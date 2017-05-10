@@ -1,5 +1,5 @@
 <?
-class DominoSwissMXFS extends IPSModule {
+class DominoSwissMXRLUP extends IPSModule {
 	
 	public function Create(){
 		//Never delete this line!
@@ -33,22 +33,30 @@ class DominoSwissMXFS extends IPSModule {
 	public function ReceiveData($JSONString) {
 		
 		$data = json_decode($JSONString);
-				
+		
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
 		
 		if($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 			switch($data->Values->Command) {
 				case 1:
 				case 3:
+				case 16:
+				case 23:
 					SetValue($this->GetIDForIdent("Status"), true);
 					break;
 				case 2:
 				case 4:
 					SetValue($this->GetIDForIdent("Status"), false);
 					break;
+				
+				case 6:
+					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
+					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
+					break;
+				
 			}
 		}
-
+	
 	}
 
 	public function RequestAction($Ident, $Value) {
@@ -56,9 +64,9 @@ class DominoSwissMXFS extends IPSModule {
 		switch($Ident) {
 			case "Status":
 				if($Value) {
-					$this->SendUpImpulse();
+					$this->SwitchMode(true);
 				} else {
-					$this->SendDownImpulse();
+					$this->SwitchMode(false);
 				}
 				break;
 			default:
@@ -66,47 +74,38 @@ class DominoSwissMXFS extends IPSModule {
 		}
 	}
 
-	public function SendUpImpulse(){
+	public function SwitchMode(bool $Status){
 		
-		$this->SendCommand(1);
-		
+		if ($Status){
+			$this->SendCommand(1);
+		} else {
+			$this->SendCommand(2);
+		}
 	}
 
-	public function SendUpContinious(){
-		
-		$this->SendCommand(3);
-		
-	}
-
-	public function SendDownImpulse(){
-		
-		$this->SendCommand(4);
-		
-	}
-
-	public function SendDownContinious(){
-		
-		$this->SendCommand(4);
-		
-	}
-
-	public function SendStop(){
-		
-		$this->SendCommand(5);
-		
-	}
-
-	public function SendToggle(){
+	public function Toggle(){
 		
 		$this->SendCommand(6);
 		
 	}
 
-	private function SendCommand(int $Command) {
+	public function RestorePosition(){
+		
+		$this->SendCommand(23);
+		
+	}
+
+	public function RestorePositionBoth(){
+		
+		$this->SendCommand(16);
+		
+	}
+
+	protected function SendCommand(int $Command, $Value = 0) {
 		
 		//Zur 1Wire Coontroller Instanz senden
 		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command)));
+		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value)));
 		
 	}
 }

@@ -29,11 +29,12 @@ class DominoSwissEGate extends IPSModule {
 		$fssTransmitParameter = json_decode($JSONString);
 		
 		$checkNr = $this->GetCheckNRForCommand($fssTransmitParameter->Command);
-		$data = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Priority=0;CheckNr=". $checkNr .";";
+		
+		$data = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Value=". $fssTransmitParameter->Value .";Priority=0;CheckNr=". $checkNr .";";
 		
 		$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data . chr(13))));
 		
-		$emulateData = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Value=0;Priority=0;". chr(13) ."";
+		$emulateData = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Value=". $fssTransmitParameter->Value .";Priority=0;". chr(13) ."";
 		$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
 	}
 	

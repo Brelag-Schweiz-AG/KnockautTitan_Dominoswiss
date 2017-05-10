@@ -1,0 +1,15 @@
+{
+	"id": "{E498DF29-57B1-48F5-8C13-A4673EE0EF9E}",
+	"name": "DominoSwissMXRLUP",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss MX RLUP 1A",
+		"DominoSwiss MX RLUP 10A"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}

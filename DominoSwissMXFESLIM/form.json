@@ -1,0 +1,7 @@
+{
+  "elements":
+  [
+	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+	{ "type": "CheckBox", "name": "Jalousie", "caption": "Jalousie"}
+  ]
+}

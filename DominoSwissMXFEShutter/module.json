@@ -1,0 +1,15 @@
+{
+	"id": "{3AA1A627-78B0-4E17-9206-0BB012094D1C}",
+	"name": "DominoSwissMXFEShutter",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss MX FE PRO",
+		"DominoSwiss MX FE UP3"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}

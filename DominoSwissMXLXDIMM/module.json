@@ -1,0 +1,15 @@
+{
+	"id": "{5ED1AA15-6D8B-4DA8-B1C8-781D24442288}",
+	"name": "DominoSwissMXDIMM",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss MX DIMM NO LIMIT",
+		"DominoSwiss MX DIMM RETROFIT"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}

@@ -1,0 +1,14 @@
+{
+	"id": "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}",
+	"name": "DominoSwissMXSLIM",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss MX FE SLIM"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}
