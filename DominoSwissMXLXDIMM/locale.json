@@ -1,0 +1,16 @@
+{
+  "translations": {
+    "de": {
+      "LockLevel ": "Sperrlevel ",
+      "Save": "Speichern",
+      "Restore": "Abrufen",
+      "SendingOnLockLevel": "SendeAufSperrLevel",
+      "Saving": "Wertespeicherung",
+      "SavedValue": "Gespeicherter Wert",
+      "Intensity": "Intensität",
+      "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
+      "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
+      "Show SendingLockLevel in WebFront": "Zeige SendeSperrLevel im WebFront an"
+    }
+  }
+}

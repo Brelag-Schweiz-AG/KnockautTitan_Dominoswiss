@@ -27,38 +27,61 @@ class DominoSwissEGate extends IPSModule {
 	public function ForwardData($JSONString){
 		
 		$fssTransmitParameter = json_decode($JSONString);
-		
-		$checkNr = $this->GetCheckNRForCommand($fssTransmitParameter->Command);
-		
-		$data = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Value=". $fssTransmitParameter->Value .";Priority=0;CheckNr=". $checkNr .";";
-		
-		$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data . chr(13))));
-		
-		$emulateData = "Instruction=1;ID=". $fssTransmitParameter->ID .";Command=". $fssTransmitParameter->Command .";Value=". $fssTransmitParameter->Value .";Priority=0;". chr(13) ."";
+
+		$data = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+		$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
+
+		$emulateData = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
 		$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
+
+		if (isset($fssTransmitParameter->GroupIDs)){
+			if (sizeof($fssTransmitParameter->GroupIDs) > 0) {
+				foreach ($fssTransmitParameter->GroupIDs as $GroupID) {
+					$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+					$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
+				}
+			}
+		}
+
 	}
 	
 
 	public function ReceiveData($JSONString) {
 		
 		$data = json_decode($JSONString);
-		$this->SendDebug("BufferIn", $data->Buffer, 0);
-		
-		//FIXME: Buffer sammeln!
-		
-		$argumentsArray = explode(";", $data->Buffer);
-		array_pop($argumentsArray);
-		
-		$valueArray = Array();
-		foreach($argumentsArray as $argument) {
-			$value = explode("=", $argument);
-			$valueArray[$value[0]] = $value[1];
+
+		$bufferData = $this->GetBuffer("DataBuffer");
+		$bufferData .= $data->Buffer;
+
+		$this->SendDebug("BufferIn", $bufferData, 0);
+
+		$bufferParts = explode("\r", $bufferData);
+
+		//Letzten Eintrag nicht auswerten, da dieser nicht vollständig ist.
+		if(sizeof($bufferParts) > 1) {
+			for($i=0; $i<sizeof($bufferParts)-1; $i++) {
+				$this->SendDebug("Data", $bufferParts[$i], 0);
+				$argumentsArray = explode(";", $data->Buffer);
+				array_pop($argumentsArray);
+
+				$valueArray = Array();
+				foreach($argumentsArray as $argument) {
+					$value = explode("=", $argument);
+					$valueArray[$value[0]] = $value[1];
+				}
+
+				$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+			}
 		}
-		
-		$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+
+		$bufferData = $bufferParts[sizeof($bufferParts)-1];
+
+		//Übriggebliebene Daten auf den Buffer schreiben
+		$this->SetBuffer("DataBuffer", $bufferData);
+
 	}
 
-	private function GetCheckNRForCommand(int $Command) {
+	private function GetCheckNRForCommand($Command) {
 		
 		switch ($Command) {
 			case 1:
@@ -136,5 +159,16 @@ class DominoSwissEGate extends IPSModule {
 		}
 	}
 
+
+	private function GetDataString($ID, $Command, $Value, $Priority, $Check){
+
+		$result = "Instruction=1;ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
+		if ($Check) {
+			$checkNr = $this->GetCheckNRForCommand($Command);
+			$result .="CheckNr=" . $checkNr . ";";
+		}
+
+		return ($result . chr(13));
+	}
 }
 ?>

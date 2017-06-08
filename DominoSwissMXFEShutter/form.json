@@ -1,7 +1,11 @@
 {
   "elements":
   [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
-	{ "type": "CheckBox", "name": "Jalousie", "caption": "Jalousie"}
+    { "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    { "type": "CheckBox", "name": "ShowLockLevel", "caption": "Show LockLevel in WebFront"},
+    { "type": "CheckBox", "name": "EnableLockLevel", "caption": "Enable LockLevel Action in WebFront"},
+    { "type": "CheckBox", "name": "ShowSendingLockLevel", "caption": "Show SendingLockLevel in WebFront"},
+    { "type": "CheckBox", "name": "Awning", "caption": "Awning"},
+    { "type": "NumberSpinner", "name": "Runtime", "caption": "Runtime in seconds"}
   ]
 }

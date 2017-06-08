@@ -5,8 +5,8 @@
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss MX FE PRO",
-		"DominoSwiss MX FE UP3"
+		"DominoSwiss MX FEPRO",
+		"DominoSwiss MX FEUP3"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],

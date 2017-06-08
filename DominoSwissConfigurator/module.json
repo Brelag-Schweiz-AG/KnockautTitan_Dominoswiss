@@ -1,0 +1,14 @@
+{
+	"id": "{7979B248-1D5C-4607-8F75-8CB50CD69E34}",
+	"name": "BrelagConfigurator",
+	"type": 4,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss Konfigurator"
+	],
+	"parentRequirements": [],
+	"childRequirements": [],
+	"implemented": [],
+	"prefix": "BRELAG"
+}

@@ -1,0 +1,11 @@
+{
+  "translations": {
+    "de": {
+      "Load a configurationfile for DominoSwiss": "Lade DominoSwisskonfigurationsdatei",
+      "Text-File": "Text Datei",
+      "Awning": "Markise",
+      "Group" : "Gruppe",
+      "Create All Devices" : "Alle Geräte erstellen"
+    }
+  }
+}

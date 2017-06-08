@@ -1,5 +1,7 @@
 <?
-class DominoSwissMXRLUP extends IPSModule {
+include_once __DIR__ . '/../libs/DominoSwissBase.php';
+
+class DominoSwissMXRLUP extends DominoSwissBase {
 	
 	public function Create(){
 		//Never delete this line!
@@ -7,11 +9,11 @@ class DominoSwissMXRLUP extends IPSModule {
 		
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
-		$this->RegisterPropertyInteger("ID", 1);
-		
-		$this->RegisterVariableBoolean("Status", "Status", "~Switch");
+
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 0, true);
+		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 0);
 		$this->EnableAction("Status");
-		
+
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
 
@@ -24,7 +26,7 @@ class DominoSwissMXRLUP extends IPSModule {
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
-		
+
 		//Apply filter
 		//$this->SetReceiveDataFilter(".*\"ID=\":". $this->ReadPropertyInteger("ID") .".*");
 		
@@ -35,15 +37,14 @@ class DominoSwissMXRLUP extends IPSModule {
 		$data = json_decode($JSONString);
 		
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
-		
-		if($data->Values->ID == $this->ReadPropertyInteger("ID")) {
+
+		if(($data->Values->ID == $this->ReadPropertyInteger("ID")) && ($data->Values->Priority >= $this->GetHighestLockLevel())) {
 			switch($data->Values->Command) {
 				case 1:
 				case 3:
-				case 16:
-				case 23:
 					SetValue($this->GetIDForIdent("Status"), true);
 					break;
+
 				case 2:
 				case 4:
 					SetValue($this->GetIDForIdent("Status"), false);
@@ -53,10 +54,26 @@ class DominoSwissMXRLUP extends IPSModule {
 					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
 					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
 					break;
-				
+
+				case 15:
+					SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Status")));
+					break;
+
+				case 16:
+				case 23:
+					SetValue($this->GetIDForIdent("Status"), GetValue($this->GetIDForIdent("SavedValue")));
+					break;
+
+				case 20:
+					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), true);
+					break;
+
+				case 21:
+					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), false);
+					break;
 			}
 		}
-	
+
 	}
 
 	public function RequestAction($Ident, $Value) {
@@ -64,49 +81,43 @@ class DominoSwissMXRLUP extends IPSModule {
 		switch($Ident) {
 			case "Status":
 				if($Value) {
-					$this->SwitchMode(true);
+					$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				} else {
-					$this->SwitchMode(false);
+					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				break;
+
+			case "Saving":
+				switch ($Value){
+					case 0:
+						$this->Save(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						break;
+
+					case 1:
+						$this->RestorePosition(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						break;
+				}
+				break;
+
+			case "SendingOnLockLevel":
+				SetValue($this->GetIDForIdent("SendingOnLockLevel"), $Value);
+				break;
+
+			case "LockLevel0":
+			case "LockLevel1":
+			case "LockLevel2":
+			case "LockLevel3":
+				if($Value) {
+					$this->LockLevelSet(substr($Ident, -1, 1));
+				} else {
+					$this->LockLevelClear(substr($Ident, -1, 1));
+				}
+				break;
+
 			default:
 				throw new Exception("Invalid ident");
 		}
 	}
 
-	public function SwitchMode(bool $Status){
-		
-		if ($Status){
-			$this->SendCommand(1);
-		} else {
-			$this->SendCommand(2);
-		}
-	}
-
-	public function Toggle(){
-		
-		$this->SendCommand(6);
-		
-	}
-
-	public function RestorePosition(){
-		
-		$this->SendCommand(23);
-		
-	}
-
-	public function RestorePositionBoth(){
-		
-		$this->SendCommand(16);
-		
-	}
-
-	protected function SendCommand(int $Command, $Value = 0) {
-		
-		//Zur 1Wire Coontroller Instanz senden
-		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value)));
-		
-	}
 }
 ?>

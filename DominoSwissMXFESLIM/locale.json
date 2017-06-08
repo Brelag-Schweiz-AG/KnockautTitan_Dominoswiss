@@ -1,0 +1,21 @@
+{
+  "translations": {
+    "de": {
+      "LockLevel ": "Sperrlevel ",
+      "Save": "Speichern",
+      "Restore": "Abrufen",
+      "SendingOnLockLevel": "SendeAufSperrLevel",
+      "Saving": "Wertespeicherung",
+      "Stopped": "Gestoppt",
+      "Moving": "In Bewegung",
+      "UP": "AUF",
+      "DOWN": "AB",
+      "Movement": "Bewegung",
+      "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
+      "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
+      "Show SendingLockLevel in WebFront": "Zeige SendeSperrLevel im WebFront an",
+      "Awning": "Markise",
+      "Runtime in seconds" : "Laufzeit in Sekunden"
+    }
+  }
+}

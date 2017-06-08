@@ -1,5 +1,5 @@
 <?
-class DominoSwissWetterstation extends IPSModule {
+class DominoSwissWeatherstation extends IPSModule {
 	
 	public function Create(){
 		//Never delete this line!
@@ -9,10 +9,10 @@ class DominoSwissWetterstation extends IPSModule {
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
 		
-		$this->RegisterVariableInteger("LightValue", "Light", "~Illumination");
-		$this->RegisterVariableFloat("WindValue", "Wind", "~WindSpeed.kmh");
-		$this->RegisterVariableBoolean("Raining", "Raining", "~Raining");
-		$this->RegisterVariableFloat("GoldCap", "GoldCap", "");
+		$this->RegisterVariableInteger("LightValue", "Light", "~Illumination", 0);
+		$this->RegisterVariableFloat("WindValue", "Wind", "~WindSpeed.kmh", 0);
+		$this->RegisterVariableBoolean("Raining", "Raining", "~Raining", 0);
+		$this->RegisterVariableFloat("GoldCap", "GoldCap", "", 0);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -26,9 +26,6 @@ class DominoSwissWetterstation extends IPSModule {
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
-		
-		//Apply filter
-		//$this->SetReceiveDataFilter(".*\"ID=\":". $this->ReadPropertyInteger("ID") .".*");
 		
 	}
 
@@ -64,12 +61,12 @@ class DominoSwissWetterstation extends IPSModule {
 	
 	}
 
-	function GetLightValue(int $Categorie, int $Modulo) {
+	function GetLightValue($Category, $Modulo) {
 		
 		$base = 0;
 		$step = 0;
 
-		switch ($Categorie) {
+		switch ($Category) {
 			case 0:
 				$base = 0;
 				$step = 5;
@@ -153,12 +150,12 @@ class DominoSwissWetterstation extends IPSModule {
 		return $base + $Modulo * ($step / 8);
 	}
 
-	function GetWindValue(int $Categorie, int $Modulo) {
+	function GetWindValue($Category, $Modulo) {
 		
 		$base = 0;
 		$step = 0;
 		
-		switch ($Categorie) {
+		switch ($Category) {
 			case 0:
 				$base = 0;
 				$step = 10;

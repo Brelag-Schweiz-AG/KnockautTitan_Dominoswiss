@@ -1,12 +1,12 @@
 {
-	"id": "{B3F0007D-44EE-460B-81D1-5A74C85EE29C}",
-	"name": "DominoSwissWetterstation",
+	"id": "{7F5C8432-CEAC-45A7-BF96-4BBC3CF04B57}",
+	"name": "DominoSwissGroup",
 	"type": 3,
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss SWW SOL",
-		"DominoSwiss SWRW"
+		"DominoSwiss Gruppe",
+		"DominoSwiss Fernbedienung"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],

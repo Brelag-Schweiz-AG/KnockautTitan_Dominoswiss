@@ -1,0 +1,36 @@
+{
+  "elements":
+  [
+    { "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    { "type": "CheckBox", "name": "ShowLockLevel", "caption": "Show LockLevel in WebFront"},
+    { "type": "CheckBox", "name": "EnableLockLevel", "caption": "Enable LockLevel Action in WebFront"},
+    { "type": "CheckBox", "name": "ShowSendingLockLevel", "caption": "Show SendingLockLevel in WebFront"},
+    { "type": "List", "name": "Devices", "add": true, "delete": true,
+      "sort": {
+        "column": "InstanceID",
+        "direction": "ascending"
+      },
+      "columns": [{
+        "label": "InstanceID",
+        "name": "InstanceID",
+        "width": "100px",
+        "add": 0,
+        "edit": {
+          "type": "SelectInstance"
+        }
+      }, {
+        "name" : "ID",
+        "label" : "ID",
+        "width" : "50px",
+        "add" : 0
+      }, {
+        "name" : "Name",
+        "label" : "Name",
+        "width" : "auto",
+        "add" : "Please select device"
+      }],
+      "values": [
+      ]
+    }
+  ]
+}

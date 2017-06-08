@@ -1,0 +1,49 @@
+{
+    "elements": [
+		{ 
+			"type": "Label",
+			"label": "Load a configurationfile for DominoSwiss"
+		},
+        {
+            "name": "FileData",
+            "type": "SelectFile",
+            "caption": "Text-File",
+            "extensions": ".txt"
+		}
+	],
+	"actions": [
+		{
+			"type": "List",
+			"name": "Devices",
+			"columns": [{
+					"name" : "ID",
+					"label" : "ID",
+					"width" : "30px",
+					"save" : true
+				}, {
+					"name" : "Name",
+					"label" : "Name",
+					"width" : "130px",
+					"save" : true
+				}, {
+					"name" : "Awning",
+					"label" : "Awning",
+					"width" : "50px",
+					"save" : true
+				}, {
+					"name": "Group",
+					"label": "Group",
+					"width": "auto",
+					"save": true
+				}],
+			"values": [
+			]
+		},
+		{
+			"type": "Button",
+			"label": "Create All Devices",
+			"onClick": "BRELAG_CreateDevices($id);"
+		}
+
+    ]
+}
