@@ -1,5 +1,5 @@
 <?
-include_once '/../DominoSwissMXRLUP/module.php';
+include_once __DIR__ . '/../DominoSwissMXRLUP/module.php';
 
 class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 	
