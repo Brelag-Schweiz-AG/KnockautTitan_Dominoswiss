@@ -4,8 +4,8 @@
       "LockLevel ": "Sperrlevel ",
       "Save": "Speichern",
       "Restore": "Abrufen",
-      "SendingOnLockLevel": "SendeAufSperrLevel",
-      "Saving": "Wertespeicherung",
+      "SendingOnLockLevel": "Priorität",
+      "Saving": "Favoriteneinstellung",
       "Stopped": "Gestoppt",
       "Moving": "In Bewegung",
       "UP": "AUF",
@@ -13,7 +13,7 @@
       "Movement": "Bewegung",
       "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
       "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
-      "Show SendingLockLevel in WebFront": "Zeige SendeSperrLevel im WebFront an",
+      "Show SendingLockLevel in WebFront": "Zeige Priorität im WebFront an",
       "Awning": "Markise",
       "Runtime in seconds" : "Laufzeit in Sekunden"
     }

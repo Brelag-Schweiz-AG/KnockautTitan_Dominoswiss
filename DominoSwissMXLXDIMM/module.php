@@ -11,6 +11,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 		//You cannot use variables here. Just static values.
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 0, true);
+		$this->RegisterVariableInteger("LastValue", $this->Translate("LastValue"), "~Intensity.100", 0);
 		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 0);
 		$this->EnableAction("Intensity");
 	}
@@ -24,20 +25,38 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 		if(($data->Values->ID == $this->ReadPropertyInteger("ID")) && ($data->Values->Priority >= $this->GetHighestLockLevel())) {
 			switch($data->Values->Command) {
 				case 1:
+					$LastValue = GetValue($this->GetIDForIdent("LastValue"));
+					if (!GetValue($this->GetIDForIdent("Status"))) {
+						if ($LastValue > 0) {
+							SetValue($this->GetIDForIdent("Status"), true);
+							SetValue($this->GetIDForIdent("Intensity"), $LastValue);
+						}
+
+					}
+					break;
+
 				case 3:
+					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Intensity"), 100);
 					break;
 
 				case 2:
 				case 4:
+					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					SetValue($this->GetIDForIdent("Status"), false);
 					SetValue($this->GetIDForIdent("Intensity"), 0);
 					break;
 				
 				case 6:
+					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
 					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
+					if ($invertedStatus) {
+						SetValue($this->GetIDForIdent("Intensity"), 100);
+					} else {
+						SetValue($this->GetIDForIdent("Intensity"), 0);
+					}
 					break;
 
 				case 15:
@@ -46,12 +65,24 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 
 				case 16:
 				case 23:
-					SetValue($this->GetIDForIdent("Intensity"), GetValue($this->GetIDForIdent("SavedValue")));
+					$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
+					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
+					if ($savedValue > 0){
+						SetValue($this->GetIDForIdent("Status"), true);
+					} else {
+						SetValue($this->GetIDForIdent("Status"), false);
+					}
 					break;
 
 				case 17:
+					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					$intensityValue =($data->Values->Value * 100) /63;
 					SetValue($this->GetIDForIdent("Intensity"), $intensityValue);
+					if ($intensityValue > 0){
+						SetValue($this->GetIDForIdent("Status"), true);
+					} else {
+						SetValue($this->GetIDForIdent("Status"), false);
+					}
 					break;
 
 				case 20:
@@ -69,26 +100,24 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 	public function RequestAction($Ident, $Value) {
 		
 		switch($Ident) {
-			case "Status":
+			case "Switch":
 				if($Value) {
-					$this->ContinuousUp(0);
+					if (!GetValue($this->GetIDForIdent("Status"))) {
+						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					}
 				} else {
-					$this->ContinuousDown(0);
+					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				break;
 
 			case "Saving":
 				switch ($Value){
 					case 0:
-						$this->Save(0);
+						$this->Save(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 						break;
 
 					case 1:
-						$this->RestorePosition(0);
-						break;
-
-					case 2:
-						$this->RestorePositionBoth(0);
+						$this->RestorePosition(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 						break;
 				}
 				break;
@@ -109,7 +138,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 				break;
 				
 			case "Intensity":
-				$this->Move(0, $Value);
+				$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), $Value);
 				break;
 			
 			default:

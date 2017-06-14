@@ -1,4 +1,4 @@
-# DominoSwiss MX FE SLIM
+# DominoSwiss MXFE SLIM
 Das Modul ist ein DominoSwiss Jalousie- oder Markisenaktor.
 
 ### Inhaltverzeichnis
@@ -21,7 +21,7 @@ Das Modul ist ein DominoSwiss Jalousie- oder Markisenaktor.
 
 ### 2. Voraussetzungen
 
-- IP-Symcon ab Version 4.x
+- IP-Symcon ab Version 4.3
 
 ### 3. Software-Installation
 
@@ -34,10 +34,13 @@ Das Modul ist ein DominoSwiss Jalousie- oder Markisenaktor.
 
 __Konfigurationsseite__:
 
-Name     | Beschreibung
--------- | ---------------------------------
-ID       | Auswahl der eingerichteten ID (Speicherpunkt im eGate).
-Jalousie | Stellt ein ob der Aktor eine Jalousie- oder Markisensteuerung ist.
+Name                                 | Beschreibung
+------------------------------------ | ---------------------------------
+ID                                   | Auswahl der eingerichteten ID (Speicherpunkt im eGate)
+Zeige SperrLevel im WebFront an      | Ob die Sperrlevel im WebFront angezeigt werden sollen
+Aktiviere SperrLevel Schaltbarkeit   | Aktiviert die Schaltbarkeit des jeweiligen Sperrlevels im WebFront
+Zeige SendeSperrLevel im WebFront an | Ob das SendeSperrLevel im Webfront angezeigt werden soll
+Markise                              | Gibt an, ob es sich beim den Empfänger um eine Markise oder Jalousie handelt 
 
 ### 5. Statusvariablen und Profile
 
@@ -47,50 +50,90 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 Es werden automatisch folgende Statusvariablen angelegt.
 
-Bezeichnung | Typ     | Beschreibung
------------ | ------- | -----------
-Movement    | Integer | Schaltbare Variable, welche den Aktor Hoch/Runter bewegt oder stoppt.
-Status      | Boolean | Zeigt an ob sich der Aktor in Stillstand und Bewegung befindet.
+Bezeichnung          | Typ     | Beschreibung
+-------------------- | ------- | -----------
+Bewegung             | Integer | Schaltbare Variable, welche den Aktor Hoch/Runter bewegt oder stoppt.
+Favoriteneinstellung | Integer | Speichert und ruft gespeicherte Werte via WebFront ab
+Priorität            | Integer | Auf welcher Priority standardmäßig Befehle versendet werden
+Sperrlevel 1-4       | Boolean | Das jeweilige SperrLevel und der Status ob dieses aktiv ist
+Status               | Boolean | Zeigt an ob sich der Aktor in Stillstand und Bewegung befindet.
 
 ##### Profile:
 
-Bezeichnung        | Beschreibung
------------------- | -----------------
-BRELAG.ShutterMove | Profil für Movement
-BRELAG.Shutter     | Profil für Status
+Bezeichnung                | Beschreibung
+-------------------------- | -----------------
+BRELAG.Shutter             | Profil für Status
+BRELAG.ShutterMoveAwning   | Markisenprofil für Movement
+BRELAG.ShutterMoveJalousie | Jalousieprofil für Movement
+BRELAG.Save                | Profil für Saving
+BRELAG.SendingOnLockLevel  | Profil für Priorität
 
 ### 6. WebFront
 
-Über das WebFront und die mobilen Apps werden die Variablen angezeigt. Via "Movement" kann der Aktor gesteuert werden.
+Über das WebFront und die mobilen Apps werden die Variablen angezeigt.
+Die LockLevel 1-4 schalten die jeweiligen LockLevel An/Aus.
+Priorität definiert die Priorität auf dem standardmäßig gesendet wird.
+Via "Movement" kann der Aktor gesteuert werden.
+Es kann ebenfalls ein Wert mit Gespeichert und abgerufen werden.
 
 ### 7. PHP-Befehlsreferenz
 
-`boolean BRELAG_MoveDown(integer $InstanzID);`  
+`boolean BRELAG_ContinuousDown(integer $InstanzID, integer $Priorität);`  
 Schaltet einen Aktor herunterzufahren.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_MoveDown(12345);`  
+`BRELAG_ContinuousDown(12345);`  
 
-`boolean BRELAG_MoveUp(integer $InstanzID);`  
-Schaltet einen Aktor hochzufahren.
+`boolean BRELAG_ContinuousUp(integer $InstanzID, integer $Priorität);`  
+Schaltet einen Aktor heraufzufahren.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_MoveUp(12345);`  
+`BRELAG_ContinuousUp(12345, 0);`  
 
-`boolean BRELAG_RestorePosition(integer $InstanzID);`  
-Ruft die gespeicherte Position auf und überschreibt diese.
+`boolean BRELAG_LockLevelClear(integer $InstanzID, integer $Wert);`  
+Entsperrt das Sperrlevel mit dem Wert $Wert.  
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_RestorePosition(12345);`  
+`BRELAG_LockLevelClear(12345, 3);`  
 
-`boolean BRELAG_RestorePositionBoth(integer $InstanzID);`  
-Ruft die gespeicherte Position auf, ohne diese zu überschreiben.
+`boolean BRELAG_LockLevelSet(integer $InstanzID, integer $Wert);`  
+Sperrt das Sperrlevel mit dem Wert $Wert.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_RestorePositionBoth(12345);`   
+`BRELAG_LockLevelSet(12345, 3);`  
 
-`boolean BRELAG_Stop(integer $InstanzID);`  
-Stoppt einen Aktor.
+`boolean BRELAG_PulseDown(integer $InstanzID, integer $Priorität);`  
+Sendet einen Impuls runter auf den Aktor.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_Stop(12345);`  
+`BRELAG_PulseDown(12345, 0);`  
+
+`boolean BRELAG_PulseUp(integer $InstanzID, integer $Priorität);`  
+Sendet einen Impuls hoch auf den Aktor.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_PulseUp(12345, 0);`  
+
+`boolean BRELAG_RestorePosition(integer $InstanzID, integer $Priorität);`  
+Ruft den gespeicherten Wert ab.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_RestorePosition(12345, 0);`  
+
+`boolean BRELAG_Save(integer $InstanzID, integer $Priorität);`  
+Speichert den Momentanen Wert.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_Save(12345, 0);`  
+
+`boolean BRELAG_SendCommand(integer $InstanzID, integer $Kommando, integer $Priorität, integer $Wert);`  
+Sendet das Kommando $KOmmando mit der Priorität $Priorität und dem Wert $Wert.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_SendCommand(12345, 1, 0);`  
+
+`boolean BRELAG_Stop(integer $InstanzID, integer $Priorität);`  
+Stoppt den Aktor.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_Stop(12345), 0;`

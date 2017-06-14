@@ -12,7 +12,8 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 0, true);
 		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 0);
-		$this->EnableAction("Status");
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 0);
+		$this->EnableAction("Switch");
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -27,9 +28,6 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		//Never delete this line!
 		parent::ApplyChanges();
 
-		//Apply filter
-		//$this->SetReceiveDataFilter(".*\"ID=\":". $this->ReadPropertyInteger("ID") .".*");
-		
 	}
 
 	public function ReceiveData($JSONString) {
@@ -79,9 +77,11 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 	public function RequestAction($Ident, $Value) {
 		
 		switch($Ident) {
-			case "Status":
+			case "Switch":
 				if($Value) {
-					$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					if(!GetValue($this->GetIDForIdent("Status"))) {
+						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					}
 				} else {
 					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}

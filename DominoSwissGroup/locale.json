@@ -3,17 +3,21 @@
     "de": {
       "LockLevel ": "Sperrlevel ",
       "Save": "Speichern",
+      "Intensity": "Intensität",
       "Restore": "Abrufen",
-      "SendingOnLockLevel": "SendeAufSperrLevel",
-      "Saving": "Wertespeicherung",
+      "SendingOnLockLevel": "Priorität",
+      "Saving": "Favoriteneinstellung",
       "UP": "AUF",
       "DOWN": "AB",
       "Toggle": "Umschalten",
       "GroupOrder": "Gruppenbefehl",
       "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
       "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
-      "Show SendingLockLevel in WebFront": "Zeige SendeSperrLevel im WebFront an",
-      "InstanceID": "InstanzID"
+      "Show SendingLockLevel in WebFront": "Zeige Priorität im WebFront an",
+      "InstanceID": "InstanzID",
+      "Awning": "Markise",
+      "Show toggle": "Zeige Umschalten an",
+      "Show intensity": "Zeige Intensität an"
     }
   }
 }

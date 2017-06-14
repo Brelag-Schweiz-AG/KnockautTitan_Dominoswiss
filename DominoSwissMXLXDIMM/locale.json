@@ -2,15 +2,17 @@
   "translations": {
     "de": {
       "LockLevel ": "Sperrlevel ",
+      "LastValue": "Letzter Wert",
       "Save": "Speichern",
       "Restore": "Abrufen",
-      "SendingOnLockLevel": "SendeAufSperrLevel",
-      "Saving": "Wertespeicherung",
-      "SavedValue": "Gespeicherter Wert",
+      "SendingOnLockLevel": "Priorität",
+      "Saving": "Favoriteneinstellung",
+      "Switch": "Schalter",
+      "SavedValue": "Wert Favoritenspeicher",
       "Intensity": "Intensität",
       "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
       "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
-      "Show SendingLockLevel in WebFront": "Zeige SendeSperrLevel im WebFront an"
+      "Show SendingLockLevel in WebFront": "Zeige Priorität im WebFront an"
     }
   }
 }

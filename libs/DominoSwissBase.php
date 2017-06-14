@@ -21,7 +21,6 @@ class DominoSwissBase extends IPSModule {
 			IPS_SetVariableProfileIcon("BRELAG.Save", "Lock");
 			IPS_SetVariableProfileAssociation("BRELAG.Save", 0, $this->Translate("Save"), "", -1);
 			IPS_SetVariableProfileAssociation("BRELAG.Save", 1, $this->Translate("Restore"), "", -1);
-			//IPS_SetVariableProfileAssociation("BRELAG.Save", 2, "RestoreBoth", "", -1);
 		}
 
 		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 0);
@@ -126,11 +125,12 @@ class DominoSwissBase extends IPSModule {
 
 	}
 
-	public function RestorePositionBoth(int $Priority){
+	//Support not wanted
+	/*public function RestorePositionBoth(int $Priority){
 
 		$this->SendCommand(16, 0  , $Priority);
 
-	}
+	}*/
 
 	public function RestorePosition(int $Priority){
 

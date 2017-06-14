@@ -21,7 +21,7 @@ Das Modul ist ein DominoSwiss Schalt- und Dimmaktor.
 
 ### 2. Voraussetzungen
 
-- IP-Symcon ab Version 4.x
+- IP-Symcon ab Version 4.3
 
 ### 3. Software-Installation
 
@@ -30,13 +30,16 @@ Das Modul ist ein DominoSwiss Schalt- und Dimmaktor.
 
 ### 4. Einrichten der Instanzen in IP-Symcon
 
-- Unter "Instanz hinzufügen" ist das 'DominoSwiss MX LS DIMM NO LIMIT/RETROFIT'-Modul unter dem Hersteller 'BRELAG' aufgeführt.  
+- Unter "Instanz hinzufügen" ist das 'DominoSwiss MXFE PRO/UP3'-Modul unter dem Hersteller 'BRELAG' aufgeführt.  
 
 __Konfigurationsseite__:
 
-Name     | Beschreibung
--------- | ---------------------------------
-ID       | Auswahl der eingerichteten ID (Speicherpunkt im eGate).
+Name                                 | Beschreibung
+------------------------------------ | ---------------------------------
+ID                                   | Auswahl der eingerichteten ID (Speicherpunkt im eGate)
+Zeige SperrLevel im WebFront an      | Ob die Sperrlevel im WebFront angezeigt werden sollen
+Aktiviere SperrLevel Schaltbarkeit   | Aktiviert die Schaltbarkeit des jeweiligen Sperrlevels im WebFront
+Zeige SendeSperrLevel im WebFront an | Ob das SendeSperrLevel im Webfront angezeigt werden soll
 
 ### 5. Statusvariablen und Profile
 
@@ -46,48 +49,95 @@ Die Statusvariablen/Kategorien werden automatisch angelegt. Das Löschen einzeln
 
 Es werden automatisch folgende Statusvariablen angelegt.
 
-Bezeichnung | Typ     | Beschreibung
------------ | ------- | -----------
-Status      | Boolean | Zeigt an ob sich der Aktor in Stillstand und Bewegung befindet.
-Intensity   | Integer | Geschalteter Dimmwert. Bei einfachen AN/AUS Schaltbefehlen wird dieser auf 0% bzw. 100% gesetzt.
+Bezeichnung            | Typ     | Beschreibung
+---------------------- | ------- | -----------
+Favoriteneinstellung   | Integer | Speichert und ruft gespeicherte Werte via WebFront ab
+Wert Favoritenspeicher | Integer | Der gespeicherte Wert von Intensität
+Letzter Wert           | Integer | Der letzte Wert von Intensität welcher durch Schalter "AN", aufgrufen wird, sofern der Dimmer vorher "Aus" war.
+Priorität              | Integer | Auf welcher Priority standardmäßig Befehle versendet werden
+Sperrlevel 1-4         | Boolean | Das jeweilige SperrLevel und der Status ob dieses aktiv ist
+Status                 | Boolean | Schaltet den Aktor auf 0%/100%
+Intensität             | Integer | Die Intensität, auf die gedimmt werden soll
 
 ##### Profile:
 
-Es werden keine neuen Profile angelegt.
+Bezeichnung               | Beschreibung
+------------------------- | -----------------
+BRELAG.Save               | Profil für Saving
+BRELAG.SendingOnLockLevel | Profil für SendingOnLockLevel
 
 ### 6. WebFront
 
-Über das WebFront und die mobilen Apps werden die Variablen angezeigt. Via "Status" kann der Aktor AN/AUS schaltet werden.
-Desweiteren kann über den Intensity Slider der Dimmwert direkt geschaltet werden.
+Über das WebFront und die mobilen Apps werden die Variablen angezeigt.
+Die LockLevel 1-4 schalten die jeweiligen LockLevel An/Aus.
+SendingOnLockLevel definiert die Priorität auf dem standardmäßig gesendet wird.
+Über Intensity kann der Aktor gedimmt werden.
+Es kann ebenfalls ein Wert mit Gespeichert und abgerufen werden.
 
-### 7. PHP-Befehlsreferenz  
+### 7. PHP-Befehlsreferenz
 
-`boolean BRELAG_Move(integer $InstanzID, integer $Value);`  
-Schaltet den Dimmer bis zu einem bestimmten Intensitätswert (0..100).
+`boolean BRELAG_ContinuousDown(integer $InstanzID, integer $Priorität);`  
+Schaltet einen Aktor herunterzufahren.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_Move(12345, 80);`  
+`BRELAG_ContinuousDown(12345);`  
 
-`boolean BRELAG_RestorePosition(integer $InstanzID);`  
-Ruft die gespeicherte Position auf und überschreibt diese.
+`boolean BRELAG_ContinuousUp(integer $InstanzID, integer $Priorität);`  
+Schaltet einen Aktor heraufzufahren.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_RestorePosition(12345);`  
+`BRELAG_ContinuousUp(12345, 0);`  
 
-`boolean BRELAG_RestorePositionBoth(integer $InstanzID);`  
-Ruft die gespeicherte Position auf, ohne diese zu überschreiben.
+`boolean BRELAG_LockLevelClear(integer $InstanzID, integer $Wert);`  
+Entsperrt das Sperrlevel mit dem Wert $Wert.  
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_RestorePositionBoth(12345);`  
+`BRELAG_LockLevelClear(12345, 3);`  
 
-`boolean BRELAG_SwitchMode(integer $InstanzID, boolean $Status);`  
-Setzt den Schalter auf AN (Status = true) oder AUS (Status = false).
+`boolean BRELAG_LockLevelSet(integer $InstanzID, integer $Wert);`  
+Sperrt das Sperrlevel mit dem Wert $Wert.
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_SwitchMode(12345, true);`  
+`BRELAG_LockLevelSet(12345, 3);`  
 
-`boolean BRELAG_Toogle(integer $InstanzID);`  
-Wechselt den Status basierend auf dem Bisherigen.
+`boolean BRELAG_Move(integer $InstanzID, integer $Priorität, integer $Wert);`  
+Schaltet einen Aktor und fährt diesen auf den Wert $Wert;
 Die Funktion liefert keinerlei Rückgabewert.  
 Beispiel:  
-`BRELAG_Toogle(12345);`  
+`BRELAG_Move(12345, 0);`  
+
+`boolean BRELAG_PulseDown(integer $InstanzID, integer $Priorität);`  
+Sendet einen Impuls runter auf den Aktor.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_PulseDown(12345, 0);`  
+
+`boolean BRELAG_PulseUp(integer $InstanzID, integer $Priorität);`  
+Sendet einen Impuls hoch auf den Aktor.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_PulseUp(12345, 0);`  
+
+`boolean BRELAG_RestorePosition(integer $InstanzID, integer $Priorität);`  
+Ruft den gespeicherten Wert ab.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_RestorePosition(12345, 0);`  
+
+`boolean BRELAG_Save(integer $InstanzID, integer $Priorität);`  
+Speichert den Momentanen Wert.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_Save(12345, 0);`  
+
+`boolean BRELAG_SendCommand(integer $InstanzID, integer $Kommando, integer $Priorität, integer $Wert);`  
+Sendet das Kommando $KOmmando mit der Priorität $Priorität und dem Wert $Wert.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_SendCommand(12345, 1, 0);`  
+
+`boolean BRELAG_Stop(integer $InstanzID, integer $Priorität);`  
+Stoppt den Aktor.
+Die Funktion liefert keinerlei Rückgabewert.  
+Beispiel:  
+`BRELAG_Stop(12345), 0;`
