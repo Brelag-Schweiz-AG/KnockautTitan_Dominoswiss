@@ -38,13 +38,16 @@ class DominoSwissGroup extends DominoSwissBase {
 		if(!IPS_VariableProfileExists("BRELAG.SaveToggle")) {
 			IPS_CreateVariableProfile("BRELAG.SaveToggle", 1);
 			IPS_SetVariableProfileIcon("BRELAG.SaveToggle", "Lock");
-			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 0, $this->Translate("Save"), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 1, $this->Translate("Restore"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 0, $this->Translate("Restore"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 1, $this->Translate("Save"), "", -1);
 			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 2, $this->Translate("Toggle"), "", -1);
 		}
 
 		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 0);
 		$this->EnableAction("Intensity");
+
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 0);
+		$this->EnableAction("Switch");
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -104,10 +107,14 @@ class DominoSwissGroup extends DominoSwissBase {
 
 				case 3:
 					SetValue($this->GetIDForIdent("GroupOrder"), 0);
+					SetValue($this->GetIDForIdent("Intensity"), 100);
+					SetValue($this->GetIDForIdent("Switch"), true);
 					break;
 
 				case 4:
 					SetValue($this->GetIDForIdent("GroupOrder"), 4);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
+					SetValue($this->GetIDForIdent("Switch"), false);
 					break;
 
 				case 5:
@@ -146,41 +153,16 @@ class DominoSwissGroup extends DominoSwissBase {
 	public function RequestAction($Ident, $Value) {
 
 		switch($Ident) {
+			case "Switch":
+				if($Value) {
+					$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+				} else {
+					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+				}
+				break;
 
 			case "GroupOrder":
 				$this->SendCommand($this->GetCommandNumberforValue($Value), 0, GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-				break;
-
-			case "Saving":
-				switch ($Value){
-					case 0:
-						$this->Save(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-						break;
-
-					case 1:
-						$this->RestorePosition(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-						break;
-
-					case 2:
-						$this->Toggle(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-						break;
-				}
-				break;
-
-
-			case "SendingOnLockLevel":
-				SetValue($this->GetIDForIdent("SendingOnLockLevel"), $Value);
-				break;
-
-			case "LockLevel0":
-			case "LockLevel1":
-			case "LockLevel2":
-			case "LockLevel3":
-				if($Value) {
-					$this->LockLevelSet(substr($Ident, -1, 1));
-				} else {
-					$this->LockLevelClear(substr($Ident, -1, 1));
-				}
 				break;
 
 			case "Intensity":
@@ -188,7 +170,7 @@ class DominoSwissGroup extends DominoSwissBase {
 				break;
 
 			default:
-				throw new Exception("Invalid ident");
+				parent::RequestAction($Ident, $Value);
 		}
 	}
 
@@ -255,8 +237,13 @@ class DominoSwissGroup extends DominoSwissBase {
 	public function SendCommand(int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
-
+		if (!($Command == 15)) {
+			$this->SendDebug("Command", "HI", 0);
+			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
+		} else {
+			$this->SendDebug("Command", "HO", 0);
+			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+		}
 	}
 
 	private function SendCommand2(int $Command, int $Value, int $Priority) {
@@ -269,10 +256,8 @@ class DominoSwissGroup extends DominoSwissBase {
 	private function GetGroupIDs(){
 
 		$groupIDs = Array();
-
 		if($this->ReadPropertyString("Devices") != "") {
 			$devices = json_decode($this->ReadPropertyString("Devices"));
-
 			foreach ($devices as $device) {
 				if (IPS_ObjectExists($device->InstanceID) && $device->InstanceID !== 0) {
 					$groupIDs[] = IPS_GetProperty($device->InstanceID, "ID");

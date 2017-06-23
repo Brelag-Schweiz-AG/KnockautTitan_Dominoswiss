@@ -19,8 +19,8 @@ class DominoSwissBase extends IPSModule {
 		if(!IPS_VariableProfileExists("BRELAG.Save")) {
 			IPS_CreateVariableProfile("BRELAG.Save", 1);
 			IPS_SetVariableProfileIcon("BRELAG.Save", "Lock");
-			IPS_SetVariableProfileAssociation("BRELAG.Save", 0, $this->Translate("Save"), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Save", 1, $this->Translate("Restore"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Save", 0, $this->Translate("Restore"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Save", 1, $this->Translate("Save"), "", -1);
 		}
 
 		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 0);
@@ -75,6 +75,43 @@ class DominoSwissBase extends IPSModule {
 		//Apply filter
 		$this->SetReceiveDataFilter(".*\"ID\":\"". $this->ReadPropertyInteger("ID") ."\".*");
 		
+	}
+
+	public function RequestAction($Ident, $Value){
+
+		switch ($Ident) {
+			case "Saving":
+				switch ($Value){
+					case 0:
+						$this->RestorePosition(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						break;
+
+					case 1:
+						$this->Save(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						break;
+
+					case 2:
+						$this->Toggle(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						break;
+				}
+				break;
+
+			case "SendingOnLockLevel":
+				SetValue($this->GetIDForIdent("SendingOnLockLevel"), $Value);
+				break;
+
+			case "LockLevel0":
+			case "LockLevel1":
+			case "LockLevel2":
+			case "LockLevel3":
+				if ($Value) {
+					$this->LockLevelSet(substr($Ident, -1, 1));
+				} else {
+					$this->LockLevelClear(substr($Ident, -1, 1));
+				}
+				break;
+
+		}
 	}
 
 	public function ReceiveData($JSONString) {
@@ -163,7 +200,6 @@ class DominoSwissBase extends IPSModule {
 	}
 
 	public function SendCommand(int $Command, int $Value, int $Priority) {
-
 		$id = $this->ReadPropertyInteger("ID");
 		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
 

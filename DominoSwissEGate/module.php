@@ -25,7 +25,7 @@ class DominoSwissEGate extends IPSModule {
 	}
 
 	public function ForwardData($JSONString){
-		
+
 		$fssTransmitParameter = json_decode($JSONString);
 
 		if (!isset($fssTransmitParameter->onlyGroups)) {

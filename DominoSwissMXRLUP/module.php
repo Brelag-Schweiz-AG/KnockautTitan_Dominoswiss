@@ -75,7 +75,7 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 	}
 
 	public function RequestAction($Ident, $Value) {
-		
+
 		switch($Ident) {
 			case "Switch":
 				if($Value) {
@@ -83,39 +83,14 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 					}
 				} else {
-					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-				}
-				break;
-
-			case "Saving":
-				switch ($Value){
-					case 0:
-						$this->Save(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-						break;
-
-					case 1:
-						$this->RestorePosition(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-						break;
-				}
-				break;
-
-			case "SendingOnLockLevel":
-				SetValue($this->GetIDForIdent("SendingOnLockLevel"), $Value);
-				break;
-
-			case "LockLevel0":
-			case "LockLevel1":
-			case "LockLevel2":
-			case "LockLevel3":
-				if($Value) {
-					$this->LockLevelSet(substr($Ident, -1, 1));
-				} else {
-					$this->LockLevelClear(substr($Ident, -1, 1));
+					if(GetValue($this->GetIDForIdent("Status"))) {
+						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					}
 				}
 				break;
 
 			default:
-				throw new Exception("Invalid ident");
+				parent::RequestAction($Ident, $Value);
 		}
 	}
 

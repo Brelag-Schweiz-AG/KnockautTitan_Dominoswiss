@@ -24,7 +24,7 @@
 
 			$devices = $this->PrepareConfigData();
 
-			//EinzelReceiver erstellen
+			//EinzelReceiver und homogene Gerätegruppen erstellen
 			$ReceiverIDs = Array();
 			foreach ($devices as $device) {
 				if ($device['Name'] != "Group") {
@@ -59,7 +59,6 @@
 						IPS_SetProperty($InsID, "ID", $device['ID']);
 
 						$groupIDs = explode(",", $device['Group']);
-						array_pop($groupIDs);
 						$propertyString = Array();
 						foreach($groupIDs as $ID) {
 							$propertyString[] =	Array("InstanceID" => $ReceiverIDs[$ID]);
@@ -104,41 +103,69 @@
 					$linkArray[$key] = $explodedValue;
 				}
 
+				//var_dump($eGate1Array);
 				foreach ($eGate1Array as $key => $value) {
 					$explodedValue = explode("~", $value);
 					$eGate1Array[$key] = array("ID" => $explodedValue[0]);
-					foreach ($linkArray as $valueArray) {
+					foreach ($linkArray as $key2 => $valueArray) {
 						if (($explodedValue[1] === $valueArray[0]) && ($explodedValue[2] === $valueArray[1])) {
-							$eGate1Array[$key]["Receiver"][] = $valueArray[2];
+							if ($valueArray[3] === "RepeaterOnly=0") {
+								$eGate1Array[$key]["Receiver"][] = $valueArray[2];
+							}
 						}
 					}
-					if (sizeof($eGate1Array[$key]["Receiver"]) > 1) {
-						$eGate1Array[$key]["Group"] = true;
+					if (isset($eGate1Array[$key]["Receiver"])) {
+						if (sizeof($eGate1Array[$key]["Receiver"]) > 1) {
+
+							$onlyReceiver = $eGate1Array[$key]["Receiver"];
+							foreach($onlyReceiver as $RecIDkey => $RecID) {
+								$explodedValue2 = explode("~", $receiverArray[$RecID]);
+								$onlyReceiver[$RecIDkey] = $explodedValue2[1];
+							}
+							$onlyReceiver = array_unique($onlyReceiver);
+
+							if (sizeof($onlyReceiver) > 1) {
+									$eGate1Array[$key]["Grouptype"] = "Group";
+							} else {
+								$eGate1Array[$key]["Grouptype"] = $onlyReceiver[0] . " Group";
+							}
+						} else {
+							$eGate1Array[$key]["Grouptype"] = false;
+						}
 					} else {
-						$eGate1Array[$key]["Group"] = false;
+						unset($eGate1Array[$key]);
 					}
 				}
 
+				$eGate1Array = array_values($eGate1Array);
+
 				if (sizeof($eGate1Array) > 0) {
 					foreach ($eGate1Array as $value) {
-						$GroupValue = "";
-						if ($value["Group"]) {
-							$Name = "Group";
+						$GroupValue = Array();
+						if ($value["Grouptype"] == "Group") {
 							$Awning = "---";
 							foreach ($value['Receiver'] as $ID) {
-								$GroupValue = $GroupValue . $ID . ",";
+								$GroupValue[] = $ID;
 							}
 						} else {
-							$explodedValue = explode("~", $receiverArray[$value['Receiver'][0]]);
-							$Name = $explodedValue[1];
-							if (strpos($explodedValue[4], "NoSlatAdjustment=1") != FALSE) {
-								$Awning = "yes";
+							if ($value["Grouptype"] == false) {
+								$explodedValue = explode("~", $receiverArray[$value['Receiver'][0]]);
+								$value["Grouptype"] = $explodedValue[1];
+								if (strpos($explodedValue[4], "NoSlatAdjustment=1") != FALSE) {
+									$Awning = "yes";
+								} else {
+									$Awning = "no";
+								}
+								$GroupValue[] = $value['Receiver'][0];
 							} else {
 								$Awning = "no";
+								foreach ($value['Receiver'] as $ID) {
+									$GroupValue[] = $ID;
+								}
 							}
-							$GroupValue = $value['Receiver'][0];
+
 						}
-						$row = array("ID" => $value['ID'], "Name" => $Name, "Group" => $GroupValue, "Awning" => $Awning);
+						$row = array("ID" => $value['ID'], "Name" => $value["Grouptype"], "Group" => implode(",", $GroupValue), "Awning" => $Awning);
 						$result[] = $row;
 					}
 				}
@@ -151,18 +178,25 @@
 
 			switch ($Modultype) {
 				case "MX FESLIM":
+				case "MX FESLIM Group":
 					return "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}";
 
 				case "MX FEPRO":
+				case "MX FEPRO Group":
 				case "MX FEUP3":
+				case "MX FEUP3 Group":
 					return "{3AA1A627-78B0-4E17-9206-0BB012094D1C}";
 
 				case "LX RLUP10A":
+				case "LX RLUP10A Group":
 				case "LX RLUP1A":
+				case "LX RLUP1A Group":
 					return "{E498DF29-57B1-48F5-8C13-A4673EE0EF9E}";
 
 				case "LX DIMM NO LIMIT":
+				case "LX DIMM NO LIMIT Group":
 				case "LX DIMM RETROFIT":
+				case "LX DIMM RETROFIT Group":
 					return "{5ED1AA15-6D8B-4DA8-B1C8-781D24442288}";
 
 				case "Group":
