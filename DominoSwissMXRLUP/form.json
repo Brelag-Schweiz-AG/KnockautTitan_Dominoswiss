@@ -1,9 +1,6 @@
 {
   "elements":
   [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
-    { "type": "CheckBox", "name": "ShowLockLevel", "caption": "Show LockLevel in WebFront"},
-    { "type": "CheckBox", "name": "EnableLockLevel", "caption": "Enable LockLevel Action in WebFront"},
-    { "type": "CheckBox", "name": "ShowSendingLockLevel", "caption": "Show SendingLockLevel in WebFront"}
+	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"}
   ]
 }

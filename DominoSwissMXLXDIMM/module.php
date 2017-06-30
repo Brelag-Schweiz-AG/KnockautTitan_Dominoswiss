@@ -31,7 +31,6 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 							SetValue($this->GetIDForIdent("Status"), true);
 							SetValue($this->GetIDForIdent("Intensity"), $LastValue);
 						}
-
 					}
 					break;
 
@@ -61,6 +60,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 
 				case 15:
 					SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
+					SetValue($this->GetIDForIdent("Saving"), 1);
 					break;
 
 				case 16:
@@ -72,6 +72,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 					} else {
 						SetValue($this->GetIDForIdent("Status"), false);
 					}
+					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
 				case 17:

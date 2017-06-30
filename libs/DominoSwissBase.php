@@ -8,9 +8,6 @@ class DominoSwissBase extends IPSModule {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
-		$this->RegisterPropertyBoolean("ShowLockLevel", true);
-		$this->RegisterPropertyBoolean("EnableLockLevel", true);
-		$this->RegisterPropertyBoolean("ShowSendingLockLevel", true);
 
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 0);
@@ -23,10 +20,6 @@ class DominoSwissBase extends IPSModule {
 			IPS_SetVariableProfileAssociation("BRELAG.Save", 1, $this->Translate("Save"), "", -1);
 		}
 
-		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 0);
-		$this->EnableAction("Saving");
-
-
 		if(!IPS_VariableProfileExists("BRELAG.SendingOnLockLevel")) {
 			IPS_CreateVariableProfile("BRELAG.SendingOnLockLevel", 1);
 			IPS_SetVariableProfileIcon("BRELAG.SendingOnLockLevel", "Lock");
@@ -35,6 +28,9 @@ class DominoSwissBase extends IPSModule {
 			IPS_SetVariableProfileAssociation("BRELAG.SendingOnLockLevel", 2, "2", "", -1);
 			IPS_SetVariableProfileAssociation("BRELAG.SendingOnLockLevel", 3, "3", "", -1);
 		}
+
+		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 0);
+		$this->EnableAction("Saving");
 
 		$this->RegisterVariableInteger("SendingOnLockLevel", $this->Translate("SendingOnLockLevel"), "BRELAG.SendingOnLockLevel", 0);
 		$this->EnableAction("SendingOnLockLevel");
@@ -52,25 +48,6 @@ class DominoSwissBase extends IPSModule {
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
-
-		for ($i = 0; $i <= 3; $i++) {
-			if($this->ReadPropertyBoolean("EnableLockLevel")) {
-				$this->EnableAction("LockLevel" . $i);
-			} else {
-				$this->DisableAction("LockLevel" . $i);
-			}
-			if($this->ReadPropertyBoolean("ShowLockLevel")) {
-				IPS_SetHidden($this->GetIDForIdent("LockLevel" . $i), false);
-			} else {
-				IPS_SetHidden($this->GetIDForIdent("LockLevel" . $i), true);
-			}
-		}
-
-		if($this->ReadPropertyBoolean("ShowSendingLockLevel")) {
-			IPS_SetHidden($this->GetIDForIdent("SendingOnLockLevel"), false);
-		} else {
-			IPS_SetHidden($this->GetIDForIdent("SendingOnLockLevel"), true);
-		}
 
 		//Apply filter
 		$this->SetReceiveDataFilter(".*\"ID\":\"". $this->ReadPropertyInteger("ID") ."\".*");

@@ -9,10 +9,7 @@
       "Saving": "Favoriteneinstellung",
       "Switch": "Schalter",
       "SavedValue": "Wert Favoritenspeicher",
-      "Intensity": "Intensität",
-      "Show LockLevel in WebFront": "Zeige SperrLevel im WebFront an",
-      "Enable LockLevel Action in WebFront": "Aktiviere SperrLevel-Schaltbarkeit",
-      "Show SendingLockLevel in WebFront": "Zeige Priorität im WebFront an"
+      "Intensity": "Intensität"
     }
   }
 }

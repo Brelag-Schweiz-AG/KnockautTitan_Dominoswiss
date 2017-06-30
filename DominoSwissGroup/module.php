@@ -103,6 +103,8 @@ class DominoSwissGroup extends DominoSwissBase {
 
 				case 2:
 					SetValue($this->GetIDForIdent("GroupOrder"), 3);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
+					SetValue($this->GetIDForIdent("Switch"), false);
 					break;
 
 				case 3:
@@ -126,7 +128,7 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 
 				case 15:
-					SetValue($this->GetIDForIdent("Saving"), 0);
+					SetValue($this->GetIDForIdent("Saving"), 1);
 					break;
 
 				case 17:
@@ -143,7 +145,7 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 
 				case 23:
-					SetValue($this->GetIDForIdent("Saving"), 1);
+					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 			}
 		}
@@ -183,12 +185,12 @@ class DominoSwissGroup extends DominoSwissBase {
 
 			foreach($devices as $device) {
 				if (IPS_ObjectExists($device->InstanceID) && $device->InstanceID !== 0) {
-					$formdata->elements[7]->values[] = Array(
+					$formdata->elements[4]->values[] = Array(
 						"Name" => IPS_GetName($device->InstanceID),
 						"ID" => IPS_GetProperty($device->InstanceID, "ID")
 					);
 				} else {
-					$formdata->elements[7]->values[] = Array(
+					$formdata->elements[4]->values[] = Array(
 						"Name" => "Unknown Device",
 						"ID" => 0
 					);
@@ -237,13 +239,8 @@ class DominoSwissGroup extends DominoSwissBase {
 	public function SendCommand(int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
-		if (!($Command == 15)) {
-			$this->SendDebug("Command", "HI", 0);
-			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
-		} else {
-			$this->SendDebug("Command", "HO", 0);
-			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
-		}
+		$this->SendDebug("Command", "HI", 0);
+		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
 	}
 
 	private function SendCommand2(int $Command, int $Value, int $Priority) {
