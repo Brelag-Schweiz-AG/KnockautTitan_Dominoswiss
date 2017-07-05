@@ -48,6 +48,8 @@ class DominoSwissGroup extends DominoSwissBase {
 
 		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 0);
 		$this->EnableAction("Switch");
+
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 0, true);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -128,7 +130,20 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 
 				case 15:
+					SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
 					SetValue($this->GetIDForIdent("Saving"), 1);
+					break;
+
+				case 16:
+				case 23:
+					$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
+					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
+					if ($savedValue > 0){
+						SetValue($this->GetIDForIdent("Status"), true);
+					} else {
+						SetValue($this->GetIDForIdent("Status"), false);
+					}
+					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
 				case 17:
@@ -142,10 +157,6 @@ class DominoSwissGroup extends DominoSwissBase {
 
 				case 21:
 					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), false);
-					break;
-
-				case 23:
-					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 			}
 		}
@@ -239,8 +250,11 @@ class DominoSwissGroup extends DominoSwissBase {
 	public function SendCommand(int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
-		$this->SendDebug("Command", "HI", 0);
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
+		if ($Command == 15) {
+			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+		} else {
+			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
+		}
 	}
 
 	private function SendCommand2(int $Command, int $Value, int $Priority) {

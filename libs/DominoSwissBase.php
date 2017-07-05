@@ -11,6 +11,7 @@ class DominoSwissBase extends IPSModule {
 
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 0);
+			$this->EnableAction("LockLevel" . $i);
 		}
 
 		if(!IPS_VariableProfileExists("BRELAG.Save")) {
