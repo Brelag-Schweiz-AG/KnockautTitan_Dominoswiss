@@ -10,7 +10,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyBoolean("Awning", false);
-		$this->RegisterPropertyInteger("SavedPosition", 0);
+		$this->RegisterPropertyInteger("CountRockerSteps", 8);
 		$this->RegisterPropertyInteger("Runtime", 90);
 
 		if(!IPS_VariableProfileExists("BRELAG.Shutter")) {
@@ -40,30 +40,102 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.ShutterMoveAwning", 4, $this->Translate("DOWN"), "", -1);
 		}
 
-		if(!IPS_VariableProfileExists("BRELAG.Rocker")) {
-			IPS_CreateVariableProfile("BRELAG.Rocker", 1);
-			IPS_SetVariableProfileValues("BRELAG.Rocker", -8, 8, 1);
-			IPS_SetVariableProfileIcon("BRELAG.Rocker", "IPS");
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -8, $this->Translate($this->Translate("8x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -7, $this->Translate($this->Translate("7x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -6, $this->Translate($this->Translate("6x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -5, $this->Translate($this->Translate("5x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -4, $this->Translate($this->Translate("4x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -3, $this->Translate($this->Translate("3x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -2, $this->Translate($this->Translate("2x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", -1, $this->Translate($this->Translate("1x Lower")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 0, $this->Translate($this->Translate("Zeroing")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 5, $this->Translate($this->Translate("5x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 6, $this->Translate($this->Translate("6x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 7, $this->Translate($this->Translate("7x Upper")), "", -1);
-			IPS_SetVariableProfileAssociation("BRELAG.Rocker", 8, $this->Translate($this->Translate("8x Upper")), "", -1);
+		if(!IPS_VariableProfileExists("BRELAG.Rocker8")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker8", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker8", 0, 8, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker8", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 5, $this->Translate($this->Translate("5x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 6, $this->Translate($this->Translate("6x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 7, $this->Translate($this->Translate("7x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker8", 8, $this->Translate($this->Translate("8x Upper")), "", -1);
 		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker7")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker7", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker7", 0, 7, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker7", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 5, $this->Translate($this->Translate("5x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 6, $this->Translate($this->Translate("6x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker7", 7, $this->Translate($this->Translate("7x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker6")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker6", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker6", 0, 6, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker6", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 5, $this->Translate($this->Translate("5x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker6", 6, $this->Translate($this->Translate("6x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker5")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker5", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker5", 0, 5, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker5", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker5", 5, $this->Translate($this->Translate("5x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker4")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker4", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker4", 0, 4, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker4", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker4", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker4", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker4", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker4", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker4", 4, $this->Translate($this->Translate("4x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker3")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker3", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker3", 0, 3, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker3", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker3", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker3", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker3", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker3", 3, $this->Translate($this->Translate("3x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker2")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker2", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker2", 0, 2, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker2", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker2", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker2", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker2", 2, $this->Translate($this->Translate("2x Upper")), "", -1);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Rocker1")) {
+			IPS_CreateVariableProfile("BRELAG.Rocker1", 1);
+			IPS_SetVariableProfileValues("BRELAG.Rocker1", 0, 1, 1);
+			IPS_SetVariableProfileIcon("BRELAG.Rocker1", "IPS");
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker1", 0, $this->Translate($this->Translate("Closed")), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Rocker1", 1, $this->Translate($this->Translate("1x Upper")), "", -1);
+		}
+
+		$this->RegisterVariableBoolean("Status", "Status", "BRELAG.Shutter", 1);
 		
-		$this->RegisterVariableBoolean("Status", "Status", "BRELAG.Shutter", 0);
+		$this->MaintainVariable("SavedRocker", $this->Translate("SavedRocker"), 1, "", 10, true);
+		IPS_SetHidden($this->GetIDForIdent("SavedRocker"), true);
 
 		$this->RegisterTimer("SetMovementStopTimer", 0, 'BRELAG_SetMovementStop($_IPS[\'TARGET\']);');
 
@@ -81,15 +153,17 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		parent::ApplyChanges();
 
 		if ($this->ReadPropertyBoolean("Awning")) {
-			$this->MaintainVariable("Movement", $this->Translate("Movement"), 1, "BRELAG.ShutterMoveAwning", 0, true);
+			$this->MaintainVariable("Movement", $this->Translate("Movement"), 1, "BRELAG.ShutterMoveAwning", 3, true);
 			$this->EnableAction("Movement");
-			$this->MaintainVariable("RockerControl", $this->Translate("RockerControl"), 1, "BRELAG.Rocker", 0, false);
+			$this->MaintainVariable("RockerControl", $this->Translate("RockerControl"), 1, "BRELAG.Rocker".$this->ReadPropertyInteger("CountRockerSteps"), 4, false);
 		} else {
-			$this->MaintainVariable("Movement", $this->Translate("Movement"), 1,  "BRELAG.ShutterMoveJalousie", 0, true);
+			$this->MaintainVariable("Movement", $this->Translate("Movement"), 1,  "BRELAG.ShutterMoveJalousie", 3, true);
 			$this->EnableAction("Movement");
-			$this->MaintainVariable("RockerControl", $this->Translate("RockerControl"), 1, "BRELAG.Rocker", 0, true);
+			$this->MaintainVariable("RockerControl", $this->Translate("RockerControl"), 1, "BRELAG.Rocker".$this->ReadPropertyInteger("CountRockerSteps"), 4, true);
 			$this->EnableAction("RockerControl");
 		}
+
+		
 		
 	}
 
@@ -119,10 +193,18 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 						} else {
 							SetValue($this->GetIDForIdent("Status"), false);
 							if ($command == 1) {
-								SetValue($this->GetIDForIdent("RockerControl"), GetValue($this->GetIDForIdent("RockerControl")) + 1);
+								if ((GetValue($this->GetIDForIdent("RockerControl")) + 1) > $this->ReadPropertyInteger("CountRockerSteps")) {
+									SetValue($this->GetIDForIdent("RockerControl"), $this->ReadPropertyInteger("CountRockerSteps"));
+								} else {
+									SetValue($this->GetIDForIdent("RockerControl"), GetValue($this->GetIDForIdent("RockerControl")) + 1);
+								}
 								SetValue($this->GetIDForIdent("Movement"), 1);
 							} else {
-								SetValue($this->GetIDForIdent("RockerControl"), GetValue($this->GetIDForIdent("RockerControl")) - 1);
+								if ((GetValue($this->GetIDForIdent("RockerControl")) - 1) < 0 ) {
+									SetValue($this->GetIDForIdent("RockerControl"), 0);
+								} else {
+									SetValue($this->GetIDForIdent("RockerControl"), GetValue($this->GetIDForIdent("RockerControl")) - 1);
+								}
 								SetValue($this->GetIDForIdent("Movement"), 3);
 							}
 						}
@@ -134,8 +216,10 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					SetValue($this->GetIDForIdent("Status"), true);
 					$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
 					if ($command == 3) {
+						SetValue($this->GetIDForIdent("RockerControl"), $this->ReadPropertyInteger("CountRockerSteps"));
 						SetValue($this->GetIDForIdent("Movement"), 0);
 					} else {
+						SetValue($this->GetIDForIdent("RockerControl"), 0);
 						SetValue($this->GetIDForIdent("Movement"), 4);
 					}
 					break;
@@ -144,7 +228,12 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					SetValue($this->GetIDForIdent("Status"), false);
 					SetValue($this->GetIDForIdent("Movement"), 2);
 					break;
-				
+
+				case 15:
+					SetValue($this->GetIDForIdent("SavedRocker"), GetValue($this->GetIDForIdent("RockerControl")));
+					SetValue($this->GetIDForIdent("Saving"), 1);
+					break;
+					
 				case 16:
 					if (GetValue($this->GetIDForIdent("Status"))) {
 						SetValue($this->GetIDForIdent("Status"), false);
@@ -154,6 +243,8 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 						SetValue($this->GetIDForIdent("Movement"), 2);
 						$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
 					}
+					$savedRocker = ($this->GetIDForIdent("SavedRocker"));
+					SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
 					break;
 
 				case 20:
@@ -168,6 +259,8 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Movement"), 2);
 					$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
+					$savedRocker = GetValue($this->GetIDForIdent("SavedRocker"));
+					SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
 					break;
 			}
 		}
@@ -220,8 +313,6 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 	public function SetRocker($Value) {
 
 		$oldValue = GetValue($this->GetIDForIdent("RockerControl"));
-
-		IPS_LogMessage("Domino", $oldValue . $Value);
 
 		if ($Value > $oldValue) {
 			for($i = 0; $i < ($Value - $oldValue); $i++) {

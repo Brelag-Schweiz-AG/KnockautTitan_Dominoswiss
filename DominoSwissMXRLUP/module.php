@@ -10,9 +10,10 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 
-		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 0, true);
-		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 0);
-		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 0);
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 10, true);
+		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
+		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 1);
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 6);
 		$this->EnableAction("Switch");
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate

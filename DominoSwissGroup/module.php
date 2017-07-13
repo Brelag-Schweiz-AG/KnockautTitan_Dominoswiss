@@ -43,13 +43,13 @@ class DominoSwissGroup extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 2, $this->Translate("Toggle"), "", -1);
 		}
 
-		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 0);
+		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
 		$this->EnableAction("Intensity");
 
-		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 0);
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 6);
 		$this->EnableAction("Switch");
 
-		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 0, true);
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -65,17 +65,17 @@ class DominoSwissGroup extends DominoSwissBase {
 		parent::ApplyChanges();
 
 		if ($this->ReadPropertyBoolean("ShowAwning")) {
-			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1, "BRELAG.ShutterMoveAwning", 0, true);
+			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1, "BRELAG.ShutterMoveAwning", 3, true);
 			$this->EnableAction("GroupOrder");
 		} else {
-			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1,  "BRELAG.ShutterMoveJalousie", 0, true);
+			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1,  "BRELAG.ShutterMoveJalousie", 3, true);
 			$this->EnableAction("GroupOrder");
 		}
 
 		if ($this->ReadPropertyBoolean("ShowToggle")) {
-			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1, "BRELAG.SaveToggle", 0, true);
+			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1, "BRELAG.SaveToggle", 7, true);
 		} else {
-			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1,  "BRELAG.Save", 0, true);
+			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1,  "BRELAG.Save", 7, true);
 		}
 
 		if ($this->ReadPropertyBoolean("ShowIntensity")) {
@@ -93,7 +93,7 @@ class DominoSwissGroup extends DominoSwissBase {
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
 
 		if ($data->Values->Instruction == 2) {
-			$this->SendCommand2($data->Values->Command, $data->Values->Value, $data->Values->Priority);
+			$this->SendCommandOfRemote($data->Values->Command, $data->Values->Value, $data->Values->Priority);
 			return;
 		}
 
@@ -138,11 +138,6 @@ class DominoSwissGroup extends DominoSwissBase {
 				case 23:
 					$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
 					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
-					if ($savedValue > 0){
-						SetValue($this->GetIDForIdent("Status"), true);
-					} else {
-						SetValue($this->GetIDForIdent("Status"), false);
-					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
@@ -213,6 +208,12 @@ class DominoSwissGroup extends DominoSwissBase {
 
 	}
 
+	public function RestorePosition(int $Priority){
+
+		$this->SendCommand(23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority);
+
+	}
+
 	public function Move(int $Priority, int $Value){
 
 		if ($Value < 0) {
@@ -252,12 +253,14 @@ class DominoSwissGroup extends DominoSwissBase {
 		$id = $this->ReadPropertyInteger("ID");
 		if ($Command == 15) {
 			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+		}else if ($Command == 23) {
+			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs(), "OnlyRestore" => true)));
 		} else {
 			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
 		}
 	}
 
-	private function SendCommand2(int $Command, int $Value, int $Priority) {
+	private function SendCommandOfRemote(int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
 		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs(), "OnlyGroups" => true)));

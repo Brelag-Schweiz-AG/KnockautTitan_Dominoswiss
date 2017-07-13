@@ -10,8 +10,9 @@ class DominoSwissBase extends IPSModule {
 		$this->RegisterPropertyInteger("ID", 1);
 
 		for ($i = 0; $i <= 3; $i++) {
-			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 0);
+			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 12 + $i);
 			$this->EnableAction("LockLevel" . $i);
+			IPS_SetHidden($this->GetIDForIdent("LockLevel" . $i), true);
 		}
 
 		if(!IPS_VariableProfileExists("BRELAG.Save")) {
@@ -30,11 +31,12 @@ class DominoSwissBase extends IPSModule {
 			IPS_SetVariableProfileAssociation("BRELAG.SendingOnLockLevel", 3, "3", "", -1);
 		}
 
-		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 0);
+		$this->RegisterVariableInteger("Saving", $this->Translate("Saving"), "BRELAG.Save", 9);
 		$this->EnableAction("Saving");
 
-		$this->RegisterVariableInteger("SendingOnLockLevel", $this->Translate("SendingOnLockLevel"), "BRELAG.SendingOnLockLevel", 0);
+		$this->RegisterVariableInteger("SendingOnLockLevel", $this->Translate("SendingOnLockLevel"), "BRELAG.SendingOnLockLevel", 11);
 		$this->EnableAction("SendingOnLockLevel");
+		IPS_SetHidden($this->GetIDForIdent("SendingOnLockLevel"), true);
 
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
@@ -149,7 +151,7 @@ class DominoSwissBase extends IPSModule {
 
 	public function RestorePosition(int $Priority){
 
-		$this->SendCommand(23, 0  , $Priority);
+		$this->SendCommand(23, -1  , $Priority);
 
 	}
 

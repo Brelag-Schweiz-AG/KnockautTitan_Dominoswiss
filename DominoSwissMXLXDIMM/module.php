@@ -10,9 +10,10 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 
-		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 0, true);
-		$this->RegisterVariableInteger("LastValue", $this->Translate("LastValue"), "~Intensity.100", 0);
-		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 0);
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
+		$this->RegisterVariableInteger("LastValue", $this->Translate("LastValue"), "~Intensity.100", 8);
+		IPS_SetHidden($this->GetIDForIdent("LastValue"), true);
+		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
 		$this->EnableAction("Intensity");
 	}
 	
@@ -65,14 +66,18 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 
 				case 16:
 				case 23:
-					$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
-					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
-					if ($savedValue > 0){
-						SetValue($this->GetIDForIdent("Status"), true);
+					if ($data->Values->Value != -1) {
+						$savedValue = $data->Values->Value;
 					} else {
-						SetValue($this->GetIDForIdent("Status"), false);
+						$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
 					}
-					SetValue($this->GetIDForIdent("Saving"), 0);
+						SetValue($this->GetIDForIdent("Intensity"), $savedValue);
+						if ($savedValue > 0) {
+							SetValue($this->GetIDForIdent("Status"), true);
+						} else {
+							SetValue($this->GetIDForIdent("Status"), false);
+						}
+						SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
 				case 17:

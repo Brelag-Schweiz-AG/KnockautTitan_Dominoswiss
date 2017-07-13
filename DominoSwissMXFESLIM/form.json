@@ -3,6 +3,7 @@
   [
     { "type": "NumberSpinner", "name": "ID", "caption": "ID"},
     { "type": "CheckBox", "name": "Awning", "caption": "Awning"},
-    { "type": "NumberSpinner", "name": "Runtime", "caption": "Runtime in seconds"}
+    { "type": "NumberSpinner", "name": "Runtime", "caption": "Runtime in seconds"},
+    { "type": "NumberSpinner", "name": "CountRockerSteps", "caption": "Count of rockersteps"}
   ]
 }

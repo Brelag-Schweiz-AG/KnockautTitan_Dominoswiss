@@ -28,9 +28,10 @@ class DominoSwissEGate extends IPSModule {
 
 		$fssTransmitParameter = json_decode($JSONString);
 
-		if (!isset($fssTransmitParameter->onlyGroups)) {
-				$data = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
-				$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
+		if (!isset($fssTransmitParameter->OnlyGroups)) {
+			$data = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+			$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
+			IPS_Sleep(50);
 		}
 
 		$emulateData = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
@@ -39,7 +40,11 @@ class DominoSwissEGate extends IPSModule {
 		if (isset($fssTransmitParameter->GroupIDs)){
 			if (sizeof($fssTransmitParameter->GroupIDs) > 0) {
 				foreach ($fssTransmitParameter->GroupIDs as $GroupID) {
-					$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+					if (isset($fssTransmitParameter->OnlyRestore)) {
+						$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
+					} else {
+						$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+					}
 					$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
 				}
 			}

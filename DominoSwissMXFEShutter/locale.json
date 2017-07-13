@@ -13,15 +13,7 @@
       "Movement": "Bewegung",
       "Awning": "Markise",
       "Runtime in seconds" : "Laufzeit in Sekunden",
-      "8x Lower": "8x AB",
-      "7x Lower": "7x AB",
-      "6x Lower": "6x AB",
-      "5x Lower": "5x AB",
-      "4x Lower": "4x AB",
-      "3x Lower": "3x AB",
-      "2x Lower": "2x AB",
-      "1x Lower": "1x AB",
-      "Zeroing": "Nullstellung",
+      "Closed": "Geschlossen",
       "1x Upper": "1x AUF",
       "2x Upper": "2x AUF",
       "3x Upper": "3x AUF",
@@ -30,7 +22,8 @@
       "6x Upper": "6x AUF",
       "7x Upper": "7x AUF",
       "8x Upper": "8x AUF",
-      "RockerControl" : "Wippkontrolle"
+      "RockerControl" : "Wippkontrolle",
+      "Count of rockersteps" : "Anzahl Wippschritte"
     }
   }
 }
