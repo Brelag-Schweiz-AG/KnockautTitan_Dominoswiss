@@ -50,6 +50,7 @@ class DominoSwissGroup extends DominoSwissBase {
 		$this->EnableAction("Switch");
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
+		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}

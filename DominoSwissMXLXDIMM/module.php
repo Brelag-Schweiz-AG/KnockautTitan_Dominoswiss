@@ -11,6 +11,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 		//You cannot use variables here. Just static values.
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
+		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
 		$this->RegisterVariableInteger("LastValue", $this->Translate("LastValue"), "~Intensity.100", 8);
 		IPS_SetHidden($this->GetIDForIdent("LastValue"), true);
 		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);

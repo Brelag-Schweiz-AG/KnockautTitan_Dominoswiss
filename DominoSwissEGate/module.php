@@ -31,7 +31,7 @@ class DominoSwissEGate extends IPSModule {
 		if (!isset($fssTransmitParameter->OnlyGroups)) {
 			$data = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
 			$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
-			IPS_Sleep(50);
+			IPS_Sleep(500);
 		}
 
 		$emulateData = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
