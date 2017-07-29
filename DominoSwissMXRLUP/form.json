@@ -1,6 +1,28 @@
 {
   "elements":
   [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"}
+	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    {
+      "type": "List",
+      "name": "Supplement",
+      "caption": "Supplement",
+      "add": true,
+      "delete": true,
+      "sort": {
+        "column": "ID",
+        "direction": "ascending"
+      },
+      "columns": [{
+        "name": "ID",
+        "label": "ID",
+        "width": "120px",
+        "add": 0,
+        "edit": {
+          "type": "NumberSpinner"
+        }
+      }],
+      "values": [
+      ]
+    }
   ]
 }

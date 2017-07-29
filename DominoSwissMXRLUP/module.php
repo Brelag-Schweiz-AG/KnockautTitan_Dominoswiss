@@ -12,41 +12,52 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 10, true);
 		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
-		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 1);
+
 		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 6);
 		$this->EnableAction("Switch");
+
+		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 1);
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
 
+	
+	
 	public function Destroy(){
 		//Never delete this line!
 		parent::Destroy();
 		
 	}
 
+	
+	
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
 
 	}
 
+	
+	
 	public function ReceiveData($JSONString) {
 		
 		$data = json_decode($JSONString);
 		
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
 
-		if(($data->Values->ID == $this->ReadPropertyInteger("ID")) && ($data->Values->Priority >= $this->GetHighestLockLevel())) {
-			switch($data->Values->Command) {
+		//No ID check necessary, check is done by receiveFilter "DominoSwissBase.php->ApplyChanges()"
+		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
+			switch ($data->Values->Command) {
 				case 1:
 				case 3:
 					SetValue($this->GetIDForIdent("Status"), true);
+					SetValue($this->GetIDForIdent("Switch"), true);
 					break;
 
 				case 2:
 				case 4:
 					SetValue($this->GetIDForIdent("Status"), false);
+					SetValue($this->GetIDForIdent("Switch"), false);
 					break;
 				
 				case 6:
@@ -55,7 +66,10 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 					break;
 
 				case 15:
-					SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Status")));
+					//only save if its our ID
+					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
+						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Status")));
+					}
 					break;
 
 				case 16:
@@ -83,7 +97,8 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 					if(!GetValue($this->GetIDForIdent("Status"))) {
 						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 					}
-				} else {
+				}
+				else {
 					if(GetValue($this->GetIDForIdent("Status"))) {
 						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 					}

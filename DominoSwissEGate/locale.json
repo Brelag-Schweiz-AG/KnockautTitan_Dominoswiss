@@ -1,0 +1,9 @@
+{
+  "translations": {
+    "de": {
+      "Delay on every message to not overwhelm the eGate": "Verzögerung bei jeder Nachricht um das eGate nicht zu überfordern",
+      "Milliseconds": "Millisekunden",
+      "Supplement" : "Zusatz"
+    }
+  }
+}

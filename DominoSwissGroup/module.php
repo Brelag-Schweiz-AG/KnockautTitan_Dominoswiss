@@ -9,13 +9,12 @@ class DominoSwissGroup extends DominoSwissBase {
 		
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
-		$this->RegisterPropertyString("Devices", "[]");
 		$this->RegisterPropertyBoolean("ShowAwning", false);
 		$this->RegisterPropertyBoolean("ShowToggle", true);
 		$this->RegisterPropertyBoolean("ShowIntensity", true);
 
 
-		if(!IPS_VariableProfileExists("BRELAG.ShutterMoveJalousie")) {
+		if (!IPS_VariableProfileExists("BRELAG.ShutterMoveJalousie")) {
 			IPS_CreateVariableProfile("BRELAG.ShutterMoveJalousie", 1);
 			IPS_SetVariableProfileValues("BRELAG.ShutterMoveJalousie", 0, 4, 0);
 			IPS_SetVariableProfileIcon("BRELAG.ShutterMoveJalousie", "IPS");
@@ -26,7 +25,7 @@ class DominoSwissGroup extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.ShutterMoveJalousie", 4, $this->Translate("DOWN"), "", -1);
 		}
 
-		if(!IPS_VariableProfileExists("BRELAG.ShutterMoveAwning")) {
+		if (!IPS_VariableProfileExists("BRELAG.ShutterMoveAwning")) {
 			IPS_CreateVariableProfile("BRELAG.ShutterMoveAwning", 1);
 			IPS_SetVariableProfileValues("BRELAG.ShutterMoveAwning", 0, 4, 0);
 			IPS_SetVariableProfileIcon("BRELAG.ShutterMoveAwning", "IPS");
@@ -35,7 +34,7 @@ class DominoSwissGroup extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.ShutterMoveAwning", 4, $this->Translate("DOWN"), "", -1);
 		}
 
-		if(!IPS_VariableProfileExists("BRELAG.SaveToggle")) {
+		if (!IPS_VariableProfileExists("BRELAG.SaveToggle")) {
 			IPS_CreateVariableProfile("BRELAG.SaveToggle", 1);
 			IPS_SetVariableProfileIcon("BRELAG.SaveToggle", "Lock");
 			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 0, $this->Translate("Restore"), "", -1);
@@ -55,12 +54,16 @@ class DominoSwissGroup extends DominoSwissBase {
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
 
+	
+	
 	public function Destroy(){
 		//Never delete this line!
 		parent::Destroy();
 		
 	}
 
+	
+	
 	public function ApplyChanges() {
 		//Never delete this line!
 		parent::ApplyChanges();
@@ -68,37 +71,37 @@ class DominoSwissGroup extends DominoSwissBase {
 		if ($this->ReadPropertyBoolean("ShowAwning")) {
 			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1, "BRELAG.ShutterMoveAwning", 3, true);
 			$this->EnableAction("GroupOrder");
-		} else {
+		}
+		else {
 			$this->MaintainVariable("GroupOrder", $this->Translate("GroupOrder"), 1,  "BRELAG.ShutterMoveJalousie", 3, true);
 			$this->EnableAction("GroupOrder");
 		}
 
 		if ($this->ReadPropertyBoolean("ShowToggle")) {
 			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1, "BRELAG.SaveToggle", 7, true);
-		} else {
+		}
+		else {
 			$this->MaintainVariable("Saving", $this->Translate("Saving"), 1,  "BRELAG.Save", 7, true);
 		}
 
 		if ($this->ReadPropertyBoolean("ShowIntensity")) {
 			IPS_SetHidden($this->GetIDForIdent("Intensity"), false);
-		} else {
+		}
+		else {
 			IPS_SetHidden($this->GetIDForIdent("Intensity"), true);
 		}
-
 	}
 
+	
+	
 	public function ReceiveData($JSONString) {
 
 		$data = json_decode($JSONString);
 
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
 
-		if ($data->Values->Instruction == 2) {
-			$this->SendCommandOfRemote($data->Values->Command, $data->Values->Value, $data->Values->Priority);
-			return;
-		}
-
-		if(($data->Values->ID == $this->ReadPropertyInteger("ID")) && ($data->Values->Priority >= $this->GetHighestLockLevel())) {
+		//No ID check necessary, check is done by receiveFilter "DominoSwissBase.php->ApplyChanges()"
+		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			switch($data->Values->Command) {
 				case 1:
 					SetValue($this->GetIDForIdent("GroupOrder"), 1);
@@ -131,8 +134,11 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 
 				case 15:
-					SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
-					SetValue($this->GetIDForIdent("Saving"), 1);
+					//only save if its our ID
+					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
+						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
+						SetValue($this->GetIDForIdent("Saving"), 1);
+					}
 					break;
 
 				case 16:
@@ -143,7 +149,7 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 
 				case 17:
-					$intensityValue =($data->Values->Value * 100) /63;
+					$intensityValue =($data->Values->Value * 100) / 63;
 					SetValue($this->GetIDForIdent("Intensity"), $intensityValue);
 					break;
 
@@ -156,16 +162,18 @@ class DominoSwissGroup extends DominoSwissBase {
 					break;
 			}
 		}
-
 	}
 
+	
+	
 	public function RequestAction($Ident, $Value) {
 
 		switch($Ident) {
 			case "Switch":
 				if($Value) {
 					$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-				} else {
+				}
+				else {
 					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				break;
@@ -183,43 +191,22 @@ class DominoSwissGroup extends DominoSwissBase {
 		}
 	}
 
-	public function GetConfigurationForm() {
-
-		$formdata = json_decode(file_get_contents(__DIR__ . "/form.json"));
-
-		if($this->ReadPropertyString("Devices") != "") {
-			$devices = json_decode($this->ReadPropertyString("Devices"));
-
-			foreach($devices as $device) {
-				if (IPS_ObjectExists($device->InstanceID) && $device->InstanceID !== 0) {
-					$formdata->elements[4]->values[] = Array(
-						"Name" => IPS_GetName($device->InstanceID),
-						"ID" => IPS_GetProperty($device->InstanceID, "ID")
-					);
-				} else {
-					$formdata->elements[4]->values[] = Array(
-						"Name" => "Unknown Device",
-						"ID" => 0
-					);
-				}
-			}
-		}
-
-		return json_encode($formdata);
-
-	}
-
+	
+	
 	public function RestorePosition(int $Priority){
 
 		$this->SendCommand(23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority);
 
 	}
 
+	
+	
 	public function Move(int $Priority, int $Value){
 
 		if ($Value < 0) {
 			$Value = 0;
-		} else if ($Value > 100) {
+		}
+		else if ($Value > 100) {
 			$Value = 100;
 		}
 
@@ -228,6 +215,8 @@ class DominoSwissGroup extends DominoSwissBase {
 
 	}
 
+	
+	
 	private function GetCommandNumberforValue($Value) {
 
 		switch ($Value) {
@@ -249,37 +238,12 @@ class DominoSwissGroup extends DominoSwissBase {
 		}
 	}
 
+	
+	
 	public function SendCommand(int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
-		if ($Command == 15) {
-			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
-		}else if ($Command == 23) {
-			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs(), "OnlyRestore" => true)));
-		} else {
-			return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs())));
-		}
-	}
-
-	private function SendCommandOfRemote(int $Command, int $Value, int $Priority) {
-
-		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "GroupIDs" => $this->GetGroupIDs(), "OnlyGroups" => true)));
-
-	}
-
-	private function GetGroupIDs(){
-
-		$groupIDs = Array();
-		if($this->ReadPropertyString("Devices") != "") {
-			$devices = json_decode($this->ReadPropertyString("Devices"));
-			foreach ($devices as $device) {
-				if (IPS_ObjectExists($device->InstanceID) && $device->InstanceID !== 0) {
-					$groupIDs[] = IPS_GetProperty($device->InstanceID, "ID");
-				}
-			}
-		}
-		return $groupIDs;
+		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
 	}
 
 }

@@ -8,6 +8,7 @@ class DominoSwissBase extends IPSModule {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
+		$this->RegisterPropertyString("Supplement", "[]");
 
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 12 + $i);
@@ -53,7 +54,12 @@ class DominoSwissBase extends IPSModule {
 		parent::ApplyChanges();
 
 		//Apply filter
-		$this->SetReceiveDataFilter(".*\"ID\":\"". $this->ReadPropertyInteger("ID") ."\".*");
+		$receiveDataFilter = ".*\"ID\":\"". $this->ReadPropertyInteger("ID") ."\".*";
+		$supplementIDs = json_decode($this->ReadPropertyString("Supplement"), true);
+		foreach($supplementIDs as $supplementID){
+			$receiveDataFilter = $receiveDataFilter ."|.*\"ID\":\"". $supplementID['ID'] ."\".*";
+		}
+		$this->SetReceiveDataFilter($receiveDataFilter);
 		
 	}
 

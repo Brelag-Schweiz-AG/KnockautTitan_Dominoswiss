@@ -12,68 +12,163 @@
 
 		}	
 
+		
+		
 		public function GetConfigurationForm() {
 			
-			$data = json_decode(file_get_contents(__DIR__ . "/form.json"));
+			$data = json_decode(file_get_contents(__DIR__ ."/form.json"));
 			$data->actions[0]->values = $this->PrepareConfigData();
 			return json_encode($data);
 		
 		}
 
+		
+		
 		public function CreateDevices() {
 
 			$devices = $this->PrepareConfigData();
-
-			//EinzelReceiver und homogene Gerätegruppen erstellen
-			$ReceiverIDs = Array();
+			
 			foreach ($devices as $device) {
-				if ($device['Name'] != "Group") {
-					if ($device['ID'] != 0) {
-						$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
-						$ReceiverIDs[$device['ID']] = $InsID;
+				$this->CreateSingleDevice($device);
+			}
 
-						IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
-						IPS_SetPosition($InsID, $device['ID']);
+		}
+		
+		
+		
+		public function CheckSingleDevice($tableRow) {
 
-						//Konfiguration
-						IPS_SetProperty($InsID, "ID", $device['ID']);
-						if ($device['Awning'] == "yes") {
-							IPS_SetProperty($InsID, "Awning", true);
-						}
+			$tableRowInstanceID = substr($tableRow['InstanceID'], 1);
+			if ($tableRow['InstanceID'] == "-") {
+				$this->CreateSingleDevice($tableRow);
+				return;
+			}
+			
+			$deviceSupplement = json_decode(IPS_GetProperty($tableRowInstanceID, "Supplement"), true);
+			$simpleSupplementArray = Array();
+			foreach ($deviceSupplement as $singleSupplement) {
+				$simpleSupplementArray[] = $singleSupplement["ID"];
+			}
+			
+			$correctSupplementArray = explode(",", $tableRow['Supplement']);
+			if ($tableRow['Supplement'] != $simpleSupplementArray) {
+				$propertySupplement = Array();
+				foreach($correctSupplementArray as $id) {
+					$propertySupplement[] = array("ID" => $id);
+				}
+				
+				IPS_SetProperty($tableRowInstanceID, "Supplement", json_encode($propertySupplement));
+				IPS_ApplyChanges($tableRowInstanceID);
+			}
+				
+		}
 
-						IPS_ApplyChanges($InsID);
+
+
+		private function CreateSingleDevice($device) {
+			
+			if ($device['Name'] != "Group") {
+				if ($device['ID'] != 0) {
+					$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
+					
+					IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
+					IPS_SetPosition($InsID, $device['ID']);
+
+					//Konfiguration
+					IPS_SetProperty($InsID, "ID", $device['ID']);
+					if ($device['Awning'] == "yes") {
+						IPS_SetProperty($InsID, "Awning", true);
+					}
+
+					$supplement = explode(",", $device['Supplement']);
+					$propertySupplement = Array();
+					foreach($supplement as $id) {
+						$propertySupplement[] = array("ID" => $id);
+					}
+
+					IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
+
+					IPS_ApplyChanges($InsID);
+				}
+			}
+			else if ($device['Name'] == "Group") {
+				if ($device['ID'] != 0) {
+					$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
+
+					IPS_SetName($InsID, $device['Name'] ." (ID: ". $device['ID'] .")");
+					IPS_SetPosition($InsID, $device['ID']);
+
+					//Konfiguration
+					IPS_SetProperty($InsID, "ID", $device['ID']);
+
+					$supplement = explode(",", $device['Supplement']);
+					$propertySupplement = Array();
+					foreach($supplement as $id) {
+						$propertySupplement[] = array("ID" => $id);
+					}
+
+					IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
+
+					IPS_ApplyChanges($InsID);
+				}
+			}
+		}
+		
+		
+		
+		private function CheckForInstancesIDs($result) {
+
+			$instanceIDs = IPS_GetInstanceList();
+			$childrenIDs = Array();
+			$eGateID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+			foreach ($instanceIDs as $instanceID) {
+				if ((IPS_GetInstance($instanceID)['ConnectionID'] == $eGateID) && ($instanceID != $this->InstanceID)) {
+					$childrenIDs[] = $instanceID;
+				}
+			}
+
+			foreach ($result as $pos => $partResult) {
+				$result[$pos]['rowColor'] = "#C0FFC0";
+				$result[$pos]['InstanceID'] = "-";
+				foreach ($childrenIDs as $childrenID) {
+					if (IPS_GetProperty($childrenID, "ID") == $partResult['ID']) {
+						$result[$pos]['InstanceID'] = "#" . $childrenID;
+						$result[$pos]['rowColor'] = "";
+						break;
 					}
 				}
 			}
 
-			//Gruppen erstellen
-			foreach ($devices as $device) {
-				if ($device['Name'] == "Group") {
-					if ($device['ID'] != 0) {
-						$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
+			return $result;
+			
+		}
 
-						IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
-						IPS_SetPosition($InsID, $device['ID']);
 
-						//Konfiguration
-						IPS_SetProperty($InsID, "ID", $device['ID']);
 
-						$groupIDs = explode(",", $device['Group']);
-						$propertyString = Array();
-						foreach($groupIDs as $ID) {
-							$propertyString[] =	Array("InstanceID" => $ReceiverIDs[$ID]);
+		private function CheckForHearingIDs($result) {
+
+			foreach ($result as $pos => $partResult) {
+				if ($partResult['InstanceID'] != "-") {
+					$instanceIDOfPartResult = substr($partResult['InstanceID'], 1);
+					if (IPS_InstanceExists($instanceIDOfPartResult)) {
+						$deviceSupplement = json_decode(IPS_GetProperty($instanceIDOfPartResult, "Supplement"), true);
+						$simpleSupplementArray = Array();
+						foreach ($deviceSupplement as $singleSupplement) {
+							$simpleSupplementArray[] = $singleSupplement["ID"];
 						}
-
-						IPS_SetProperty($InsID, "Devices", json_encode($propertyString));
-
-						IPS_ApplyChanges($InsID);
+						if ($result[$pos]['Supplement'] != implode(",",$simpleSupplementArray)) {
+							$result[$pos]['rowColor'] = "#FFC0C0";
+						}
 					}
 				}
 			}
 
+			return $result;
 
 		}
 
+		
+		
 		private function PrepareConfigData() {
 
 			$file = base64_decode($this->ReadPropertyString("FileData"));
@@ -103,7 +198,6 @@
 					$linkArray[$key] = $explodedValue;
 				}
 
-				//var_dump($eGate1Array);
 				foreach ($eGate1Array as $key => $value) {
 					$explodedValue = explode("~", $value);
 					$eGate1Array[$key] = array("ID" => $explodedValue[0]);
@@ -126,13 +220,16 @@
 
 							if (sizeof($onlyReceiver) > 1) {
 									$eGate1Array[$key]["Grouptype"] = "Group";
-							} else {
-								$eGate1Array[$key]["Grouptype"] = $onlyReceiver[0] . " Group";
 							}
-						} else {
+							else {
+								$eGate1Array[$key]["Grouptype"] = $onlyReceiver[0] ." Group";
+							}
+						}
+						else {
 							$eGate1Array[$key]["Grouptype"] = false;
 						}
-					} else {
+					}
+					else {
 						unset($eGate1Array[$key]);
 					}
 				}
@@ -140,40 +237,68 @@
 				$eGate1Array = array_values($eGate1Array);
 
 				if (sizeof($eGate1Array) > 0) {
+					$hearingArray = Array();
 					foreach ($eGate1Array as $value) {
-						$GroupValue = Array();
+						$groupValue = Array();
 						if ($value["Grouptype"] == "Group") {
 							$Awning = "---";
 							foreach ($value['Receiver'] as $ID) {
-								$GroupValue[] = $ID;
+								$groupValue[] = $ID;
 							}
-						} else {
+						}
+						else {
 							if ($value["Grouptype"] == false) {
 								$explodedValue = explode("~", $receiverArray[$value['Receiver'][0]]);
 								$value["Grouptype"] = $explodedValue[1];
 								if (strpos($explodedValue[4], "NoSlatAdjustment=1") != FALSE) {
 									$Awning = "yes";
-								} else {
+								}
+								else {
 									$Awning = "no";
 								}
-								$GroupValue[] = $value['Receiver'][0];
-							} else {
+								$groupValue[] = $value['Receiver'][0];
+							}
+							else {
 								$Awning = "no";
 								foreach ($value['Receiver'] as $ID) {
-									$GroupValue[] = $ID;
+									$groupValue[] = $ID;
 								}
 							}
 
 						}
-						$row = array("ID" => $value['ID'], "Name" => $value["Grouptype"], "Group" => implode(",", $GroupValue), "Awning" => $Awning);
+						$row = array("ID" => $value['ID'], "Name" => $value["Grouptype"], "Group" => implode(",", $groupValue), "Awning" => $Awning);
+						$hearingArray[$value['ID']] = $groupValue;
 						$result[] = $row;
 					}
-				}
 
+					//Building the supplement
+					foreach ($hearingArray as $key => $hearerID) {
+						$supplement = Array();
+						foreach ($result as $partResult) {
+								$groupArray = explode(",", $partResult['Group']);
+								if (sizeof(array_intersect($hearerID, $groupArray)) == sizeof($hearerID)) {
+									if (($key != $partResult['ID'])) {
+										$supplement[] = $partResult['ID'];
+									}
+								}
+						}
+						foreach ($result as $pos => $partResult) {
+							if ($key == $partResult['ID']) {
+								$result[$pos]['Supplement'] = implode(",", $supplement);
+							}
+						}						
+					}
+					
+					$result = $this->CheckForInstancesIDs($result);
+					$result = $this->CheckForHearingIDs($result);
+				}
 			}
+
 			return $result;
 		}
 
+		
+		
 		private function GetGUIDforModuleType($Modultype) {
 
 			switch ($Modultype) {

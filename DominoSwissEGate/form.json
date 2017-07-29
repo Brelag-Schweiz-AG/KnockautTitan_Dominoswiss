@@ -1,0 +1,7 @@
+{
+  "elements":
+  [
+    { "type": "Label", "label": "Delay on every message to not overwhelm the eGate"},
+    { "type": "NumberSpinner", "name": "MessageDelay", "caption": "Milliseconds"}
+  ]
+}

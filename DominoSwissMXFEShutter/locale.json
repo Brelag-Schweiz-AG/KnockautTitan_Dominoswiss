@@ -23,7 +23,8 @@
       "7x Upper": "7x AUF",
       "8x Upper": "8x AUF",
       "RockerControl" : "Wippkontrolle",
-      "Count of rockersteps" : "Anzahl Wippschritte"
+      "Count of rockersteps" : "Anzahl Wippschritte",
+      "Supplement" : "Zusatz"
     }
   }
 }

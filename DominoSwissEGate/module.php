@@ -7,50 +7,47 @@ class DominoSwissEGate extends IPSModule {
 		
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
+
+		$this->RegisterPropertyInteger("MessageDelay", 200);
 		
 		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
 		
 	}
 
+	
+	
 	public function Destroy(){
 		//Never delete this line!
 		parent::Destroy();
 		
 	}
 
+	
+	
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
 		
 	}
 
+	
+	
 	public function ForwardData($JSONString){
 
 		$fssTransmitParameter = json_decode($JSONString);
 
-		if (!isset($fssTransmitParameter->OnlyGroups)) {
+		if (IPS_SemaphoreEnter($_IPS['SELF'], 20 * $this->ReadPropertyInteger("MessageDelay"))) {
 			$data = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
 			$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
-			IPS_Sleep(500);
+			IPS_Sleep($this->ReadPropertyInteger("MessageDelay"));
+			IPS_SemaphoreLeave($_IPS['SELF']);
 		}
 
 		$emulateData = $this->GetDataString($fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
 		$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
 
-		if (isset($fssTransmitParameter->GroupIDs)){
-			if (sizeof($fssTransmitParameter->GroupIDs) > 0) {
-				foreach ($fssTransmitParameter->GroupIDs as $GroupID) {
-					if (isset($fssTransmitParameter->OnlyRestore)) {
-						$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
-					} else {
-						$emulateData = $this->GetDataString($GroupID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
-					}
-					$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
-				}
-			}
-		}
-
 	}
+	
 	
 
 	public function ReceiveData($JSONString) {
@@ -65,14 +62,14 @@ class DominoSwissEGate extends IPSModule {
 		$bufferParts = explode("\r", $bufferData);
 
 		//Letzten Eintrag nicht auswerten, da dieser nicht vollständig ist.
-		if(sizeof($bufferParts) > 1) {
-			for($i=0; $i<sizeof($bufferParts)-1; $i++) {
+		if (sizeof($bufferParts) > 1) {
+			for ($i = 0; $i < sizeof($bufferParts) - 1; $i++) {
 				$this->SendDebug("Data", $bufferParts[$i], 0);
 				$argumentsArray = explode(";", $data->Buffer);
 				array_pop($argumentsArray);
 
 				$valueArray = Array();
-				foreach($argumentsArray as $argument) {
+				foreach ($argumentsArray as $argument) {
 					$value = explode("=", $argument);
 					$valueArray[$value[0]] = $value[1];
 				}
@@ -81,13 +78,15 @@ class DominoSwissEGate extends IPSModule {
 			}
 		}
 
-		$bufferData = $bufferParts[sizeof($bufferParts)-1];
+		$bufferData = $bufferParts[sizeof($bufferParts) - 1];
 
 		//Übriggebliebene Daten auf den Buffer schreiben
 		$this->SetBuffer("DataBuffer", $bufferData);
 
 	}
 
+	
+	
 	private function GetCheckNRForCommand($Command) {
 		
 		switch ($Command) {
@@ -166,13 +165,14 @@ class DominoSwissEGate extends IPSModule {
 		}
 	}
 
+	
 
 	private function GetDataString($ID, $Command, $Value, $Priority, $Check){
 
-		$result = "Instruction=1;ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
+		$result = "Instruction=1;ID=". $ID .";Command=". $Command .";Value=". $Value .";Priority=". $Priority .";";
 		if ($Check) {
 			$checkNr = $this->GetCheckNRForCommand($Command);
-			$result .="CheckNr=" . $checkNr . ";";
+			$result .="CheckNr=". $checkNr .";";
 		}
 
 		return ($result . chr(13));

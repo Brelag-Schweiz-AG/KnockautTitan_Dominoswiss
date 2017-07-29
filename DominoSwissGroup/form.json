@@ -2,35 +2,30 @@
   "elements":
   [
     { "type": "NumberSpinner", "name": "ID", "caption": "ID"},
-    { "type": "CheckBox", "name": "ShowAwning", "caption": "Awning"},
-    { "type": "CheckBox", "name": "ShowToggle", "caption": "Show toggle"},
-    { "type": "CheckBox", "name": "ShowIntensity", "caption": "Show intensity"},
-    { "type": "List", "name": "Devices", "add": true, "delete": true,
+    {
+      "type": "List",
+      "name": "Supplement",
+      "caption": "Supplement",
+      "add": true,
+      "delete": true,
       "sort": {
-        "column": "InstanceID",
+        "column": "ID",
         "direction": "ascending"
       },
       "columns": [{
-        "label": "InstanceID",
-        "name": "InstanceID",
-        "width": "100px",
+        "name": "ID",
+        "label": "ID",
+        "width": "120px",
         "add": 0,
         "edit": {
-          "type": "SelectInstance"
+          "type": "NumberSpinner"
         }
-      }, {
-        "name" : "ID",
-        "label" : "ID",
-        "width" : "50px",
-        "add" : 0
-      }, {
-        "name" : "Name",
-        "label" : "Name",
-        "width" : "auto",
-        "add" : "Please select device"
       }],
       "values": [
       ]
-    }
+    },
+    { "type": "CheckBox", "name": "ShowAwning", "caption": "Awning"},
+    { "type": "CheckBox", "name": "ShowToggle", "caption": "Show toggle"},
+    { "type": "CheckBox", "name": "ShowIntensity", "caption": "Show intensity"}
   ]
 }

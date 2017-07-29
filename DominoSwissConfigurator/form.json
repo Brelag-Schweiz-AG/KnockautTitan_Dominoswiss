@@ -33,8 +33,18 @@
 				}, {
 					"name": "Group",
 					"label": "Group",
-					"width": "auto",
+					"width": "150",
 					"save": true
+				}, {
+					"name" : "Supplement",
+					"label" : "Supplement",
+					"width" : "auto",
+					"save" : true
+				}, {
+					"name" : "InstanceID",
+					"label" : "InstanceID",
+					"width" : "70px",
+					"save" : true
 				}],
 			"values": [
 			]
@@ -43,6 +53,11 @@
 			"type": "Button",
 			"label": "Create All Devices",
 			"onClick": "BRELAG_CreateDevices($id);"
+		},
+		{
+			"type": "Button",
+			"label": "Check Single Device",
+			"onClick": "BRELAG_CheckSingleDevice($id, $Devices);"
 		}
 
     ]

@@ -17,25 +17,31 @@ class DominoSwissWeatherstation extends IPSModule {
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
 
+	
+	
 	public function Destroy(){
 		//Never delete this line!
 		parent::Destroy();
 		
 	}
 
+	
+	
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
 		
 	}
 
+	
+	
 	public function ReceiveData($JSONString) {
 		
 		$data = json_decode($JSONString);
 		
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
-		if($data->Values->ID == $this->ReadPropertyInteger("ID")) {
-			switch($data->Values->Command) {
+		if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
+			switch ($data->Values->Command) {
 				case 32:
 					SetValue($this->GetIDForIdent("LightValue"), $this->GetLightValue(intval($data->Values->Value / 8), ($data->Values->Value % 8)));
 					break;
@@ -47,7 +53,8 @@ class DominoSwissWeatherstation extends IPSModule {
 				case 34:
 					if ($data->Values->Value >= 112) {
 						SetValue($this->GetIDForIdent("Raining"), true);
-					} else {
+					}
+					else {
 						SetValue($this->GetIDForIdent("Raining"), false);
 					}
 					break;
@@ -61,6 +68,8 @@ class DominoSwissWeatherstation extends IPSModule {
 	
 	}
 
+	
+	
 	function GetLightValue($Category, $Modulo) {
 		
 		$base = 0;
@@ -150,6 +159,8 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $base + $Modulo * ($step / 8);
 	}
 
+	
+	
 	function GetWindValue($Category, $Modulo) {
 		
 		$base = 0;
