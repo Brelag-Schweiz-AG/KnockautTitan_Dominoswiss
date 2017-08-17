@@ -42,10 +42,17 @@ class DominoSwissGroup extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.SaveToggle", 2, $this->Translate("Toggle"), "", -1);
 		}
 
+		if(!IPS_VariableProfileExists("BRELAG.Switch")) {
+			IPS_CreateVariableProfile("BRELAG.Switch", 0);
+			IPS_SetVariableProfileIcon("BRELAG.Switch", "Power");
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0xCCCCCC);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x006BB2);
+		}
+
 		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
 		$this->EnableAction("Intensity");
 
-		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 6);
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "BRELAG.Switch", 6);
 		$this->EnableAction("Switch");
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);

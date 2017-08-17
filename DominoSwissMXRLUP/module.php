@@ -10,13 +10,27 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 
-		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "~Switch", 10, true);
+		if(!IPS_VariableProfileExists("BRELAG.Switch")) {
+			IPS_CreateVariableProfile("BRELAG.Switch", 0);
+			IPS_SetVariableProfileIcon("BRELAG.Switch", "Power");
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0x787875);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x006BB2);
+		}
+
+		if(!IPS_VariableProfileExists("BRELAG.Status")) {
+			IPS_CreateVariableProfile("BRELAG.Status", 0);
+			IPS_SetVariableProfileIcon("BRELAG.Status", "Power");
+			IPS_SetVariableProfileAssociation("BRELAG.Status", 0, $this->Translate("Off"), "", 0x787875);
+			IPS_SetVariableProfileAssociation("BRELAG.Status", 1, $this->Translate("On"), "", 0x006BB2);
+		}
+
+		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "BRELAG.Status", 10, true);
 		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
 
-		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "~Switch", 6);
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "BRELAG.Switch", 6);
 		$this->EnableAction("Switch");
 
-		$this->RegisterVariableBoolean("Status", "Status", "~Switch", 1);
+		$this->RegisterVariableBoolean("Status", "Status", "BRELAG.Status", 1);
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}

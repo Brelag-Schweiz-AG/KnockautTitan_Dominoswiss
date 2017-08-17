@@ -2,6 +2,8 @@
   "translations": {
     "de": {
       "LockLevel ": "Sperrlevel ",
+      "Off": "Aus",
+      "On": "An",
       "LastValue": "Letzter Wert",
       "Save": "Speichern",
       "Restore": "Abrufen",
