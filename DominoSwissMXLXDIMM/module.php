@@ -34,10 +34,8 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 				case 1:
 					$LastValue = GetValue($this->GetIDForIdent("LastValue"));
 					if (!GetValue($this->GetIDForIdent("Status"))) {
-						if ($LastValue > 0) {
 							SetValue($this->GetIDForIdent("Status"), true);
 							SetValue($this->GetIDForIdent("Intensity"), $LastValue);
-						}
 					}
 					SetValue($this->GetIDForIdent("Switch"), true);
 					break;

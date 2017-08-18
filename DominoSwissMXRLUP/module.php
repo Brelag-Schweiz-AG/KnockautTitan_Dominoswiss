@@ -13,15 +13,15 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		if(!IPS_VariableProfileExists("BRELAG.Switch")) {
 			IPS_CreateVariableProfile("BRELAG.Switch", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Switch", "Power");
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0x787875);
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x006BB2);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0xFF0000);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x00FF00);
 		}
 
 		if(!IPS_VariableProfileExists("BRELAG.Status")) {
 			IPS_CreateVariableProfile("BRELAG.Status", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Status", "Power");
-			IPS_SetVariableProfileAssociation("BRELAG.Status", 0, $this->Translate("Off"), "", 0x787875);
-			IPS_SetVariableProfileAssociation("BRELAG.Status", 1, $this->Translate("On"), "", 0x006BB2);
+			IPS_SetVariableProfileAssociation("BRELAG.Status", 0, $this->Translate("Off"), "", 0xFF0000);
+			IPS_SetVariableProfileAssociation("BRELAG.Status", 1, $this->Translate("On"), "", 0x00FF00);
 		}
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "BRELAG.Status", 10, true);
@@ -81,8 +81,11 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 
 				case 15:
 					//only save if its our ID
+				case 15:
+					//only save if its our ID
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Status")));
+						SetValue($this->GetIDForIdent("Saving"), 1);
 					}
 					break;
 
@@ -108,14 +111,14 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		switch($Ident) {
 			case "Switch":
 				if($Value) {
-					if(!GetValue($this->GetIDForIdent("Status"))) {
+					//if(!GetValue($this->GetIDForIdent("Status"))) {
 						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-					}
+					//}
 				}
 				else {
-					if(GetValue($this->GetIDForIdent("Status"))) {
+					//if(GetValue($this->GetIDForIdent("Status"))) {
 						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-					}
+					//}
 				}
 				break;
 

@@ -16,8 +16,8 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		if (!IPS_VariableProfileExists("BRELAG.Shutter")) {
 			IPS_CreateVariableProfile("BRELAG.Shutter", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Shutter", "IPS");
-			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 0, $this->Translate("Stopped"), "", 0x787875);
-			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 1, $this->Translate("Moving"), "", 0x006BB2);
+			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 0, $this->Translate("Stopped"), "", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 1, $this->Translate("Moving"), "", 0xFF0000);
 		}
 		
 		if (!IPS_VariableProfileExists("BRELAG.ShutterMoveJalousie")) {
@@ -275,6 +275,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 				case 23:
 					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Movement"), 2);
+					SetValue($this->GetIDForIdent("Saving"), 0);
 					$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
 					$savedRocker = GetValue($this->GetIDForIdent("SavedRocker"));
 					SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
