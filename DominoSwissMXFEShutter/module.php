@@ -16,7 +16,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		if (!IPS_VariableProfileExists("BRELAG.Shutter")) {
 			IPS_CreateVariableProfile("BRELAG.Shutter", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Shutter", "IPS");
-			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 0, $this->Translate("Stopped"), "", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 0, $this->Translate("Stopped"), "", 0x00D500);
 			IPS_SetVariableProfileAssociation("BRELAG.Shutter", 1, $this->Translate("Moving"), "", 0xFF0000);
 		}
 		

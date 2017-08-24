@@ -20,21 +20,21 @@ class DominoSwissMAGM1 extends IPSModule {
 		if (!IPS_VariableProfileExists("BRELAG.MAGContact")) {
 			IPS_CreateVariableProfile("BRELAG.MAGContact", 0);
 			IPS_SetVariableProfileIcon("BRELAG.MAGContact", "");
-			IPS_SetVariableProfileAssociation("BRELAG.MAGContact", 0, $this->Translate("Closed"), "LockClosed", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.MAGContact", 0, $this->Translate("Closed"), "LockClosed", 0x00D500);
 			IPS_SetVariableProfileAssociation("BRELAG.MAGContact", 1, $this->Translate("Open"), "LockOpen", 0xFF0000);
 		}
 
 		if (!IPS_VariableProfileExists("BRELAG.MAGBattery")) {
 			IPS_CreateVariableProfile("BRELAG.MAGBattery", 0);
 			IPS_SetVariableProfileIcon("BRELAG.MAGBattery", "");
-			IPS_SetVariableProfileAssociation("BRELAG.MAGBattery", 0, "Ok", "Battery", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.MAGBattery", 0, "Ok", "Battery", 0x00D500);
 			IPS_SetVariableProfileAssociation("BRELAG.MAGBattery", 1, $this->Translate("Battery Low"), "Alert", 0xFF0000);
 		}
 
 		if (!IPS_VariableProfileExists("BRELAG.MAGLifesign")) {
 			IPS_CreateVariableProfile("BRELAG.MAGLifesign", 0);
 			IPS_SetVariableProfileIcon("BRELAG.MAGLifesign", "");
-			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 0, "Ok", "Ok", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 0, "Ok", "Ok", 0x00D500);
 			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 1, $this->Translate("Alert"), "Alert", 0xFF0000);
 		}
 		

@@ -13,15 +13,15 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 		if(!IPS_VariableProfileExists("BRELAG.Switch")) {
 			IPS_CreateVariableProfile("BRELAG.Switch", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Switch", "Power");
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0xFF0000);
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", -1);
 		}
 
 		if(!IPS_VariableProfileExists("BRELAG.Status")) {
 			IPS_CreateVariableProfile("BRELAG.Status", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Status", "Power");
 			IPS_SetVariableProfileAssociation("BRELAG.Status", 0, $this->Translate("Off"), "", 0xFF0000);
-			IPS_SetVariableProfileAssociation("BRELAG.Status", 1, $this->Translate("On"), "", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.Status", 1, $this->Translate("On"), "", 0x00D500);
 		}
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 0, "BRELAG.Status", 10, true);
@@ -92,6 +92,7 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 				case 16:
 				case 23:
 					SetValue($this->GetIDForIdent("Status"), GetValue($this->GetIDForIdent("SavedValue")));
+					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
 				case 20:

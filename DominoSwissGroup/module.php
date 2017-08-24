@@ -45,8 +45,8 @@ class DominoSwissGroup extends DominoSwissBase {
 		if(!IPS_VariableProfileExists("BRELAG.Switch")) {
 			IPS_CreateVariableProfile("BRELAG.Switch", 0);
 			IPS_SetVariableProfileIcon("BRELAG.Switch", "Power");
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", 0xFF0000);
-			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", 0x00FF00);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 0, $this->Translate("Off"), "", -1);
+			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", -1);
 		}
 
 		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
