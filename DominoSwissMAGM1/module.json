@@ -1,0 +1,15 @@
+{
+	"id": "{26AE9337-13A8-4BF8-99D0-EE11D91FDEE2}",
+	"name": "DominoSwissMAGM1",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss MAG M1",
+		"DominoSwiss Magnetschalter M1"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}

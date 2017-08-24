@@ -202,7 +202,7 @@ class DominoSwissGroup extends DominoSwissBase {
 	
 	public function RestorePosition(int $Priority){
 
-		$this->SendCommand(23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority);
+		$this->SendCommand( 1, 23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority);
 
 	}
 
@@ -218,7 +218,7 @@ class DominoSwissGroup extends DominoSwissBase {
 		}
 
 		$Value = round(($Value * 63) / 100, 0);
-		$this->SendCommand(17, $Value, $Priority);
+		$this->SendCommand( 1, 17, $Value, $Priority);
 
 	}
 
@@ -247,10 +247,10 @@ class DominoSwissGroup extends DominoSwissBase {
 
 	
 	
-	public function SendCommand(int $Command, int $Value, int $Priority) {
+	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
 	}
 
 }

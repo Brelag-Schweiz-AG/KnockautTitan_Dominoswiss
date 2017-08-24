@@ -108,43 +108,43 @@ class DominoSwissBase extends IPSModule {
 
 	public function PulseUp(int $Priority){
 
-		$this->SendCommand(1, 0  , $Priority);
+		$this->SendCommand( 1, 1, 0  , $Priority);
 
 	}
 
 	public function PulseDown(int $Priority){
 
-		$this->SendCommand(2, 0  , $Priority);
+		$this->SendCommand( 1, 2, 0  , $Priority);
 
 	}
 
 	public function ContinuousUp(int $Priority){
 
-		$this->SendCommand(3, 0  , $Priority);
+		$this->SendCommand( 1, 3, 0  , $Priority);
 
 	}
 
 	public function ContinuousDown(int $Priority){
 
-		$this->SendCommand(4, 0  , $Priority);
+		$this->SendCommand( 1, 4, 0  , $Priority);
 
 	}
 
 	public function Stop(int $Priority){
 
-		$this->SendCommand(5, 0  , $Priority);
+		$this->SendCommand( 1, 5, 0  , $Priority);
 
 	}
 
 	public function Toggle(int $Priority){
 
-		$this->SendCommand(6, 0  , $Priority);
+		$this->SendCommand( 1, 6, 0  , $Priority);
 
 	}
 
 	public function Save(int $Priority){
 
-		$this->SendCommand(15, 0  , $Priority);
+		$this->SendCommand( 1, 15, 0  , $Priority);
 
 	}
 
@@ -157,19 +157,19 @@ class DominoSwissBase extends IPSModule {
 
 	public function RestorePosition(int $Priority){
 
-		$this->SendCommand(23, -1  , $Priority);
+		$this->SendCommand( 1, 23, -1  , $Priority);
 
 	}
 
 	public function LockLevelSet(int $Value) {
 
-		$this->SendCommand(20, $Value , 3);
+		$this->SendCommand( 1, 20, $Value , 3);
 
 	}
 
 	public function LockLevelClear(int $Value) {
 
-		$this->SendCommand(21, $Value, 3);
+		$this->SendCommand( 1, 21, $Value, 3);
 
 	}
 
@@ -185,9 +185,9 @@ class DominoSwissBase extends IPSModule {
 		return $result;
 	}
 
-	public function SendCommand(int $Command, int $Value, int $Priority) {
+	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority) {
 		$id = $this->ReadPropertyInteger("ID");
-		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
 
 	}
 

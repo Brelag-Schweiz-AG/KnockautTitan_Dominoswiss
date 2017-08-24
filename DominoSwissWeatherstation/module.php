@@ -9,9 +9,9 @@ class DominoSwissWeatherstation extends IPSModule {
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
 		
-		$this->RegisterVariableInteger("LightValue", "Light", "~Illumination", 0);
+		$this->RegisterVariableInteger("LightValue", $this->Translate("Light"), "~Illumination", 0);
 		$this->RegisterVariableFloat("WindValue", "Wind", "~WindSpeed.kmh", 0);
-		$this->RegisterVariableBoolean("Raining", "Raining", "~Raining", 0);
+		$this->RegisterVariableBoolean("Raining", $this->Translate("Raining"), "~Raining", 0);
 		$this->RegisterVariableFloat("GoldCap", "GoldCap", "", 0);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate

@@ -157,7 +157,7 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 		}
 		
 		$Value = round(($Value * 63) / 100, 0);
-		$this->SendCommand(17, $Value, $Priority);
+		$this->SendCommand( 1, 17, $Value, $Priority);
 		
 	}
 	
