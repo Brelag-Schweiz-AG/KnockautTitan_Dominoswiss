@@ -6,8 +6,9 @@
       "Battery": "Batterie",
       "BatteryLow": "Batterie Niedrig",
       "Event": "Ereignis",
-      "Alert": "Alarm",
-      "Lifesign": "Lebenszeichen"
+      "No": "Nein",
+      "Lifesign": "Lebenszeichen",
+      "Nothing": "Kein"
     }
   }
 }

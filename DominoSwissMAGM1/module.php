@@ -13,7 +13,7 @@ class DominoSwissMAGM1 extends IPSModule {
 			IPS_CreateVariableProfile("BRELAG.MAGEvent", 1);
 			IPS_SetVariableProfileValues("BRELAG.MAGEvent", 0, 1, 0);
 			IPS_SetVariableProfileIcon("BRELAG.MAGEvent", "");
-			IPS_SetVariableProfileAssociation("BRELAG.MAGEvent", 0, "---", "Ok", 0x787875);
+			IPS_SetVariableProfileAssociation("BRELAG.MAGEvent", 0, $this->Translate("Nothing"), "Ok", 0x787875);
 			IPS_SetVariableProfileAssociation("BRELAG.MAGEvent", 1, "Sabotage", "Alert", 0xFF0000);
 		}
 
@@ -35,10 +35,10 @@ class DominoSwissMAGM1 extends IPSModule {
 			IPS_CreateVariableProfile("BRELAG.MAGLifesign", 0);
 			IPS_SetVariableProfileIcon("BRELAG.MAGLifesign", "");
 			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 0, "Ok", "Ok", 0x00D500);
-			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 1, $this->Translate("Alert"), "Alert", 0xFF0000);
+			IPS_SetVariableProfileAssociation("BRELAG.MAGLifesign", 1, $this->Translate("No"), "Alert", 0xFF0000);
 		}
 		
-		$this->RegisterVariableBoolean("Status", "Status", "BRELAG.MAGContact", 1);
+		$this->RegisterVariableBoolean("Contact", "Status", "BRELAG.MAGContact", 1);
 		$this->RegisterVariableBoolean("Battery", $this->Translate("Battery"), "BRELAG.MAGBattery", 3);
 		$this->RegisterVariableInteger("Event", $this->Translate("Event"), "BRELAG.MAGEvent", 2);
 		$this->RegisterVariableBoolean("Lifesign", $this->Translate("Lifesign"), "BRELAG.MAGLifesign", 4);
@@ -90,6 +90,8 @@ class DominoSwissMAGM1 extends IPSModule {
 			}
 		}
 	}
+	
+	
 	
 	public function CheckLifesign() {
 		
