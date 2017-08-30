@@ -186,7 +186,7 @@ class DominoSwissGroup extends DominoSwissBase {
 				break;
 
 			case "GroupOrder":
-				$this->SendCommand($this->GetCommandNumberforValue($Value), 0, GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+				$this->SendCommand(1, $this->GetCommandNumberforValue($Value), 0, GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				break;
 
 			case "Intensity":

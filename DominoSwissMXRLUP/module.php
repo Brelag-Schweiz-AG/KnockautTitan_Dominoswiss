@@ -78,9 +78,7 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
 					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
 					break;
-
-				case 15:
-					//only save if its our ID
+				
 				case 15:
 					//only save if its our ID
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
