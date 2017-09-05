@@ -89,8 +89,21 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 
 				case 16:
 				case 23:
-					SetValue($this->GetIDForIdent("Status"), GetValue($this->GetIDForIdent("SavedValue")));
+					if ($data->Values->Value != -1) {
+						$savedValue = $data->Values->Value;
+					}
+					else {
+						$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
+					}
+	
+					if ($savedValue > 0) {
+						SetValue($this->GetIDForIdent("Status"), true);
+					}
+					else {
+						SetValue($this->GetIDForIdent("Status"), false);
+					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
+					break;
 					break;
 
 				case 20:

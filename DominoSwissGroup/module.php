@@ -150,8 +150,20 @@ class DominoSwissGroup extends DominoSwissBase {
 
 				case 16:
 				case 23:
-					$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
+					if ($data->Values->Value != -1) {
+						$savedValue = $data->Values->Value;
+					}
+					else {
+						$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
+					}
 					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
+	
+					if ($savedValue > 0) {
+						SetValue($this->GetIDForIdent("Status"), true);
+					}
+					else {
+						SetValue($this->GetIDForIdent("Status"), false);
+					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
