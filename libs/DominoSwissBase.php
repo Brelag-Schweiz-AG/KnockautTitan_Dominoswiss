@@ -9,6 +9,7 @@ class DominoSwissBase extends IPSModule {
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
 		$this->RegisterPropertyString("Supplement", "[]");
+		$this->RegisterPropertyString("SavedValuesArray", "[]");
 
 		for ($i = 0; $i <= 3; $i++) {
 			$this->RegisterVariableBoolean("LockLevel" . $i, $this->Translate("LockLevel ") . $i, "~Switch", 12 + $i);
@@ -39,6 +40,9 @@ class DominoSwissBase extends IPSModule {
 		$this->EnableAction("SendingOnLockLevel");
 		IPS_SetHidden($this->GetIDForIdent("SendingOnLockLevel"), true);
 
+		$this->RegisterVariableString("SavedValuesArray", "SavedValuesArray", "", 50);
+		IPS_SetHidden($this->GetIDForIdent("SavedValuesArray"), true);
+
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
@@ -56,9 +60,23 @@ class DominoSwissBase extends IPSModule {
 		//Apply filter
 		$receiveDataFilter = ".*\"ID\":\"". $this->ReadPropertyInteger("ID") ."\".*";
 		$supplementIDs = json_decode($this->ReadPropertyString("Supplement"), true);
+		$savedValuesIDs = json_decode($this->ReadPropertyString("SavedValuesArray"), true);
 		foreach($supplementIDs as $supplementID){
 			$receiveDataFilter = $receiveDataFilter ."|.*\"ID\":\"". $supplementID['ID'] ."\".*";
+			
+			//checking keys for saved values array
+			if (!array_key_exists($supplementID['ID'], $savedValuesIDs)) {
+				$savedValuesIDs[$supplementID['ID']] = 0;
+			}
 		}
+		
+		//check if own ID is in valueIDArray
+		if (!array_key_exists($this->ReadPropertyInteger("ID"), $savedValuesIDs)) {
+			$savedValuesIDs[$this->ReadPropertyInteger("ID")] = 0;
+		}
+
+		SetValue($this->GetIDForIdent("SavedValuesArray"), json_encode($savedValuesIDs));
+		
 		$this->SetReceiveDataFilter($receiveDataFilter);
 		
 	}

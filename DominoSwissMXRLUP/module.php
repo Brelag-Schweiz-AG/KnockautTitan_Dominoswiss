@@ -80,21 +80,16 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 					break;
 				
 				case 15:
-					//only save if its our ID
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Status")));
 						SetValue($this->GetIDForIdent("Saving"), 1);
 					}
+					$this->SaveIntoArray($data->Values->ID);
 					break;
 
 				case 16:
 				case 23:
-					if ($data->Values->Value != -1) {
-						$savedValue = $data->Values->Value;
-					}
-					else {
-						$savedValue = GetValue($this->GetIDForIdent("SavedValue"));
-					}
+					$savedValue = $this->LoadOutOfArray($data->Values->ID);
 	
 					if ($savedValue > 0) {
 						SetValue($this->GetIDForIdent("Status"), true);
@@ -103,7 +98,6 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 						SetValue($this->GetIDForIdent("Status"), false);
 					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
-					break;
 					break;
 
 				case 20:
@@ -118,6 +112,8 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 
 	}
 
+	
+	
 	public function RequestAction($Ident, $Value) {
 
 		switch($Ident) {
@@ -137,6 +133,25 @@ class DominoSwissMXRLUP extends DominoSwissBase {
 			default:
 				parent::RequestAction($Ident, $Value);
 		}
+	}
+
+	
+	
+	private function SaveIntoArray($ID) {
+
+		$savedValuesIDs = json_decode(GetValue($this->GetIDForIdent("SavedValuesArray")), true);
+		$savedValuesIDs[$ID] = GetValue($this->GetIDForIdent("Status"));
+
+		SetValue($this->GetIDForIdent("SavedValuesArray"), json_encode($savedValuesIDs));
+	}
+
+	
+	
+	private function LoadOutOfArray($ID) {
+
+		$savedValuesIDs = json_decode(GetValue($this->GetIDForIdent("SavedValuesArray")), true);
+		return $savedValuesIDs[$ID];
+		
 	}
 
 }
