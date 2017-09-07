@@ -153,13 +153,6 @@ class DominoSwissGroup extends DominoSwissBase {
 					$savedValue = $this->LoadOutOfArray($data->Values->ID);
 
 					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
-
-					if ($savedValue > 0) {
-						SetValue($this->GetIDForIdent("Status"), true);
-					}
-					else {
-						SetValue($this->GetIDForIdent("Status"), false);
-					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 

@@ -166,6 +166,15 @@ class DominoSwissMXDIMM extends DominoSwissMXRLUP {
 
 		SetValue($this->GetIDForIdent("SavedValuesArray"), json_encode($savedValuesIDs));
 	}
+
+
+
+	private function LoadOutOfArray($ID) {
+
+		$savedValuesIDs = json_decode(GetValue($this->GetIDForIdent("SavedValuesArray")), true);
+		return $savedValuesIDs[$ID];
+
+	}
 	
 }
 ?>
