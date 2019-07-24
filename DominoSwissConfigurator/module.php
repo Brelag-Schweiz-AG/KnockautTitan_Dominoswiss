@@ -203,7 +203,8 @@
 					$eGate1Array[$key] = array("ID" => $explodedValue[0]);
 					foreach ($linkArray as $key2 => $valueArray) {
 						if (($explodedValue[1] === $valueArray[0]) && ($explodedValue[2] === $valueArray[1])) {
-							if ($valueArray[3] === "RepeaterOnly=0") {
+							$explodedValueArray = explode(",", $valueArray[3]);
+							if ($explodedValueArray[0] === "RepeaterOnly=0") {
 								$eGate1Array[$key]["Receiver"][] = $valueArray[2];
 							}
 						}
