@@ -66,52 +66,38 @@
 
 
 		private function CreateSingleDevice($device) {
-			
+
+			if ($device['ID'] == 0) {
+				return;
+			}
+
+			$ModuleID = $this->GetGUIDforModuleType($device['Name']);
+			if($ModuleID == "") {
+				return;
+			}
+
+			$InsID = IPS_CreateInstance($ModuleID);
+
+			IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
+			IPS_SetPosition($InsID, $device['ID']);
+			IPS_SetProperty($InsID, "ID", $device['ID']);
+
+			$supplement = explode(",", $device['Supplement']);
+			$propertySupplement = Array();
+			foreach($supplement as $id) {
+				$propertySupplement[] = array("ID" => $id);
+			}
+
+			//Konfiguration je nach Typ
 			if ($device['Name'] != "Group") {
-				if ($device['ID'] != 0) {
-					$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
-					
-					IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
-					IPS_SetPosition($InsID, $device['ID']);
-
-					//Konfiguration
-					IPS_SetProperty($InsID, "ID", $device['ID']);
-					if ($device['Awning'] == "yes") {
-						IPS_SetProperty($InsID, "Awning", true);
-					}
-
-					$supplement = explode(",", $device['Supplement']);
-					$propertySupplement = Array();
-					foreach($supplement as $id) {
-						$propertySupplement[] = array("ID" => $id);
-					}
-
-					IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
-
-					IPS_ApplyChanges($InsID);
+				if ($device['Awning'] == "yes") {
+					IPS_SetProperty($InsID, "Awning", true);
 				}
 			}
-			else if ($device['Name'] == "Group") {
-				if ($device['ID'] != 0) {
-					$InsID = IPS_CreateInstance($this->GetGUIDforModuleType($device['Name']));
 
-					IPS_SetName($InsID, $device['Name'] ." (ID: ". $device['ID'] .")");
-					IPS_SetPosition($InsID, $device['ID']);
+			IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
+			IPS_ApplyChanges($InsID);
 
-					//Konfiguration
-					IPS_SetProperty($InsID, "ID", $device['ID']);
-
-					$supplement = explode(",", $device['Supplement']);
-					$propertySupplement = Array();
-					foreach($supplement as $id) {
-						$propertySupplement[] = array("ID" => $id);
-					}
-
-					IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
-
-					IPS_ApplyChanges($InsID);
-				}
-			}
 		}
 		
 		
