@@ -290,6 +290,7 @@
 
 			switch ($Modultype) {
 				case "MX FESLIM":
+				case "MX FE SLIM":
 				case "MX FESLIM Group":
 					return "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}";
 
@@ -309,6 +310,7 @@
 				case "LX DIMM NO LIMIT Group":
 				case "LX DIMM RETROFIT":
 				case "LX DIMM RETROFIT Group":
+				case "LX Plugin DIMMER":
 					return "{5ED1AA15-6D8B-4DA8-B1C8-781D24442288}";
 
 				case "Group":
@@ -318,6 +320,9 @@
 				case "SWRW":
 					return "{B3F0007D-44EE-460B-81D1-5A74C85EE29C}";
 			}
+			
+			return "";
+			
 		}
 		
 	}
