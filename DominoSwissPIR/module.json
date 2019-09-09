@@ -1,0 +1,14 @@
+{
+	"id": "{CE892EF8-C01D-43D2-BBA7-D5B54484795E}",
+	"name": "DominoSwissPIR",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss PIR 24V"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}
