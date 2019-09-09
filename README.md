@@ -14,10 +14,10 @@ Folgende Module beinhaltet das BRELAG Repository:
 - __DominoSwiss MX FESLIM__ ([Dokumentation](DominoSwissMXFESLIM))  
 	Der MX Funkempfänger SLIM kann angesteuert werden.
 
-- __DominoSwiss LX RLUP1A/RLUP10A__ ([Dokumentation](DominoSwissMXRLUP))  
+- __DominoSwiss LX RLUP1A/RLUP10A__ ([Dokumentation](DominoSwissLXRLUP))  
 	Der LX Funkschalter Unterputz 1A/10A für Lichtquellen kann angesteuert werden.
 
-- __DominoSwiss LX DIMM NO LIMIT/RETROFIT__ ([Dokumentation](DominoSwissMXLXDIMM))  
+- __DominoSwiss LX DIMM NO LIMIT/RETROFIT__ ([Dokumentation](DominoSwissLXDIMM))  
 	Der LX Funkdimmer Unterputz kann angesteuert werden.
 
 - __DominoSwiss SWW SOL/SWRW__ ([Dokumentation](DominoSwissWeatherstation))  
