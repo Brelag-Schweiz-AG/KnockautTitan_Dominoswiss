@@ -5,8 +5,9 @@
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss MX RLUP 1A",
-		"DominoSwiss MX RLUP 10A"
+		"DominoSwiss LX RLUP 1A",
+		"DominoSwiss LX RLUP 10A",
+		"DominoSwiss LX Plugin SWITCH"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],

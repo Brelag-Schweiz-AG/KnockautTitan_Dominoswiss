@@ -5,8 +5,10 @@
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss MX DIMM NO LIMIT",
-		"DominoSwiss MX DIMM RETROFIT"
+		"DominoSwiss LX DIMM NO LIMIT",
+		"DominoSwiss LX DIMM RETROFIT",
+		"DominoSwiss LX Plugin DIMMER",
+		"DominoSwiss LX DALA"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],

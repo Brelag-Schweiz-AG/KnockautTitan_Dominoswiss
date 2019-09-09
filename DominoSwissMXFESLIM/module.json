@@ -5,7 +5,8 @@
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss MX FESLIM"
+		"DominoSwiss MX FESLIM",
+		"DominoSwiss MX FESLIM 24V"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],
