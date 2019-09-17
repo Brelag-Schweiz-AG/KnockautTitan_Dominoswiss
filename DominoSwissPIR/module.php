@@ -8,7 +8,7 @@ class DominoSwissPIR extends IPSModule {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
-		$this->RegisterPropertyInteger("Motiontimer", 300);
+		$this->RegisterPropertyInteger("MotionTimer", 300);
 
 		$this->RegisterTimer("PIRTimer", 0, "BRELAG_StopPIRTimer(\$_IPS['TARGET']);");
 		
@@ -50,8 +50,8 @@ class DominoSwissPIR extends IPSModule {
 		if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 			switch ($data->Values->Command) {
 				case 28:
-					$motionTimer = $this->ReadPropertyInteger("Motiontimer");
-					$this->SetTimerInterval("OffTimer", $motionTimer * 1000);
+					$motionTimer = $this->ReadPropertyInteger("MotionTimer");
+					$this->SetTimerInterval("PIRTimer", $motionTimer * 1000);
 					SetValue($this->GetIDForIdent("MotionValue"), true);
 					break;
 			}

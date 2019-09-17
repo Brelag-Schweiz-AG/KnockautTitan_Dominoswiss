@@ -2,7 +2,8 @@
   "translations": {
     "de": {
       "Motion": "Bewegung",
-      "Motioninterval in seconds": "Bewegungsintervall in Sekunden"
+      "Motion interval": "Bewegungsintervall",
+      "seconds": "Sekunden"
     }
   }
 }
