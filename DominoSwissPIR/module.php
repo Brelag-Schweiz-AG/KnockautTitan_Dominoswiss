@@ -8,8 +8,10 @@ class DominoSwissPIR extends IPSModule {
 		//These lines are parsed on Symcon Startup or Instance creation
 		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyInteger("ID", 1);
+		$this->RegisterPropertyInteger("Motiontimer", 300);
+
+		$this->RegisterTimer("PIRTimer", 0, "BRELAG_StopPIRTimer(\$_IPS['TARGET']);");
 		
-		$this->RegisterVariableInteger("SensoractivityValue", $this->Translate("Sensoractivity"), "", 0);
 		$this->RegisterVariableBoolean("MotionValue", $this->Translate("Motion"), "~Motion", 0);
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
@@ -31,6 +33,13 @@ class DominoSwissPIR extends IPSModule {
 		
 	}
 
+
+
+	public function StopPIRTimer(){
+		$this->SetTimerInterval("PIRTimer", 0);
+		SetValue($this->GetIDForIdent("MotionValue"), false);
+	}
+	
 	
 	
 	public function ReceiveData($JSONString) {
@@ -41,9 +50,9 @@ class DominoSwissPIR extends IPSModule {
 		if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 			switch ($data->Values->Command) {
 				case 28:
-					//Hier den Wert von Sensoracticity eintragen
-					//eGate CheckNR muss noch eingefügt werden
-					//SetValue($this->GetIDForIdent("LightValue"), $this->GetLightValue(intval($data->Values->Value / 8), ($data->Values->Value % 8)));
+					$motionTimer = $this->ReadPropertyInteger("Motiontimer");
+					$this->SetTimerInterval("OffTimer", $motionTimer * 1000);
+					SetValue($this->GetIDForIdent("MotionValue"), true);
 					break;
 			}
 		}

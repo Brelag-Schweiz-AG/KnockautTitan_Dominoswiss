@@ -1,8 +1,8 @@
 {
   "translations": {
     "de": {
-      "Sensoractivity": "Sensoraktivität",
-      "Motion": "Bewegung"
+      "Motion": "Bewegung",
+      "Motioninterval in seconds": "Bewegungsintervall in Sekunden"
     }
   }
 }

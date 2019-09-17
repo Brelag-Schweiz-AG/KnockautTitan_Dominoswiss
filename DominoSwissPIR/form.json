@@ -1,6 +1,7 @@
 {
   "elements":
   [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"}
+	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    { "type": "NumberSpinner", "name": "Motiontimer", "caption": "Motioninterval in seconds"}
   ]
 }
