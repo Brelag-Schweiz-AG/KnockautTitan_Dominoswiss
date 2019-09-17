@@ -1,6 +1,5 @@
 # DominoSwiss PIR
 Das Modul ist ein DominoSwiss PIR.
-//ToDo
 
 ### Inhaltverzeichnis
 
@@ -16,7 +15,7 @@ Das Modul ist ein DominoSwiss PIR.
 
 * Stellt selbstständig eine Verbindung zum eGate her
 * Einstellbarkeit der ID
-* Automatische Verwaltung von Datenpaketen
+* Einstellbarkeit der Bewegungsdauer in Sekunden
 * Visualisierung via WebFront
 
 ### 2. Voraussetzungen
@@ -34,9 +33,10 @@ Das Modul ist ein DominoSwiss PIR.
 
 __Konfigurationsseite__:
 
-Name     | Beschreibung
--------- | ---------------------------------
-ID       | Auswahl der eingerichteten ID (Speicherpunkt im eGate).
+Name               | Beschreibung
+------------------ | ---------------------------------
+ID                 | Auswahl der eingerichteten ID (Speicherpunkt im eGate).
+Bewegungsintervall | Dauer der Bewegungsanzeige in Sekunden.
 
 ### 5. Statusvariablen und Profile
 
@@ -48,8 +48,7 @@ Es werden automatisch folgende Statusvariablen angelegt.
 
 Bezeichnung    | Typ     | Beschreibung
 -------------- | ------- | -----------
-Sensoractivity | Integer | Sensoraktivität
-Motion         | Boolean | Es liegt eine Bewegung vor oder nicht
+MotionValue    | Boolean | Es liegt eine Bewegung vor oder nicht
 
 ##### Profile:
 

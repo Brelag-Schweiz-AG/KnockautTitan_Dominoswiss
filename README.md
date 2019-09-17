@@ -23,6 +23,9 @@ Folgende Module beinhaltet das BRELAG Repository:
 - __DominoSwiss SWW SOL/SWRW__ ([Dokumentation](DominoSwissWeatherstation))  
 	Die Wetterstation SWW SOL/SWRW kann ausgelesen werden.
 	
+- __DominoSwiss PIR__ ([Dokumentation](DominoSwissPIR))  
+	Der PIR Bewegungsmelder kann ausgelesen werden.
+	
 - __DominoSwiss FSS 887M__ ([Dokumentation](DominoSwissFSS887M))  
     Der Magnetschalter FSS 887M kann ausgelesen werden.
 	
