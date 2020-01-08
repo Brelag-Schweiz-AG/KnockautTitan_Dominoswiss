@@ -5,7 +5,7 @@
 	"vendor": "BRELAG",
 	"aliases": 
 	[
-		"DominoSwiss PIR 24V"
+		"DominoSwiss PIR DC"
 	],
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],

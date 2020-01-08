@@ -49,7 +49,7 @@ class DominoSwissPIR extends IPSModule {
 		$this->SendDebug("BufferIn", print_r($data->Values, true), 0);
 		if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 			switch ($data->Values->Command) {
-				case 28:
+				case 30:
 					$motionTimer = $this->ReadPropertyInteger("MotionTimer");
 					$this->SetTimerInterval("PIRTimer", $motionTimer * 1000);
 					SetValue($this->GetIDForIdent("MotionValue"), true);

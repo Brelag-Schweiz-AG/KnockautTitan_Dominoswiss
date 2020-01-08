@@ -322,6 +322,9 @@
 				case "SWW SOL":
 				case "SWRW":
 					return "{B3F0007D-44EE-460B-81D1-5A74C85EE29C}";
+					
+				case "PIR DC":
+					return "{CE892EF8-C01D-43D2-BBA7-D5B54484795E}";
 			}
 			
 			return "";
