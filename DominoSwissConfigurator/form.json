@@ -23,27 +23,27 @@
 				}, {
 					"name" : "Name",
 					"label" : "Name",
-					"width" : "130px",
+					"width" : "auto",
 					"save" : true
 				}, {
 					"name" : "Awning",
 					"label" : "Awning",
-					"width" : "50px",
+					"width" : "100px",
 					"save" : true
 				}, {
 					"name": "Group",
 					"label": "Group",
-					"width": "150",
+					"width": "200px",
 					"save": true
 				}, {
 					"name" : "Supplement",
 					"label" : "Supplement",
-					"width" : "auto",
+					"width" : "200px",
 					"save" : true
 				}, {
 					"name" : "InstanceID",
 					"label" : "InstanceID",
-					"width" : "70px",
+					"width" : "150px",
 					"save" : true
 				}],
 			"values": [
