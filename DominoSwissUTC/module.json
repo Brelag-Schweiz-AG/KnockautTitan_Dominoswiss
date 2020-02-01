@@ -1,0 +1,14 @@
+{
+	"id": "{4E1FBB10-9283-7779-6D79-7D190ECE33FF}",
+	"name": "DominoSwissUTC", 
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss UTC (nur Werte)"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}
