@@ -17,278 +17,337 @@
 		public function GetConfigurationForm() {
 			
 			$data = json_decode(file_get_contents(__DIR__ ."/form.json"));
-			$data->actions[0]->values = $this->PrepareConfigData();
+		
+			$findInstanceID = function($id) {
+				$eGateID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
+				foreach (IPS_GetInstanceList() as $instanceID) {
+					if($instanceID != $this->InstanceID) {
+						if (IPS_GetInstance($instanceID)['ConnectionID'] == $eGateID) {
+							if(IPS_GetProperty($instanceID, "ID") == $id) {
+								return $instanceID;
+							}
+						}
+					}
+				}
+				
+				return 0;
+			};
+			
+			$buildSupplementList = function($ids) {
+				$result = [];
+				foreach($ids as $id) {
+					$result[] = ["ID" => $id];
+				}
+				return $result;
+			};
+			
+			$channels = $this->BuildChannels();
+			foreach($channels as $id => $channel) {
+
+				//Use a special group if we have mixed types. Otherwise filter the " Group" keyword and use name to get ModuleID
+				if($channel["Type"] == "Group") {
+					$moduleID = "{7F5C8432-CEAC-45A7-BF96-4BBC3CF04B57}";
+				} else {
+					$moduleID = $this->GetModuleIDForType(str_replace(" Group", "", $channel["Type"]));
+				}
+				
+				$value = [
+					"ID" => $id,
+					"Name" => $channel["Name"],
+					"Type" => $channel["Type"],
+					"Awning" => isset($channel["Awning"]) ? ($channel["Awning"] ? "yes" : "no") : "---",
+					"Group" => implode(", ", $channel["Group"]),
+					"Supplement" => implode(", ", $channel["Supplement"]),
+					"instanceID" => $findInstanceID($id),
+					"create" => [
+						"moduleID" => $moduleID,
+						"configuration" => [
+							"ID" => $id
+						]
+					]
+				];
+				
+				//Some properties are only available for receivers
+				if($channel["IsReceiver"]) {
+					$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+				
+					//Awning property is only available for non groups and only some devices
+					if(isset($channel["Awning"])) {
+						$value["create"]["configuration"]["Awning"] = $channel["Awning"];
+					}
+				}
+				
+				$data->actions[0]->values[] = $value;
+			}
+			
 			return json_encode($data);
 		
 		}
 
 		
 		
-		public function CreateDevices() {
-
-			$devices = $this->PrepareConfigData();
+		private function ParseFileData() {
 			
-			foreach ($devices as $device) {
-				$this->CreateSingleDevice($device);
-			}
-
-		}
-		
-		
-		
-		public function CheckSingleDevice($tableRow) {
-
-			$tableRowInstanceID = substr($tableRow['InstanceID'], 1);
-			if ($tableRow['InstanceID'] == "-") {
-				$this->CreateSingleDevice($tableRow);
-				return;
+			$data = base64_decode($this->ReadPropertyString("FileData"));
+			
+			if(!trim($data)) {
+				return []; //we have nothing to do
 			}
 			
-			$deviceSupplement = json_decode(IPS_GetProperty($tableRowInstanceID, "Supplement"), true);
-			$simpleSupplementArray = Array();
-			foreach ($deviceSupplement as $singleSupplement) {
-				$simpleSupplementArray[] = $singleSupplement["ID"];
+			//remove characters which the ini scanner does not like
+			$data = str_replace(";", "~", $data);
+			
+			//parse ini compatible format
+			$ini = parse_ini_string($data, true, INI_SCANNER_RAW);
+			
+			//array for our parsed representation
+			$config = [];
+			
+			//parse Transmitter
+			$transmitter = $ini['Transmitter'];
+			$transmitterFields = explode("~", $transmitter['//Index']);
+			$transmitterFields[4] = "Location"; //Rename this field
+			unset($transmitter['//Index']);
+			$index = 1;
+			foreach($transmitter as $row) {
+				$row = explode("~", $row);
+				$configTransmitter= ["Index" => $index++];
+				foreach($row as $key => $value) {
+					if($transmitterFields[$key] != "") {
+						$configTransmitter[$transmitterFields[$key]] = $value;
+					}
+				}
+				$config["Transmitter"][] = $configTransmitter;
 			}
 			
-			$correctSupplementArray = explode(",", $tableRow['Supplement']);
-			if ($tableRow['Supplement'] != $simpleSupplementArray) {
-				$propertySupplement = Array();
-				foreach($correctSupplementArray as $id) {
-					$propertySupplement[] = array("ID" => $id);
+			//parse receiver
+			$receiver = $ini['Receiver'];
+			$receiverFields = explode("~", $receiver['//Index']);
+			$receiverFields[4] = "Options"; //Rename this field
+			unset($receiver['//Index']);
+			$index = 1;
+			foreach($receiver as $row) {
+				$row = explode("~", $row);
+				$configReceiver= ["Index" => $index++];
+				foreach($row as $key => $value) {
+					if($receiverFields[$key] != "") {            
+						$configReceiver[$receiverFields[$key]] = $value;
+					}
 				}
-				
-				IPS_SetProperty($tableRowInstanceID, "Supplement", json_encode($propertySupplement));
-				IPS_ApplyChanges($tableRowInstanceID);
+				$config["Receiver"][] = $configReceiver;
 			}
-				
-		}
-
-
-
-		private function CreateSingleDevice($device) {
-
-			if ($device['ID'] == 0) {
-				return;
-			}
-
-			$ModuleID = $this->GetGUIDforModuleType($device['Name']);
-			if($ModuleID == "") {
-				return;
-			}
-
-			$InsID = IPS_CreateInstance($ModuleID);
-
-			IPS_SetName($InsID, $device['Name'] . " (ID: " . $device['ID'] . ")");
-			IPS_SetPosition($InsID, $device['ID']);
-			IPS_SetProperty($InsID, "ID", $device['ID']);
-
-			$supplement = explode(",", $device['Supplement']);
-			$propertySupplement = Array();
-			foreach($supplement as $id) {
-				$propertySupplement[] = array("ID" => $id);
-			}
-
-			//Konfiguration je nach Typ
-			if ($device['Name'] != "Group") {
-				if ($device['Awning'] == "yes") {
-					IPS_SetProperty($InsID, "Awning", true);
-				}
-			}
-
-			IPS_SetProperty($InsID, "Supplement", json_encode($propertySupplement));
-			IPS_ApplyChanges($InsID);
-
-		}
-		
-		
-		
-		private function CheckForInstancesIDs($result) {
-
-			$instanceIDs = IPS_GetInstanceList();
-			$childrenIDs = Array();
-			$eGateID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
-			foreach ($instanceIDs as $instanceID) {
-				if ((IPS_GetInstance($instanceID)['ConnectionID'] == $eGateID) && ($instanceID != $this->InstanceID)) {
-					$childrenIDs[] = $instanceID;
-				}
-			}
-
-			foreach ($result as $pos => $partResult) {
-				$result[$pos]['rowColor'] = "#C0FFC0";
-				$result[$pos]['InstanceID'] = "-";
-				foreach ($childrenIDs as $childrenID) {
-					if (IPS_GetProperty($childrenID, "ID") == $partResult['ID']) {
-						$result[$pos]['InstanceID'] = "#" . $childrenID;
-						$result[$pos]['rowColor'] = "";
-						break;
+			
+			//parse receiver options
+			foreach($config["Receiver"] as &$receiver) {
+				$options = explode(",", $receiver["Options"]);
+				$receiver["Options"] = [];
+				foreach($options as $option) {
+					$option = explode("=", $option);
+					if($option[0] != "") {
+						$receiver["Options"][$option[0]] = $option[1];
 					}
 				}
 			}
-
-			return $result;
+			
+			//parse link
+			$link = $ini['Link'];
+			$linkFields = explode("~", $link['//Index']);
+			$linkFields[3] = "Options"; //Rename this field
+			unset($link['//Index']);
+			$index = 1;
+			foreach($link as $row) {
+				$row = explode("~", $row);
+				$configLink= ["Index" => $index++];
+				foreach($row as $key => $value) {
+					if($linkFields[$key] != "") {            
+						$configLink[$linkFields[$key]] = $value;
+					}
+				}
+				$config["link"][] = $configLink;
+			}
+			
+			//parse link options
+			foreach($config["link"] as &$link) {
+				$options = explode(",", $link["Options"]);
+				$link["Options"] = [];
+				foreach($options as $option) {
+					$option = explode("=", $option);
+					if($option[0] != "") {
+						$link["Options"][$option[0]] = $option[1];
+					}
+				}
+			}
+			
+			//remove all egate1 options which we do not need
+			foreach ($ini['eGate1'] as $key => $value) {
+				if ($key == "//Index") {
+					break;
+				}
+				unset($ini['eGate1'][$key]);
+			}
+			
+			//parse egate1
+			$egate1 = $ini['eGate1'];
+			$egate1Fields = explode("~", $egate1['//Index']);
+			$egate1Fields[4] = "Location"; //Rename this field
+			unset($egate1['//Index']);
+			$index = 1;
+			foreach($egate1 as $row) {
+				$row = explode("~", $row);
+				$configeGate1= ["Index" => $index++];
+				foreach($row as $key => $value) {
+					if($egate1Fields[$key] != "") {
+						$configeGate1[$egate1Fields[$key]] = $value;
+					}
+				}
+				$config["eGate1"][] = $configeGate1;
+			}
+			
+			return $config;
 			
 		}
-
-
-
-		private function CheckForHearingIDs($result) {
-
-			foreach ($result as $pos => $partResult) {
-				if ($partResult['InstanceID'] != "-") {
-					$instanceIDOfPartResult = substr($partResult['InstanceID'], 1);
-					if (IPS_InstanceExists($instanceIDOfPartResult)) {
-						$deviceSupplement = json_decode(IPS_GetProperty($instanceIDOfPartResult, "Supplement"), true);
-						$simpleSupplementArray = Array();
-						foreach ($deviceSupplement as $singleSupplement) {
-							$simpleSupplementArray[] = $singleSupplement["ID"];
-						}
-						if ($result[$pos]['Supplement'] != implode(",",$simpleSupplementArray)) {
-							$result[$pos]['rowColor'] = "#FFC0C0";
-						}
+		
+		
+		
+		public function BuildChannels() {
+			
+			$config = $this->ParseFileData();
+			
+			$getReceiverByIndex = function($index) use($config) {
+				foreach($config["Receiver"] as $receiver) {
+					if($receiver["Index"] == $index) {
+						return $receiver;
+					}
+				}
+				return null;
+			};
+			
+			$getTransmitterByIndex = function($index) use($config) {
+				foreach($config["Transmitter"] as $transmitter) {
+					if($transmitter["Index"] == $index) {
+						return $transmitter;
+					}
+				}
+				return null;
+			};
+			
+			$geteGate1ID = function($transmitterIndex, $channel) use($config) {
+				foreach($config["eGate1"] as $eGate1) {
+					if($eGate1["TransmitterIndex"] == $transmitterIndex && $eGate1["Channel"] == $channel) {
+						return $eGate1["ID"];
+					}
+				}
+				return null;
+			};			
+			
+			$channels = [];
+			
+			//Go through all (non repeater) link channels for building the grouping (and associate with eGate IDs)
+			foreach($config["link"] as $link) {
+				if(isset($link["Options"]["RepeaterOnly"]) && ($link["Options"]["RepeaterOnly"] == 0)) {
+					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
+					if($id != null) {
+						$channels[$id]["Group"][] = $link["ReceiverIndex"];
+						$channels[$id]["Supplement"] = [];
+						$channels[$id]["IsReceiver"] = true;
+						$channels[$id]["IsTransmitter"] = false;
 					}
 				}
 			}
 
-			return $result;
-
-		}
-
-		
-		
-		private function PrepareConfigData() {
-
-			$file = base64_decode($this->ReadPropertyString("FileData"));
-			$result = Array();
-
-			if ($file != "") {
-				$file = str_replace(";", "~", $file);
-				$fileArray = parse_ini_string($file, true, INI_SCANNER_RAW);
-
-				$transmitterArray = $fileArray['Transmitter'];
-				$receiverArray = $fileArray['Receiver'];
-				$linkArray = $fileArray['Link'];
-				$eGate1Array = $fileArray['eGate1'];
-
-				unset($transmitterArray['//Index']);
-				unset($receiverArray['//Index']);
-				unset($linkArray['//Index']);
-				foreach ($eGate1Array as $key => $value) {
-					if ($key == 1) {
-						break;
-					}
-					unset($eGate1Array[$key]);
-				}
-
-				foreach ($linkArray as $key => $value) {
-					$explodedValue = explode("~", $value);
-					$linkArray[$key] = $explodedValue;
-				}
-
-				foreach ($eGate1Array as $key => $value) {
-					$explodedValue = explode("~", $value);
-					$eGate1Array[$key] = array("ID" => $explodedValue[0]);
-					foreach ($linkArray as $key2 => $valueArray) {
-						if (($explodedValue[1] === $valueArray[0]) && ($explodedValue[2] === $valueArray[1])) {
-							$explodedValueArray = explode(",", $valueArray[3]);
-							if ($explodedValueArray[0] === "RepeaterOnly=0") {
-								$eGate1Array[$key]["Receiver"][] = $valueArray[2];
-							}
+			//Search a few special transmitter devices and also add them if they weren't assigned a group
+			foreach($config["link"] as $link) {
+				$transmitter = $getTransmitterByIndex($link["TransmitterIndex"]);
+				if($this->IsSensorType($transmitter["Type"])) {
+					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
+					if($id != null) {
+						if(!isset($channels[$id])) {
+							$channels[$id]["Group"][] = $link["TransmitterIndex"];
+							$channels[$id]["Supplement"] = [];
+							$channels[$id]["IsReceiver"] = false;
+							$channels[$id]["IsTransmitter"] = true;
 						}
-					}
-					if (isset($eGate1Array[$key]["Receiver"])) {
-						if (sizeof($eGate1Array[$key]["Receiver"]) > 1) {
-
-							$onlyReceiver = $eGate1Array[$key]["Receiver"];
-							foreach($onlyReceiver as $RecIDkey => $RecID) {
-								$explodedValue2 = explode("~", $receiverArray[$RecID]);
-								$onlyReceiver[$RecIDkey] = $explodedValue2[1];
-							}
-							$onlyReceiver = array_unique($onlyReceiver);
-
-							if (sizeof($onlyReceiver) > 1) {
-									$eGate1Array[$key]["Grouptype"] = "Group";
-							}
-							else {
-								$eGate1Array[$key]["Grouptype"] = $onlyReceiver[0] ." Group";
-							}
-						}
-						else {
-							$eGate1Array[$key]["Grouptype"] = false;
-						}
-					}
-					else {
-						unset($eGate1Array[$key]);
 					}
 				}
-
-				$eGate1Array = array_values($eGate1Array);
-
-				if (sizeof($eGate1Array) > 0) {
-					$hearingArray = Array();
-					foreach ($eGate1Array as $value) {
-						$groupValue = Array();
-						if ($value["Grouptype"] == "Group") {
-							$Awning = "---";
-							foreach ($value['Receiver'] as $ID) {
-								$groupValue[] = $ID;
-							}
-						}
-						else {
-							if ($value["Grouptype"] == false) {
-								$explodedValue = explode("~", $receiverArray[$value['Receiver'][0]]);
-								$value["Grouptype"] = $explodedValue[1];
-								if (strpos($explodedValue[4], "NoSlatAdjustment=1") != FALSE) {
-									$Awning = "yes";
-								}
-								else {
-									$Awning = "no";
-								}
-								$groupValue[] = $value['Receiver'][0];
-							}
-							else {
-								$Awning = "no";
-								foreach ($value['Receiver'] as $ID) {
-									$groupValue[] = $ID;
-								}
-							}
-
-						}
-						$row = array("ID" => $value['ID'], "Name" => $value["Grouptype"], "Group" => implode(",", $groupValue), "Awning" => $Awning);
-						$hearingArray[$value['ID']] = $groupValue;
-						$result[] = $row;
+			}
+			
+			//Go through all channels and mark as Group or obtain the device type, name and awning
+			foreach($channels as $id => $channel) {
+				if(sizeof($channel["Group"]) > 1) {
+					//Check if we have a homogeneous group of the same device
+					$types = [];
+					foreach($channel["Group"] as $group) {
+						$receiver = $getReceiverByIndex($group);
+						$types[] = $receiver["Type"];
 					}
-
-					//Building the supplement
-					foreach ($hearingArray as $key => $hearerID) {
-						$supplement = Array();
-						foreach ($result as $partResult) {
-								$groupArray = explode(",", $partResult['Group']);
-								if (sizeof(array_intersect($hearerID, $groupArray)) == sizeof($hearerID)) {
-									if (($key != $partResult['ID'])) {
-										$supplement[] = $partResult['ID'];
-									}
-								}
-						}
-						foreach ($result as $pos => $partResult) {
-							if ($key == $partResult['ID']) {
-								$result[$pos]['Supplement'] = implode(",", $supplement);
-							}
-						}						
+					$types = array_unique($types);
+					
+					if(sizeof($types) == 1) {
+						$channels[$id]["Type"] = $types[0] . " Group";
+					} else {
+						$channels[$id]["Type"] = "Group";
 					}
 					
-					$result = $this->CheckForInstancesIDs($result);
-					$result = $this->CheckForHearingIDs($result);
+					$channels[$id]["Name"] = "";
+					$channels[$id]["IsGroup"] = true;
+				} else {
+					//Group is the ReceiverIndex/TransmitterIndex which we can use to get the receiver/transmitter
+					if($channel["IsReceiver"]) {
+						$device = $getReceiverByIndex($channel["Group"][0]);
+					}
+					if($channel["IsTransmitter"]) {
+						$device = $getTransmitterByIndex($channel["Group"][0]);
+					}
+					$channels[$id]["Type"] = $device["Type"];
+					$channels[$id]["Name"] = $device["Name"];
+					if(isset($device["Options"]["NoSlatAdjustment"])) {
+						$channels[$id]["Awning"] = ($device["Options"]["NoSlatAdjustment"] == 1);
+					}
+					$channels[$id]["IsGroup"] = false;
 				}
 			}
-
-			return $result;
+			
+			//Go through all channels and build supplement for group channels
+			foreach($channels as $id => $channel) {
+				if(!$channel["IsGroup"]) {
+					//Go through each "group" channel und if and check if we are inside
+					foreach($channels as $idx => $channelx) {
+						if($channelx["IsGroup"]) {
+							foreach($channelx["Group"] as $groupx) {
+								if($groupx == $channel["Group"][0]) {
+									$channels[$id]["Supplement"][] = $idx;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return $channels;
+			
 		}
 
 		
 		
-		private function GetGUIDforModuleType($Modultype) {
+		private function IsSensorType($Type) {
 
-			switch ($Modultype) {
+			switch ($Type) {
+				case "SWW SOL":
+				case "SWRW":
+				case "PIR DC":
+				case "UTC":
+					return true;
+			}
+			
+			return false;
+			
+		}
+		
+		
+		
+		private function GetModuleIDForType($Type) {
+
+			switch ($Type) {
 				case "MX FESLIM":
 				case "MX FE SLIM":
 				case "MX FESLIM Group":
@@ -315,16 +374,16 @@
 				case "LX Plugin DIMMER":
 				case "LX DALA":
 					return "{5ED1AA15-6D8B-4DA8-B1C8-781D24442288}";
-
-				case "Group":
-					return "{7F5C8432-CEAC-45A7-BF96-4BBC3CF04B57}";
-
+					
 				case "SWW SOL":
 				case "SWRW":
 					return "{B3F0007D-44EE-460B-81D1-5A74C85EE29C}";
 					
 				case "PIR DC":
 					return "{CE892EF8-C01D-43D2-BBA7-D5B54484795E}";
+					
+				case "UTC":
+					return "{4E1FBB10-9283-7779-6D79-7D190ECE33FF}";
 			}
 			
 			return "";
