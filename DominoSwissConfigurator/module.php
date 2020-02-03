@@ -87,11 +87,19 @@
 		
 		
 		private function ParseFileData() {
-			
+
+			//array for our parsed representation, with defaults
+			$config = [
+				"Transmitter" => [],
+				"Receiver" => [],
+				"link" => [],
+				"eGate1" => []
+			];
+
 			$data = base64_decode($this->ReadPropertyString("FileData"));
 			
 			if(!trim($data)) {
-				return []; //we have nothing to do
+				return $config; //we have nothing to do. return defaults
 			}
 			
 			//remove characters which the ini scanner does not like
@@ -99,10 +107,7 @@
 			
 			//parse ini compatible format
 			$ini = parse_ini_string($data, true, INI_SCANNER_RAW);
-			
-			//array for our parsed representation
-			$config = [];
-			
+
 			//parse Transmitter
 			$transmitter = $ini['Transmitter'];
 			$transmitterFields = explode("~", $transmitter['//Index']);
