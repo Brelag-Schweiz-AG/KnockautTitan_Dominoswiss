@@ -59,6 +59,7 @@
 					"Group" => implode(", ", $channel["Group"]),
 					"Supplement" => implode(", ", $channel["Supplement"]),
 					"instanceID" => $findInstanceID($id),
+					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
 					"create" => [
 						"moduleID" => $moduleID,
 						"configuration" => [
