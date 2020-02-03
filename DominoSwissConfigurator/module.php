@@ -23,7 +23,8 @@
 				foreach (IPS_GetInstanceList() as $instanceID) {
 					if($instanceID != $this->InstanceID) {
 						if (IPS_GetInstance($instanceID)['ConnectionID'] == $eGateID) {
-							if(IPS_GetProperty($instanceID, "ID") == $id) {
+							$configuration = json_decode(IPS_GetConfiguration($instanceID), true);
+							if(isset($configuration["ID"]) && ($configuration["ID"] == $id)) {
 								return $instanceID;
 							}
 						}
