@@ -316,18 +316,16 @@
 			
 			//Go through all channels and build supplement for group channels
 			foreach($channels as $id => $channel) {
-				if(!$channel["IsGroup"]) {
-					//Go through each "group" channel und if and check if we are inside
-					foreach($channels as $idx => $channelx) {
-						if($channelx["IsGroup"]) {
-							foreach($channelx["Group"] as $groupx) {
-								if($groupx == $channel["Group"][0]) {
-									$channels[$id]["Supplement"][] = $idx;
-								}
-							}
+				//Go through each channel("channelx") and check if channel is a part of channelx 
+				foreach($channels as $idx => $channelx) {
+					//if we found ourself -> ignore
+					if ($id != $idx) {
+						if (array_intersect($channel["Group"], $channelx["Group"]) == $channel["Group"]) {
+							$channels[$id]["Supplement"][] = $idx;
 						}
 					}
 				}
+				sort($channels[$id]["Supplement"]);
 			}
 			
 			return $channels;
