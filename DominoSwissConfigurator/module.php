@@ -316,9 +316,8 @@
 			
 			//Go through all channels and build supplement for group channels
 			foreach($channels as $id => $channel) {
-				//Go through each channel("channelx") and check if channel is a part of channelx 
+				//Go through each "group" channel und if and check if we are inside
 				foreach($channels as $idx => $channelx) {
-					//if we found ourself -> ignore
 					if ($id != $idx) {
 						if (array_intersect($channel["Group"], $channelx["Group"]) == $channel["Group"]) {
 							$channels[$id]["Supplement"][] = $idx;
@@ -340,6 +339,7 @@
 				case "SWW SOL":
 				case "SWRW":
 				case "PIR DC":
+				case "MAG TFK":
 				case "UTC":
 					return true;
 			}
@@ -386,6 +386,9 @@
 					
 				case "PIR DC":
 					return "{CE892EF8-C01D-43D2-BBA7-D5B54484795E}";
+
+				case "MAG TFK":
+					return "{D95EA69C-2FFF-4CB3-B8BE-2DC708AAC2A6}";
 					
 				case "UTC":
 					return "{4E1FBB10-9283-7779-6D79-7D190ECE33FF}";
