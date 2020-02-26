@@ -6,7 +6,9 @@
       "Awning": "Markise",
       "Group" : "Gruppe",
       "Create All Devices" : "Alle Geräte erstellen",
-      "Supplement" : "Zusatz"
+      "Supplement" : "Zusatz",
+      "Actuators": "Aktoren",
+      "Sensors": "Sensoren"
     }
   }
 }

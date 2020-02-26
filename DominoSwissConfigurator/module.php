@@ -18,14 +18,42 @@
 			
 			$data = json_decode(file_get_contents(__DIR__ ."/form.json"));
 		
-			$findInstanceID = function($id) {
+			//Add category for actuators
+			$data->actions[0]->values[] = [
+					"id" => 1,
+					"expanded" => true,
+					"ID" => "",
+					"Name" => "",
+					"Type" => $this->Translate("Actuators"),
+					"Awning" => "",
+					"Group" => "",
+					"Supplement" => ""
+			];
+			
+			//Add category for sensors
+			$data->actions[0]->values[] = [
+					"id" => 2,
+					"expanded" => true,
+					"ID" => "",
+					"Name" => "",
+					"Type" => $this->Translate("Sensors"),
+					"Awning" => "",
+					"Group" => "",
+					"Supplement" => ""
+			];
+			
+			$findInstanceID = function($moduleID, $id) {
 				$eGateID = IPS_GetInstance($this->InstanceID)['ConnectionID'];
 				foreach (IPS_GetInstanceList() as $instanceID) {
 					if($instanceID != $this->InstanceID) {
-						if (IPS_GetInstance($instanceID)['ConnectionID'] == $eGateID) {
-							$configuration = json_decode(IPS_GetConfiguration($instanceID), true);
-							if(isset($configuration["ID"]) && ($configuration["ID"] == $id)) {
-								return $instanceID;
+						$instance = IPS_GetInstance($instanceID);
+						if ($instance['ConnectionID'] == $eGateID) {
+							//Also check ModuleID to distinguish actuators and sensors
+							if($instance["ModuleInfo"]["ModuleID"] == $moduleID) {
+								$configuration = json_decode(IPS_GetConfiguration($instanceID), true);
+								if(isset($configuration["ID"]) && ($configuration["ID"] == $id)) {
+									return $instanceID;
+								}
 							}
 						}
 					}
@@ -43,7 +71,9 @@
 			};
 			
 			$channels = $this->BuildChannels();
-			foreach($channels as $id => $channel) {
+			
+			//Add all Actuators
+			foreach($channels["receivers"] as $id => $channel) {
 
 				//Use a special group if we have mixed types. Otherwise filter the " Group" keyword and use name to get ModuleID
 				if($channel["Type"] == "Group") {
@@ -59,8 +89,9 @@
 					"Awning" => isset($channel["Awning"]) ? ($channel["Awning"] ? "yes" : "no") : "---",
 					"Group" => implode(", ", $channel["Group"]),
 					"Supplement" => implode(", ", $channel["Supplement"]),
-					"instanceID" => $findInstanceID($id),
+					"instanceID" => $findInstanceID($moduleID, $id),
 					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
+					"parent" => 1,
 					"create" => [
 						"moduleID" => $moduleID,
 						"configuration" => [
@@ -70,14 +101,38 @@
 				];
 				
 				//Some properties are only available for receivers
-				if($channel["IsReceiver"]) {
-					$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
-				
-					//Awning property is only available for non groups and only some devices
-					if(isset($channel["Awning"])) {
-						$value["create"]["configuration"]["Awning"] = $channel["Awning"];
-					}
+				$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+			
+				//Awning property is only available for non groups and only some devices
+				if(isset($channel["Awning"])) {
+					$value["create"]["configuration"]["Awning"] = $channel["Awning"];
 				}
+				
+				$data->actions[0]->values[] = $value;
+			}
+			
+			//Add all Actuators
+			foreach($channels["transmitters"] as $id => $channel) {
+				
+				$moduleID = $this->GetModuleIDForType($channel["Type"]);
+				
+				$value = [
+					"ID" => $id,
+					"Name" => $channel["Name"],
+					"Type" => $channel["Type"],
+					"Awning" => "---",
+					"Group" => "",
+					"Supplement" => "",
+					"instanceID" => $findInstanceID($moduleID, $id),
+					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
+					"parent" => 2,
+					"create" => [
+						"moduleID" => $moduleID,
+						"configuration" => [
+							"ID" => $id
+						]
+					]
+				];
 				
 				$data->actions[0]->values[] = $value;
 			}
@@ -247,39 +302,34 @@
 				return null;
 			};			
 			
-			$channels = [];
+			$receiverChannels = [];
+			$transmitterChannels = [];
 			
 			//Go through all (non repeater) link channels for building the grouping (and associate with eGate IDs)
 			foreach($config["link"] as $link) {
 				if(isset($link["Options"]["RepeaterOnly"]) && ($link["Options"]["RepeaterOnly"] == 0)) {
 					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
-						$channels[$id]["Group"][] = $link["ReceiverIndex"];
-						$channels[$id]["Supplement"] = [];
-						$channels[$id]["IsReceiver"] = true;
-						$channels[$id]["IsTransmitter"] = false;
+						$receiverChannels[$id]["Group"][] = $link["ReceiverIndex"];
+						$receiverChannels[$id]["Supplement"] = [];
 					}
 				}
 			}
 
-			//Search a few special transmitter devices and also add them if they weren't assigned a group
+			//Search a few special transmitter devices and also add them
 			foreach($config["link"] as $link) {
 				$transmitter = $getTransmitterByIndex($link["TransmitterIndex"]);
 				if($this->IsSensorType($transmitter["Type"])) {
 					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
-						if(!isset($channels[$id])) {
-							$channels[$id]["Group"][] = $link["TransmitterIndex"];
-							$channels[$id]["Supplement"] = [];
-							$channels[$id]["IsReceiver"] = false;
-							$channels[$id]["IsTransmitter"] = true;
-						}
+						$transmitterChannels[$id]["Group"][] = $link["TransmitterIndex"];
+						$transmitterChannels[$id]["Supplement"] = [];
 					}
 				}
 			}
 			
-			//Go through all channels and mark as Group or obtain the device type, name and awning
-			foreach($channels as $id => $channel) {
+			//Go through all receiver channels and mark as Group or obtain the device type, name and awning
+			foreach($receiverChannels as $id => $channel) {
 				if(sizeof($channel["Group"]) > 1) {
 					//Check if we have a homogeneous group of the same device
 					$types = [];
@@ -290,44 +340,48 @@
 					$types = array_unique($types);
 					
 					if(sizeof($types) == 1) {
-						$channels[$id]["Type"] = $types[0] . " Group";
+						$receiverChannels[$id]["Type"] = $types[0] . " Group";
 					} else {
-						$channels[$id]["Type"] = "Group";
+						$receiverChannels[$id]["Type"] = "Group";
 					}
 					
-					$channels[$id]["Name"] = "";
-					$channels[$id]["IsGroup"] = true;
+					$receiverChannels[$id]["Name"] = "";
+					$receiverChannels[$id]["IsGroup"] = true;
 				} else {
-					//Group is the ReceiverIndex/TransmitterIndex which we can use to get the receiver/transmitter
-					if($channel["IsReceiver"]) {
-						$device = $getReceiverByIndex($channel["Group"][0]);
-					}
-					if($channel["IsTransmitter"]) {
-						$device = $getTransmitterByIndex($channel["Group"][0]);
-					}
-					$channels[$id]["Type"] = $device["Type"];
-					$channels[$id]["Name"] = $device["Name"];
+					$device = $getReceiverByIndex($channel["Group"][0]);
+					$receiverChannels[$id]["Type"] = $device["Type"];
+					$receiverChannels[$id]["Name"] = $device["Name"];
 					if(isset($device["Options"]["NoSlatAdjustment"])) {
-						$channels[$id]["Awning"] = ($device["Options"]["NoSlatAdjustment"] == 1);
+						$receiverChannels[$id]["Awning"] = ($device["Options"]["NoSlatAdjustment"] == 1);
 					}
-					$channels[$id]["IsGroup"] = false;
+					$receiverChannels[$id]["IsGroup"] = false;
 				}
 			}
 			
-			//Go through all channels and build supplement for group channels
-			foreach($channels as $id => $channel) {
+			//Go through all receiver channels and build supplement for group channels
+			foreach($receiverChannels as $id => $channel) {
 				//Go through each "group" channel und if and check if we are inside
-				foreach($channels as $idx => $channelx) {
+				foreach($receiverChannels as $idx => $channelx) {
 					if ($id != $idx) {
 						if (array_intersect($channel["Group"], $channelx["Group"]) == $channel["Group"]) {
-							$channels[$id]["Supplement"][] = $idx;
+							$receiverChannels[$id]["Supplement"][] = $idx;
 						}
 					}
 				}
-				sort($channels[$id]["Supplement"]);
+				sort($receiverChannels[$id]["Supplement"]);
 			}
 			
-			return $channels;
+			//Go through all transmitter channels and obtain the device type, name and awning
+			foreach($transmitterChannels as $id => $channel) {
+				$device = $getTransmitterByIndex($channel["Group"][0]);
+				$transmitterChannels[$id]["Type"] = $device["Type"];
+				$transmitterChannels[$id]["Name"] = $device["Name"];
+			}
+			
+			return [
+				"receivers" => $receiverChannels,
+				"transmitters" => $transmitterChannels
+			];
 			
 		}
 
