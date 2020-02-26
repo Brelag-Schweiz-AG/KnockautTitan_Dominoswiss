@@ -75,22 +75,29 @@
 			//Add all Actuators
 			foreach($channels["receivers"] as $id => $channel) {
 
-				//Use a special group if we have mixed types. Otherwise filter the " Group" keyword and use name to get ModuleID
-				if($channel["Type"] == "Group") {
+				//Use a special group if we have mixed types. This is defined as an empty moduleID
+				if($channel["Type"] == "") {
 					$moduleID = "{7F5C8432-CEAC-45A7-BF96-4BBC3CF04B57}";
 				} else {
-					$moduleID = $this->GetModuleIDForType(str_replace(" Group", "", $channel["Type"]));
+					$moduleID = $this->GetModuleIDForType($channel["Type"]);
+				}
+				
+				$typeName = $channel["Type"];
+				
+				//append Group into name
+				if($channel["IsGroup"]) {
+					$typeName .= " " . $this->Translate("Group");
 				}
 				
 				$value = [
 					"ID" => $id,
 					"Name" => $channel["Name"],
-					"Type" => $channel["Type"],
-					"Awning" => isset($channel["Awning"]) ? ($channel["Awning"] ? "yes" : "no") : "---",
+					"Type" => $typeName,
+					"Awning" => isset($channel["Awning"]) ? ($channel["Awning"] ? $this->Translate("yes") : $this->Translate("no")) : "---",
 					"Group" => implode(", ", $channel["Group"]),
 					"Supplement" => implode(", ", $channel["Supplement"]),
 					"instanceID" => $findInstanceID($moduleID, $id),
-					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
+					"name" => sprintf("%s (ID: %d)", $typeName, $id),
 					"parent" => 1,
 					"create" => [
 						"moduleID" => $moduleID,
@@ -340,9 +347,9 @@
 					$types = array_unique($types);
 					
 					if(sizeof($types) == 1) {
-						$receiverChannels[$id]["Type"] = $types[0] . " Group";
+						$receiverChannels[$id]["Type"] = $types[0];
 					} else {
-						$receiverChannels[$id]["Type"] = "Group";
+						$receiverChannels[$id]["Type"] = "";
 					}
 					
 					$receiverChannels[$id]["Name"] = "";

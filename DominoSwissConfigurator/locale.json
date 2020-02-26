@@ -3,6 +3,9 @@
     "de": {
       "DominoSwiss eGate Export": "DominoSwiss eGate Export",
       "Text-File": "Text Datei",
+      "Type": "Typ",
+      "no": "nein",
+      "yes": "ja",
       "Awning": "Markise",
       "Group" : "Gruppe",
       "Create All Devices" : "Alle Geräte erstellen",
