@@ -24,12 +24,12 @@
 				}, {
 					"name" : "Type",
 					"label" : "Type",
-					"width" : "220px",
+					"width" : "auto",
 					"save" : true
 				}, {
 					"name" : "Name",
 					"label" : "Name",
-					"width" : "auto",
+					"width" : "300px",
 					"save" : true
 				}, {
 					"name" : "Awning",
