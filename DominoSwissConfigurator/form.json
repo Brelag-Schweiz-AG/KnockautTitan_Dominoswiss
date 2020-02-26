@@ -15,6 +15,7 @@
 		{
 			"type": "Configurator",
 			"name": "Devices",
+			"delete": true,
 			"columns": [{
 					"name" : "ID",
 					"label" : "ID",
