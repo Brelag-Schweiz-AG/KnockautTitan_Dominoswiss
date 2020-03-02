@@ -1,6 +1,0 @@
-{
-  "elements":
-  [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"}
-  ]
-}

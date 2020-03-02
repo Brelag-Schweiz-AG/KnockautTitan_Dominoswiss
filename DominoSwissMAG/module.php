@@ -1,5 +1,5 @@
 <?
-class DominoSwissMAGM1 extends IPSModule {
+class DominoSwissMAG extends IPSModule {
 	
 	public function Create(){
 		//Never delete this line!
