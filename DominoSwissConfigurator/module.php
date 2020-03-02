@@ -326,7 +326,7 @@
 			//Search a few special transmitter devices and also add them
 			foreach($config["link"] as $link) {
 				$transmitter = $getTransmitterByIndex($link["TransmitterIndex"]);
-				if($this->IsSensorType($transmitter["Type"])) {
+				if($this->IsSensorType($transmitter["Type"], $link["Channel"])) {
 					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
 						$transmitterChannels[$id]["Group"][] = $link["TransmitterIndex"];
@@ -394,11 +394,12 @@
 
 		
 		
-		private function IsSensorType($Type) {
+		private function IsSensorType($Type, $Channel) {
 
 			switch ($Type) {
 				case "SWW SOL":
 				case "SWRW":
+					return ($Channel == 1); //This is an explicit exception for weather station devices
 				case "PIR DC":
 				case "MAG TFK":
 				case "UTC":
