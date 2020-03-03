@@ -103,7 +103,8 @@
 						"moduleID" => $moduleID,
 						"configuration" => [
 							"ID" => $id
-						]
+						],
+						"position" => $id
 					]
 				];
 				
@@ -137,7 +138,8 @@
 						"moduleID" => $moduleID,
 						"configuration" => [
 							"ID" => $id
-						]
+						],
+						"position" => $id
 					]
 				];
 				
