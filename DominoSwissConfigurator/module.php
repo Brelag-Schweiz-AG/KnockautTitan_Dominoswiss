@@ -419,27 +419,20 @@
 			switch ($Type) {
 				case "MX FESLIM":
 				case "MX FE SLIM":
-				case "MX FESLIM Group":
 					return "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}";
 
 				case "MX FEPRO":
-				case "MX FEPRO Group":
 				case "MX FEUP3":
-				case "MX FEUP3 Group":
 				case "MX FE SLIM 24V":
 					return "{3AA1A627-78B0-4E17-9206-0BB012094D1C}";
 
 				case "LX RLUP10A":
-				case "LX RLUP10A Group":
 				case "LX RLUP1A":
-				case "LX RLUP1A Group":
 				case "LX Plugin SWITCH":
 					return "{E498DF29-57B1-48F5-8C13-A4673EE0EF9E}";
 
 				case "LX DIMM NO LIMIT":
-				case "LX DIMM NO LIMIT Group":
 				case "LX DIMM RETROFIT":
-				case "LX DIMM RETROFIT Group":
 				case "LX Plugin DIMMER":
 				case "LX DALA":
 					return "{5ED1AA15-6D8B-4DA8-B1C8-781D24442288}";
