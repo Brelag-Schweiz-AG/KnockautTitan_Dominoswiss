@@ -422,7 +422,9 @@
 					return "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}";
 
 				case "MX FEPRO":
+				case "MX FE PRO":
 				case "MX FEUP3":
+				case "MX FE UP3":
 				case "MX FE SLIM 24V":
 					return "{3AA1A627-78B0-4E17-9206-0BB012094D1C}";
 
