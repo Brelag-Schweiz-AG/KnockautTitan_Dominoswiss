@@ -108,6 +108,8 @@ class DominoSwissEGate extends IPSModule {
 					$valueArray[$value[0]] = $value[1];
 				}
 				
+				$this->SendDebug("ArrayDevice", print_r($valueArray, true), 0);
+				
 				if (array_key_exists("DeviceName", $valueArray)) {
 					SetValue($this->GetIDForIdent("Name"), $valueArray["DeviceName"]);
 					SetValue($this->GetIDForIdent("ID"), $valueArray["DeviceId"]);
