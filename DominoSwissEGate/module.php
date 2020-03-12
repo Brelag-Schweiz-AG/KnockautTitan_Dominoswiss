@@ -104,6 +104,8 @@ class DominoSwissEGate extends IPSModule {
 				$valueArray = Array();
 				foreach ($argumentsArray as $argument) {
 					$value = explode("=", $argument);
+					$this->SendDebug("Value0", $value[0], 0);
+					$this->SendDebug("Value1", $value[1], 0);
 					$valueArray[$value[0]] = $value[1];
 				}
 				
@@ -127,14 +129,6 @@ class DominoSwissEGate extends IPSModule {
 
 	}
 	
-	
-	
-	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority) {
-
-		$id = $this->ReadPropertyInteger("ID");
-		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
-	}
-
 	
 
 	public function SendDeviceInfoGet() {
