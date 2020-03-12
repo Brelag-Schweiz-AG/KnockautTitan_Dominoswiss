@@ -17,7 +17,7 @@ class DominoSwissEGate extends IPSModule {
 		$this->RegisterVariableString("Firmware","Firmware");
 		$this->RegisterVariableInteger("Serial",$this->Translate("Serialnumber"));
 		
-		$this->RegisterTimer("DeviceGetInfoTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("DeviceInfoGetTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
 		
 		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
 		
@@ -75,10 +75,11 @@ class DominoSwissEGate extends IPSModule {
 			IPS_Sleep($this->ReadPropertyInteger("MessageDelay"));
 			IPS_SemaphoreLeave($_IPS['SELF']);
 		}
-
-		$emulateData = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
-		$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
-
+		
+		if ($fssTransmitParameter->Instruction != 200) {
+			$emulateData = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
+			$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
+		}
 	}
 	
 	
