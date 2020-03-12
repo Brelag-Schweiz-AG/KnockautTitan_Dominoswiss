@@ -10,7 +10,7 @@ class DominoSwissEGate extends IPSModule {
 
 		$this->RegisterPropertyInteger("MessageDelay", 250);
 		
-		$this->$this->RegisterTimer("DeviceGetInfoTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("DeviceGetInfoTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
 		
 		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
 		
