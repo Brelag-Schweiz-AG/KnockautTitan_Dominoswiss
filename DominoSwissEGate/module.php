@@ -115,7 +115,7 @@ class DominoSwissEGate extends IPSModule {
 					SetValue($this->GetIDForIdent("ID"), $valueArray["DeviceId"]);
 					SetValue($this->GetIDForIdent("Type"), $valueArray["DeviceType"]);
 					SetValue($this->GetIDForIdent("Firmware"), $valueArray["FwVersion"]);
-					SetValue($this->GetIDForIdent("Serial"), $valueArray["SerialNR"]);
+					SetValue($this->GetIDForIdent("Serial"), $valueArray["SerialNr"]);
 				}
 				else {
 					$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
