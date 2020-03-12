@@ -10,6 +10,8 @@ class DominoSwissEGate extends IPSModule {
 
 		$this->RegisterPropertyInteger("MessageDelay", 250);
 		
+		$this->$this->RegisterTimer("DeviceGetInfoTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
+		
 		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
 		
 	}
@@ -86,10 +88,18 @@ class DominoSwissEGate extends IPSModule {
 	}
 	
 	
+	
 	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority) {
 
 		$id = $this->ReadPropertyInteger("ID");
 		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+	}
+
+	
+
+	public function SendDeviceInfoGet() {
+
+		$this->SendCommand(200,0,0,0);
 	}
 
 	
@@ -176,10 +186,18 @@ class DominoSwissEGate extends IPSModule {
 
 	private function GetDataString($Instruction, $ID, $Command, $Value, $Priority, $Check){
 
-		$result = "Instruction=". $Instruction .";ID=". $ID .";Command=". $Command .";Value=". $Value .";Priority=". $Priority .";";
-		if ($Check) {
-			$checkNr = $this->GetCheckNRForCommand($Command);
-			$result .="CheckNr=". $checkNr .";";
+		switch ($Instruction) {
+			case 200:
+				$result = "DeviceInfoGet;";
+				break;
+				
+			default:
+				$result = "Instruction=" . $Instruction . ";ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
+				if ($Check) {
+					$checkNr = $this->GetCheckNRForCommand($Command);
+					$result .= "CheckNr=" . $checkNr . ";";
+				}
+				break;
 		}
 
 		return ($result . chr(13));
