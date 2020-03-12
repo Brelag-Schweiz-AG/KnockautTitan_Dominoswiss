@@ -104,8 +104,6 @@ class DominoSwissEGate extends IPSModule {
 				$valueArray = Array();
 				foreach ($argumentsArray as $argument) {
 					$value = explode("=", $argument);
-					$this->SendDebug("Value0", $value[0], 0);
-					$this->SendDebug("Value1", $value[1], 0);
 					$valueArray[$value[0]] = $value[1];
 				}
 				
