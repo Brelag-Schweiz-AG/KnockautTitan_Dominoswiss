@@ -9,6 +9,13 @@ class DominoSwissEGate extends IPSModule {
 		//You cannot use variables here. Just static values.
 
 		$this->RegisterPropertyInteger("MessageDelay", 250);
+		$this->RegisterPropertyInteger("Mode", 0);
+		
+		$this->RegisterVariableString("Name","Name");
+		$this->RegisterVariableString("ID",$this->Translate("DeviceID"));
+		$this->RegisterVariableString("Type",$this->Translate("Type"));
+		$this->RegisterVariableString("Firmware","Firmware");
+		$this->RegisterVariableInteger("Serial",$this->Translate("Serialnumber"));
 		
 		$this->RegisterTimer("DeviceGetInfoTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
 		
@@ -29,7 +36,31 @@ class DominoSwissEGate extends IPSModule {
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
-		
+
+		switch ($this->ReadPropertyInteger("Mode")) {
+			case 0:
+				$this->ForceParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}");
+				break;
+			case 1:
+				$this->ForceParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
+				break;
+		}
+	}
+	
+	
+	
+	public function GetConfigurationForParent() {
+
+		switch ($this->ReadPropertyInteger("Mode")) {
+			case 0: // eGate LAN
+				return "";
+				
+			case 1: // eGate direct
+				return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+
+			default:
+				break;
+		}
 	}
 
 	
@@ -75,8 +106,17 @@ class DominoSwissEGate extends IPSModule {
 					$value = explode("=", $argument);
 					$valueArray[$value[0]] = $value[1];
 				}
-
-				$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+				
+				if (array_key_exists("DeviceName", $valueArray)) {
+					SetValue($this->GetIDForIdent("Name"), $valueArray["DeviceName"]);
+					SetValue($this->GetIDForIdent("ID"), $valueArray["DeviceId"]);
+					SetValue($this->GetIDForIdent("Type"), $valueArray["DeviceType"]);
+					SetValue($this->GetIDForIdent("Firmware"), $valueArray["FwVersion"]);
+					SetValue($this->GetIDForIdent("Serial"), $valueArray["SerialNR"]);
+				}
+				else {
+					$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+				}
 			}
 		}
 
@@ -99,7 +139,7 @@ class DominoSwissEGate extends IPSModule {
 
 	public function SendDeviceInfoGet() {
 
-		$this->SendCommand(200,0,0,0);
+		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => 200, "ID" => 0, "Command" => 0, "Value" => 0, "Priority" => 0)));
 	}
 
 	
