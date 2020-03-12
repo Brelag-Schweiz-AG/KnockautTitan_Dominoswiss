@@ -99,7 +99,7 @@ class DominoSwissEGate extends IPSModule {
 		if (sizeof($bufferParts) > 1) {
 			for ($i = 0; $i < sizeof($bufferParts) - 1; $i++) {
 				$this->SendDebug("Data", $bufferParts[$i], 0);
-				$argumentsArray = explode(";", $data->Buffer);
+				$argumentsArray = explode(";", $bufferParts[$i]);
 				array_pop($argumentsArray);
 
 				$valueArray = Array();
