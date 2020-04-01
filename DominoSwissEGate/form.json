@@ -1,6 +1,12 @@
 {
   "elements":
   [
+    { "type": "Select", "name": "Mode", "caption": "Mode",
+      "options": [
+        { "caption": "eGate LAN", "value": 0 },
+        { "caption": "eGate direct", "value": 1 }
+      ]
+    },
     { "type": "Label", "label": "Delay on every message to not overwhelm the eGate"},
     { "type": "NumberSpinner", "name": "MessageDelay", "caption": "Milliseconds"}
   ]

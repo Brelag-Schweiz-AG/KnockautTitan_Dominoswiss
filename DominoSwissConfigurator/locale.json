@@ -1,12 +1,17 @@
 {
   "translations": {
     "de": {
-      "Load a configurationfile for DominoSwiss": "Lade DominoSwisskonfigurationsdatei",
+      "DominoSwiss eGate Export": "DominoSwiss eGate Export",
       "Text-File": "Text Datei",
+      "Type": "Typ",
+      "no": "nein",
+      "yes": "ja",
       "Awning": "Markise",
       "Group" : "Gruppe",
       "Create All Devices" : "Alle Geräte erstellen",
-      "Supplement" : "Zusatz"
+      "Supplement" : "Zusatz",
+      "Actuators": "Aktoren",
+      "Sensors": "Sensoren"
     }
   }
 }

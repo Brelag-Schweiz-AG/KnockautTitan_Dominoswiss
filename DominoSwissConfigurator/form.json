@@ -2,7 +2,7 @@
     "elements": [
 		{ 
 			"type": "Label",
-			"label": "Load a configurationfile for DominoSwiss"
+			"label": "DominoSwiss eGate Export"
 		},
         {
             "name": "FileData",
@@ -13,17 +13,23 @@
 	],
 	"actions": [
 		{
-			"type": "List",
+			"type": "Configurator",
 			"name": "Devices",
+			"delete": true,
 			"columns": [{
 					"name" : "ID",
 					"label" : "ID",
-					"width" : "30px",
+					"width" : "50px",
+					"save" : true
+				}, {
+					"name" : "Type",
+					"label" : "Type",
+					"width" : "auto",
 					"save" : true
 				}, {
 					"name" : "Name",
 					"label" : "Name",
-					"width" : "auto",
+					"width" : "300px",
 					"save" : true
 				}, {
 					"name" : "Awning",
@@ -40,25 +46,13 @@
 					"label" : "Supplement",
 					"width" : "200px",
 					"save" : true
-				}, {
-					"name" : "InstanceID",
-					"label" : "InstanceID",
-					"width" : "150px",
-					"save" : true
 				}],
+			"sort": {
+				"column": "ID",
+				"direction": "ascending"
+			},
 			"values": [
 			]
-		},
-		{
-			"type": "Button",
-			"label": "Create All Devices",
-			"onClick": "BRELAG_CreateDevices($id);"
-		},
-		{
-			"type": "Button",
-			"label": "Check Single Device",
-			"onClick": "BRELAG_CheckSingleDevice($id, $Devices);"
 		}
-
     ]
 }

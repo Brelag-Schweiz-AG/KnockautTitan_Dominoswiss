@@ -9,6 +9,15 @@ class DominoSwissEGate extends IPSModule {
 		//You cannot use variables here. Just static values.
 
 		$this->RegisterPropertyInteger("MessageDelay", 250);
+		$this->RegisterPropertyInteger("Mode", 0);
+		
+		$this->RegisterVariableString("Name","Name");
+		$this->RegisterVariableString("ID",$this->Translate("DeviceID"));
+		$this->RegisterVariableString("Type",$this->Translate("Type"));
+		$this->RegisterVariableString("Firmware","Firmware");
+		$this->RegisterVariableInteger("Serial",$this->Translate("Serialnumber"));
+		
+		$this->RegisterTimer("DeviceInfoGetTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
 		
 		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
 		
@@ -27,7 +36,31 @@ class DominoSwissEGate extends IPSModule {
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
-		
+
+		switch ($this->ReadPropertyInteger("Mode")) {
+			case 0:
+				$this->ForceParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}");
+				break;
+			case 1:
+				$this->ForceParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}");
+				break;
+		}
+	}
+	
+	
+	
+	public function GetConfigurationForParent() {
+
+		switch ($this->ReadPropertyInteger("Mode")) {
+			case 0: // eGate LAN
+				return "";
+				
+			case 1: // eGate direct
+				return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+
+			default:
+				break;
+		}
 	}
 
 	
@@ -42,10 +75,11 @@ class DominoSwissEGate extends IPSModule {
 			IPS_Sleep($this->ReadPropertyInteger("MessageDelay"));
 			IPS_SemaphoreLeave($_IPS['SELF']);
 		}
-
-		$emulateData = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
-		$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
-
+		
+		if ($fssTransmitParameter->Instruction != 200) {
+			$emulateData = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
+			$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
+		}
 	}
 	
 	
@@ -65,7 +99,7 @@ class DominoSwissEGate extends IPSModule {
 		if (sizeof($bufferParts) > 1) {
 			for ($i = 0; $i < sizeof($bufferParts) - 1; $i++) {
 				$this->SendDebug("Data", $bufferParts[$i], 0);
-				$argumentsArray = explode(";", $data->Buffer);
+				$argumentsArray = explode(";", $bufferParts[$i]);
 				array_pop($argumentsArray);
 
 				$valueArray = Array();
@@ -73,8 +107,19 @@ class DominoSwissEGate extends IPSModule {
 					$value = explode("=", $argument);
 					$valueArray[$value[0]] = $value[1];
 				}
-
-				$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+				
+				$this->SendDebug("ArrayDevice", print_r($valueArray, true), 0);
+				
+				if (array_key_exists("DeviceName", $valueArray)) {
+					SetValue($this->GetIDForIdent("Name"), $valueArray["DeviceName"]);
+					SetValue($this->GetIDForIdent("ID"), $valueArray["DeviceId"]);
+					SetValue($this->GetIDForIdent("Type"), $valueArray["DeviceType"]);
+					SetValue($this->GetIDForIdent("Firmware"), $valueArray["FwVersion"]);
+					SetValue($this->GetIDForIdent("Serial"), $valueArray["SerialNr"]);
+				}
+				else {
+					$this->SendDataToChildren(json_encode(Array("DataID" => "{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}", "Values" => $valueArray)));
+				}
 			}
 		}
 
@@ -86,10 +131,10 @@ class DominoSwissEGate extends IPSModule {
 	}
 	
 	
-	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority) {
 
-		$id = $this->ReadPropertyInteger("ID");
-		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority)));
+	public function SendDeviceInfoGet() {
+
+		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => 200, "ID" => 0, "Command" => 0, "Value" => 0, "Priority" => 0)));
 	}
 
 	
@@ -176,10 +221,18 @@ class DominoSwissEGate extends IPSModule {
 
 	private function GetDataString($Instruction, $ID, $Command, $Value, $Priority, $Check){
 
-		$result = "Instruction=". $Instruction .";ID=". $ID .";Command=". $Command .";Value=". $Value .";Priority=". $Priority .";";
-		if ($Check) {
-			$checkNr = $this->GetCheckNRForCommand($Command);
-			$result .="CheckNr=". $checkNr .";";
+		switch ($Instruction) {
+			case 200:
+				$result = "DeviceInfoGet;";
+				break;
+				
+			default:
+				$result = "Instruction=" . $Instruction . ";ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
+				if ($Check) {
+					$checkNr = $this->GetCheckNRForCommand($Command);
+					$result .= "CheckNr=" . $checkNr . ";";
+				}
+				break;
 		}
 
 		return ($result . chr(13));

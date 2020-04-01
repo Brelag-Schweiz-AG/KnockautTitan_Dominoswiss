@@ -19,22 +19,6 @@ class DominoSwissPIR extends IPSModule {
 
 	
 	
-	public function Destroy(){
-		//Never delete this line!
-		parent::Destroy();
-		
-	}
-
-	
-	
-	public function ApplyChanges(){
-		//Never delete this line!
-		parent::ApplyChanges();
-		
-	}
-
-
-
 	public function StopPIRTimer(){
 		$this->SetTimerInterval("PIRTimer", 0);
 		SetValue($this->GetIDForIdent("MotionValue"), false);
@@ -59,4 +43,3 @@ class DominoSwissPIR extends IPSModule {
 	}
 
 }
-?>
