@@ -32,10 +32,10 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			switch ($data->Values->Command) {
 				case 1:
-					$LastValue = GetValue($this->GetIDForIdent("LastValue"));
+					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					if (!GetValue($this->GetIDForIdent("Status"))) {
 							SetValue($this->GetIDForIdent("Status"), true);
-							SetValue($this->GetIDForIdent("Intensity"), $LastValue);
+							SetValue($this->GetIDForIdent("Intensity"), $lastValue);
 					}
 					SetValue($this->GetIDForIdent("Switch"), true);
 					break;
@@ -56,11 +56,12 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 					break;
 				
 				case 6:
+					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
 					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
 					if ($invertedStatus) {
-						SetValue($this->GetIDForIdent("Intensity"), 100);
+						SetValue($this->GetIDForIdent("Intensity"), $lastValue);
 					}
 					else {
 						SetValue($this->GetIDForIdent("Intensity"), 0);
