@@ -1,7 +1,8 @@
 {
   "elements":
   [
-	{ "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    { "type": "NumberSpinner", "name": "ID", "caption": "ID"},
+    { "type": "CheckBox", "name": "ShowStatus", "caption": "Show Status"},
     {
       "type": "List",
       "name": "Supplement",

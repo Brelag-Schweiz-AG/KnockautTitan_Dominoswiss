@@ -12,7 +12,8 @@
       "Switch": "Schalter",
       "SavedValue": "Wert Favoritenspeicher",
       "Intensity": "Intensität",
-      "Supplement" : "Zusatz"
+      "Supplement" : "Zusatz",
+      "Show Status": "Status Anzeigen"
     }
   }
 }

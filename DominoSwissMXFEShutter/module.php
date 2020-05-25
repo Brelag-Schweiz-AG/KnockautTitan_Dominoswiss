@@ -7,8 +7,6 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		//Never delete this line!
 		parent::Create();
 		
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyBoolean("Awning", false);
 		$this->RegisterPropertyInteger("CountRockerSteps", 8);
 		$this->RegisterPropertyInteger("Runtime", 90);
