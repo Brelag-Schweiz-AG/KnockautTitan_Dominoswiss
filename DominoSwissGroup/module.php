@@ -110,6 +110,8 @@ class DominoSwissGroup extends DominoSwissBase {
 			switch($data->Values->Command) {
 				case 1: //PulseUp
 					SetValue($this->GetIDForIdent("GroupOrder"), 1);
+                    SetValue($this->GetIDForIdent("Intensity"), 0);
+                    SetValue($this->GetIDForIdent("Switch"), true);
 					break;
 
 				case 2: //PulseDown
@@ -136,6 +138,7 @@ class DominoSwissGroup extends DominoSwissBase {
 
 				case 6: //Toggle
 					SetValue($this->GetIDForIdent("Saving"), 2);
+                    SetValue($this->GetIDForIdent("Switch"), !GetValue($this->GetIDForIdent("Switch")));
 					break;
 
 				case 15: //PosSaveBoth

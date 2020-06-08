@@ -29,17 +29,15 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			switch ($data->Values->Command) {
 				case 1: //PulseUp
-					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Switch"), true);
-					SetValue($this->GetIDForIdent("Intensity"), $lastValue);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
 					break;
 
 				case 2: //PulseDown
-					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					SetValue($this->GetIDForIdent("Status"), false);
 					SetValue($this->GetIDForIdent("Switch"), false);
-					SetValue($this->GetIDForIdent("Intensity"), $lastValue);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
 					break;
 
 				case 3: //ContinuousUp
@@ -57,16 +55,13 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 					break;
 				
 				case 6: //Toggle
+					//Fetch the last value and update the last value to the current one
 					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
-					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
-					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
-					if ($invertedStatus) {
-						SetValue($this->GetIDForIdent("Intensity"), $lastValue);
-					}
-					else {
-						SetValue($this->GetIDForIdent("Intensity"), 0);
-					}
+
+					//Set the value to last value and toggle the status
+					SetValue($this->GetIDForIdent("Status"), !(GetValue($this->GetIDForIdent("Status"))));
+					SetValue($this->GetIDForIdent("Intensity"), $lastValue);
 					break;
 					
 				case 15: //PosSaveBoth
