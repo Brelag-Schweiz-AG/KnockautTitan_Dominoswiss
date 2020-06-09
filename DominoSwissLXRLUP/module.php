@@ -128,14 +128,10 @@ class DominoSwissLXRLUP extends DominoSwissBase {
 		switch($Ident) {
 			case "Switch":
 				if($Value) {
-					//if(!GetValue($this->GetIDForIdent("Status"))) {
-						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-					//}
+                    $this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				else {
-					//if(GetValue($this->GetIDForIdent("Status"))) {
-						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-					//}
+                    $this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				break;
 
