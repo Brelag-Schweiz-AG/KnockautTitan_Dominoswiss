@@ -131,7 +131,7 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
 					} else {
 						//If the LastValue was zero dimm to 100%. The users want to switch on and setting to lastValue = 0 would leave it off
-						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 					}
 				}
 				else {
