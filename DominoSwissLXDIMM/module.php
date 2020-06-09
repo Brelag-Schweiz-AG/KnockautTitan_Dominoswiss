@@ -31,7 +31,7 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 				case 1: //PulseUp
 					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Switch"), true);
-					SetValue($this->GetIDForIdent("Intensity"), 0);
+					SetValue($this->GetIDForIdent("Intensity"), 0); //Letzter Wert (evtl. unbekannt da eine Dimmfahrt)
 					break;
 
 				case 2: //PulseDown
@@ -48,7 +48,10 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 					break;
 
 				case 4: //ContinuousDown
-					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
+					//Only save intensity if we have a proper intensity (fix issues with double off)
+					if(GetValue($this->GetIDForIdent("Intensity")) > 0) {
+						SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
+					}
 					SetValue($this->GetIDForIdent("Status"), false);
 					SetValue($this->GetIDForIdent("Switch"), false);
 					SetValue($this->GetIDForIdent("Intensity"), 0);
@@ -123,8 +126,13 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		switch($Ident) {
 			case "Switch":
 				if ($Value) {
-					//We want to use PulseUp to switch on with last value. ContinuousUp would switch on with 100%
-					$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
+					if(GetValue($this->GetIDForIdent("LastValue")) > 0) {
+						//We want to use Move to switch on with last value. ContinuousUp would switch on with 100%
+						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
+					} else {
+						//If the LastValue was zero dimm to 100%. The users want to switch on and setting to lastValue = 0 would leave it off
+						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					}
 				}
 				else {
 					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
