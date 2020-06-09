@@ -61,6 +61,7 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 
 					//Set the value to last value and toggle the status
 					SetValue($this->GetIDForIdent("Status"), !(GetValue($this->GetIDForIdent("Status"))));
+					SetValue($this->GetIDForIdent("Switch"), !(GetValue($this->GetIDForIdent("Switch"))));
 					SetValue($this->GetIDForIdent("Intensity"), $lastValue);
 					break;
 					
