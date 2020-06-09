@@ -1,7 +1,10 @@
 {
   "translations": {
     "de": {
-      "Temperature": "Temperatur"
+      "Temperature": "Temperatur",
+      "Actual Temperature": "Ist-Temperatur",
+      "Target Temperature": "Soll-Temperatur",
+      "Temperature (Correction)": "Temperatur (Korrektur)"
     }
   }
 }
