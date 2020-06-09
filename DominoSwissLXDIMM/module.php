@@ -126,7 +126,10 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		switch($Ident) {
 			case "Switch":
 				if ($Value) {
-					if(GetValue($this->GetIDForIdent("LastValue")) > 0) {
+					if(GetValue($this->GetIDForIdent("Status"))) {
+						//We want to use Move to switch to the same value. Just send the same value
+						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
+					} else if(GetValue($this->GetIDForIdent("LastValue")) > 0) {
 						//We want to use Move to switch on with last value. ContinuousUp would switch on with 100%
 						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
 					} else {
