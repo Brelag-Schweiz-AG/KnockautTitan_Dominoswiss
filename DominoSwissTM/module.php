@@ -1,7 +1,7 @@
 <?
 include_once __DIR__ . '/../libs/DominoSwissBase.php';
 
-class DominoSwissTM extends DominoSwissBase {
+class DominoSwissTM extends IPSModule {
 	
 	public function Create() {
 		parent::Create();
@@ -31,7 +31,6 @@ class DominoSwissTM extends DominoSwissBase {
 		$this->RegisterVariableFloat("Temperature", $this->Translate("Temperature"), "~Temperature", 1);
         $this->RegisterVariableFloat("ActualTemperature", $this->Translate("Actual Temperature"), "~Temperature", 2);
         $this->RegisterVariableFloat("TargetTemperature", $this->Translate("Target Temperature"), "BRELAG.ThermostatMiniTargetTemperature", 3);
-        $this->EnableAction("TargetTemperature");
         $this->RegisterVariableFloat("CorrectionTemperature", $this->Translate("Temperature (Correction)"), "BRELAG.ThermostatMiniCorrectionTemperature", 4);
         $this->EnableAction("CorrectionTemperature");
 
@@ -77,20 +76,9 @@ class DominoSwissTM extends DominoSwissBase {
                 SetValue($this->GetIDForIdent($Ident), $Value);
                 $this->UpdateTemperature();
                 break;
-            case "TargetTemperature":
-                $this->SetTemperature(GetValue($this->GetIDForIdent("SendingOnLockLevel")), $Value);
-                break;
             default:
                 throw new Exception("Invalid Ident");
         }
-
-    }
-
-
-
-    public function SetTemperature($Priority, $Value) {
-
-        $this->SendCommand( 1, 42, $Value, $Priority);
 
     }
 
