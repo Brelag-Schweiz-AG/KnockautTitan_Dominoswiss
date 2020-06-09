@@ -6,6 +6,8 @@ class DominoSwissTM extends IPSModule {
 	public function Create() {
 		parent::Create();
 
+        $this->RegisterPropertyInteger("ID", 0);
+
         if (!IPS_VariableProfileExists("BRELAG.ThermostatMiniTargetTemperature")) {
             IPS_CreateVariableProfile("BRELAG.ThermostatMiniTargetTemperature", 2);
             IPS_SetVariableProfileValues("BRELAG.ThermostatMiniTargetTemperature", 0, 7, 0);
