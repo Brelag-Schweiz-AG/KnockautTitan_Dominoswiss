@@ -7,8 +7,6 @@ class DominoSwissGroup extends DominoSwissBase {
 		//Never delete this line!
 		parent::Create();
 		
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
 		$this->RegisterPropertyBoolean("ShowAwning", false);
 		$this->RegisterPropertyBoolean("ShowToggle", true);
 		$this->RegisterPropertyBoolean("ShowIntensity", true);
@@ -49,10 +47,10 @@ class DominoSwissGroup extends DominoSwissBase {
 			IPS_SetVariableProfileAssociation("BRELAG.Switch", 1, $this->Translate("On"), "", -1);
 		}
 
-		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
+		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 6);
 		$this->EnableAction("Intensity");
 
-		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "BRELAG.Switch", 6);
+		$this->RegisterVariableBoolean("Switch",  $this->Translate("Switch"), "BRELAG.Switch", 5);
 		$this->EnableAction("Switch");
 
 		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
@@ -110,37 +108,40 @@ class DominoSwissGroup extends DominoSwissBase {
 		//No ID check necessary, check is done by receiveFilter "DominoSwissBase.php->ApplyChanges()"
 		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			switch($data->Values->Command) {
-				case 1:
+				case 1: //PulseUp
 					SetValue($this->GetIDForIdent("GroupOrder"), 1);
+                    SetValue($this->GetIDForIdent("Intensity"), 0);
+                    SetValue($this->GetIDForIdent("Switch"), true);
 					break;
 
-				case 2:
+				case 2: //PulseDown
 					SetValue($this->GetIDForIdent("GroupOrder"), 3);
 					SetValue($this->GetIDForIdent("Intensity"), 0);
 					SetValue($this->GetIDForIdent("Switch"), false);
 					break;
 
-				case 3:
+				case 3: //ContinuousUp
 					SetValue($this->GetIDForIdent("GroupOrder"), 0);
 					SetValue($this->GetIDForIdent("Intensity"), 100);
 					SetValue($this->GetIDForIdent("Switch"), true);
 					break;
 
-				case 4:
+				case 4: //ContinuousDown
 					SetValue($this->GetIDForIdent("GroupOrder"), 4);
 					SetValue($this->GetIDForIdent("Intensity"), 0);
 					SetValue($this->GetIDForIdent("Switch"), false);
 					break;
 
-				case 5:
+				case 5: //Stop
 					SetValue($this->GetIDForIdent("GroupOrder"), 2);
 					break;
 
-				case 6:
+				case 6: //Toggle
 					SetValue($this->GetIDForIdent("Saving"), 2);
+                    SetValue($this->GetIDForIdent("Switch"), !GetValue($this->GetIDForIdent("Switch")));
 					break;
 
-				case 15:
+				case 15: //PosSaveBoth
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
 						SetValue($this->GetIDForIdent("Saving"), 1);
@@ -148,24 +149,24 @@ class DominoSwissGroup extends DominoSwissBase {
 					$this->SaveIntoArray($data->Values->ID);
 					break;
 
-				case 16:
-				case 23:
+				case 16: //PosRestoreBoth
+				case 23: //PosRestore
 					$savedValue = $this->LoadOutOfArray($data->Values->ID);
 
 					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
-				case 17:
+				case 17: //PosByVal
 					$intensityValue =($data->Values->Value * 100) / 63;
 					SetValue($this->GetIDForIdent("Intensity"), $intensityValue);
 					break;
 
-				case 20:
+				case 20: //LockLevelSet
 					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), true);
 					break;
 
-				case 21:
+				case 21: //LockLevelClear
 					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), false);
 					break;
 			}

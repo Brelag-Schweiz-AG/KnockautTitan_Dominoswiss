@@ -6,17 +6,14 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 	public function Create(){
 		//Never delete this line!
 		parent::Create();
-		
-		//These lines are parsed on Symcon Startup or Instance creation
-		//You cannot use variables here. Just static values.
 
-		$this->MaintainVariable("SavedValue", $this->Translate("SavedValue"), 1, "~Intensity.100", 10, true);
+		$this->RegisterVariableInteger("SavedValue", $this->Translate("SavedValue"), "~Intensity.100", 10);
 		IPS_SetHidden($this->GetIDForIdent("SavedValue"), true);
 		
 		$this->RegisterVariableInteger("LastValue", $this->Translate("LastValue"), "~Intensity.100", 8);
 		IPS_SetHidden($this->GetIDForIdent("LastValue"), true);
 		
-		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 5);
+		$this->RegisterVariableInteger("Intensity", $this->Translate("Intensity"), "~Intensity.100", 6);
 		$this->EnableAction("Intensity");
 	}
 	
@@ -31,44 +28,47 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		//No ID check necessary, check is done by receiveFilter "DominoSwissBase.php->ApplyChanges()"
 		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			switch ($data->Values->Command) {
-				case 1:
-					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
-					if (!GetValue($this->GetIDForIdent("Status"))) {
-							SetValue($this->GetIDForIdent("Status"), true);
-							SetValue($this->GetIDForIdent("Intensity"), $lastValue);
-					}
+				case 1: //PulseUp
+					SetValue($this->GetIDForIdent("Status"), true);
 					SetValue($this->GetIDForIdent("Switch"), true);
+					SetValue($this->GetIDForIdent("Intensity"), 0); //Letzter Wert (evtl. unbekannt da eine Dimmfahrt)
 					break;
 
-				case 3:
+				case 2: //PulseDown
+					SetValue($this->GetIDForIdent("Status"), false);
+					SetValue($this->GetIDForIdent("Switch"), false);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
+					break;
+
+				case 3: //ContinuousUp
 					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					SetValue($this->GetIDForIdent("Status"), true);
-					SetValue($this->GetIDForIdent("Intensity"), 100);
 					SetValue($this->GetIDForIdent("Switch"), true);
+					SetValue($this->GetIDForIdent("Intensity"), 100);
 					break;
 
-				case 2:
-				case 4:
-					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
+				case 4: //ContinuousDown
+					//Only save intensity if we have a proper intensity (fix issues with double off)
+					if(GetValue($this->GetIDForIdent("Intensity")) > 0) {
+						SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
+					}
 					SetValue($this->GetIDForIdent("Status"), false);
-					SetValue($this->GetIDForIdent("Intensity"), 0);
 					SetValue($this->GetIDForIdent("Switch"), false);
+					SetValue($this->GetIDForIdent("Intensity"), 0);
 					break;
 				
-				case 6:
+				case 6: //Toggle
+					//Fetch the last value and update the last value to the current one
 					$lastValue = GetValue($this->GetIDForIdent("LastValue"));
 					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
-					$invertedStatus = !(GetValue($this->GetIDForIdent("Status")));
-					SetValue($this->GetIDForIdent("Status"), $invertedStatus);
-					if ($invertedStatus) {
-						SetValue($this->GetIDForIdent("Intensity"), $lastValue);
-					}
-					else {
-						SetValue($this->GetIDForIdent("Intensity"), 0);
-					}
+
+					//Set the value to last value and toggle the status
+					SetValue($this->GetIDForIdent("Status"), !(GetValue($this->GetIDForIdent("Status"))));
+					SetValue($this->GetIDForIdent("Switch"), !(GetValue($this->GetIDForIdent("Switch"))));
+					SetValue($this->GetIDForIdent("Intensity"), $lastValue);
 					break;
 					
-				case 15:
+				case 15: //PosSaveBoth
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 						SetValue($this->GetIDForIdent("SavedValue"), GetValue($this->GetIDForIdent("Intensity")));
 						SetValue($this->GetIDForIdent("Saving"), 1);
@@ -76,38 +76,42 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 					$this->SaveIntoArray($data->Values->ID);
 					break;
 
-				case 16:
-				case 23:
+				case 16: //PosRestoreBoth
+				case 23: //PosRestore
 					$savedValue = $this->LoadOutOfArray($data->Values->ID);
 
 					SetValue($this->GetIDForIdent("Intensity"), $savedValue);
 
 					if ($savedValue > 0) {
 						SetValue($this->GetIDForIdent("Status"), true);
+						SetValue($this->GetIDForIdent("Switch"), true);
 					}
 					else {
 						SetValue($this->GetIDForIdent("Status"), false);
+						SetValue($this->GetIDForIdent("Switch"), false);
 					}
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					break;
 
-				case 17:
+				case 17: //PosByVal
 					SetValue($this->GetIDForIdent("LastValue"), GetValue($this->GetIDForIdent("Intensity")));
 					$intensityValue = ($data->Values->Value * 100) / 63;
 					SetValue($this->GetIDForIdent("Intensity"), $intensityValue);
 					if ($intensityValue > 0) {
 						SetValue($this->GetIDForIdent("Status"), true);
+						SetValue($this->GetIDForIdent("Switch"), true);
 					}
 					else {
 						SetValue($this->GetIDForIdent("Status"), false);
+						SetValue($this->GetIDForIdent("Switch"), false);
 					}
 					break;
 
-				case 20:
+				case 20: //LockLeveSet
 					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), true);
 					break;
 
-				case 21:
+				case 21: //LockLevelClear
 					SetValue($this->GetIDForIdent("LockLevel". $data->Values->Value .""), false);
 					break;
 			}
@@ -122,14 +126,19 @@ class DominoSwissLXDIMM extends DominoSwissLXRLUP {
 		switch($Ident) {
 			case "Switch":
 				if ($Value) {
-					if (!GetValue($this->GetIDForIdent("Status"))) {
-						$this->PulseUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+					if(GetValue($this->GetIDForIdent("Status"))) {
+						//We want to use Move to switch to the same value. Just send the same value
+						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("Intensity")));
+					} else if(GetValue($this->GetIDForIdent("LastValue")) > 0) {
+						//We want to use Move to switch on with last value. ContinuousUp would switch on with 100%
+						$this->Move(GetValue($this->GetIDForIdent("SendingOnLockLevel")), GetValue($this->GetIDForIdent("LastValue")));
+					} else {
+						//If the LastValue was zero dimm to 100%. The users want to switch on and setting to lastValue = 0 would leave it off
+						$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 					}
 				}
 				else {
-					if (GetValue($this->GetIDForIdent("Status"))) {
-						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
-					}
+					$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 				}
 				break;
 				

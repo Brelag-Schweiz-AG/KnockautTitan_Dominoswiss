@@ -399,9 +399,16 @@
 		private function IsSensorType($Type, $Channel) {
 
 			switch ($Type) {
+				case "MX FS1W TM":
+				case "MX FS1B TM":
+				case "MX FS1WF TM":
+				case "MX FS1BF TM":
+					return true;
+
 				case "SWW SOL":
 				case "SWRW":
 					return ($Channel == 1); //This is an explicit exception for weather station devices
+				
 				case "PIR DC":
 				case "MAG TFK":
 				case "UTC":
@@ -427,6 +434,12 @@
 				case "MX FE UP3":
 				case "MX FE SLIM 24V":
 					return "{3AA1A627-78B0-4E17-9206-0BB012094D1C}";
+
+				case "MX FS1W TM":
+				case "MX FS1B TM":
+				case "MX FS1WF TM":
+				case "MX FS1BF TM":
+					return "{61CD5357-4D1E-E0CF-CBE0-08EAA8478A39}";
 
 				case "LX RLUP10A":
 				case "LX RLUP1A":

@@ -1,0 +1,14 @@
+{
+	"id": "{61CD5357-4D1E-E0CF-CBE0-08EAA8478A39}",
+	"name": "DominoSwissTM",
+	"type": 3,
+	"vendor": "BRELAG",
+	"aliases": 
+	[
+		"DominoSwiss Thermostat Mini"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}
