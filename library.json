@@ -1,9 +1,12 @@
 {
     "id": "{7E2FBCEA-D9A4-4710-B56D-860748B01B17}",
-    "author": "Symcon GmbH",
+    "author": "Brelag Schweiz AG",
     "name": "Brelag DominoSwiss",
-    "url": "",
+    "url": "https://www.brelag.com",
+    "compatibility": {
+        "version": "5.5"
+    },
     "version": "1.0",
-    "build": 0,
+    "build": 2,
     "date": 0
 }
