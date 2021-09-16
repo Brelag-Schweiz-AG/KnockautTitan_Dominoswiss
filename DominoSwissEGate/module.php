@@ -134,8 +134,10 @@ class DominoSwissEGate extends IPSModule {
 		return $this->ForwardData(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => 200, "ID" => 0, "Command" => 0, "Value" => 0, "Priority" => 0)));
 	}
 
-	
-	
+	/**
+	 * Die eGate hat CheckNr zur überprüfung des Befehls und leitet den Befehl nur an
+	 * das Funktnetz weiter wen die CheckNr übereinstimmt.
+	 */
 	private function GetCheckNRForCommand($Command) {
 		
 		switch ($Command) {
@@ -210,7 +212,10 @@ class DominoSwissEGate extends IPSModule {
 			
 			case 26:
 				return 6123675;
-					
+
+			// MaxFlex
+			case 43:
+				return 2942145;		
 		}
 	}
 
