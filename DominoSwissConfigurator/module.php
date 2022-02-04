@@ -428,6 +428,9 @@
 				case "MX FE SLIM":
 					return "{0A5C3DFA-CD52-4529-82F1-99DCFCF8A7A2}";
 
+				case "MX FE ULTRA":
+					return "{FE8DB15B-6FD0-F9A7-D7FD-B5188D368528}";
+
 				case "MX FEPRO":
 				case "MX FE PRO":
 				case "MX FEUP3":

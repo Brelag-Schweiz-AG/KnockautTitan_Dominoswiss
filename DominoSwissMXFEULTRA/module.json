@@ -1,0 +1,14 @@
+{
+	"id": "{FE8DB15B-6FD0-F9A7-D7FD-B5188D368528}",
+	"name": "DominoSwissMXFEULTRA",
+	"type": 3,
+	"vendor": "Brelag Schweiz AG",
+	"aliases": 
+	[
+		"DominoSwiss MX FE ULTRA"
+	],
+	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
+	"childRequirements": [],
+	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
+	"prefix": "BRELAG"
+}
