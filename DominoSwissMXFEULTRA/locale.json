@@ -1,0 +1,30 @@
+{
+  "translations": {
+    "de": {
+      "LockLevel ": "Sperrlevel ",
+      "Save": "Speichern",
+      "Restore": "Abrufen",
+      "SendingOnLockLevel": "Priorität",
+      "Saving": "Favoriteneinstellung",
+      "Stopped": "Gestoppt",
+      "Moving": "In Bewegung",
+      "UP": "AUF",
+      "DOWN": "AB",
+      "Movement": "Bewegung",
+      "Awning": "Markise",
+      "Runtime in seconds" : "Laufzeit in Sekunden",
+      "Closed": "Geschlossen",
+      "1x Upper": "1x AUF",
+      "2x Upper": "2x AUF",
+      "3x Upper": "3x AUF",
+      "4x Upper": "4x AUF",
+      "5x Upper": "5x AUF",
+      "6x Upper": "6x AUF",
+      "7x Upper": "7x AUF",
+      "8x Upper": "8x AUF",
+      "RockerControl" : "Wippkontrolle",
+      "Count of rockersteps" : "Anzahl Wippschritte",
+      "Supplement" : "Zusatz"
+    }
+  }
+}
