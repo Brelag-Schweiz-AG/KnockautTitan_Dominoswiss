@@ -57,7 +57,7 @@ class DominoSwissEGate extends IPSModule {
 				if ($has_knx) {
 						return "{\"Port\":\"/dev/ttyAMA1\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
 				} else {
-						return "{\"Port\":\"/dev/ttyAMA3\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+						return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
 				}
 
 			default:
