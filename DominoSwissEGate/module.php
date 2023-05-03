@@ -48,8 +48,6 @@ class DominoSwissEGate extends IPSModule {
 	
 	public function GetConfigurationForParent() {
 
-		file_exists()
-
 		switch ($this->ReadPropertyInteger("Mode")) {
 			case 0: // eGate LAN
 				return "";
