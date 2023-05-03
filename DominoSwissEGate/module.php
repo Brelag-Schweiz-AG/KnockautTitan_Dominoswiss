@@ -48,12 +48,19 @@ class DominoSwissEGate extends IPSModule {
 	
 	public function GetConfigurationForParent() {
 
+		file_exists()
+
 		switch ($this->ReadPropertyInteger("Mode")) {
 			case 0: // eGate LAN
 				return "";
 				
 			case 1: // eGate direct
-				return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+				$has_knx = file_exists("/mnt/system/.uart");
+				if ($has_knx) {
+						return "{\"Port\":\"/dev/ttyAMA1\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+				} else {
+						return "{\"Port\":\"/dev/ttyAMA3\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+				}
 
 			default:
 				break;
