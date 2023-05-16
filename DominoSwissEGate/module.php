@@ -53,8 +53,8 @@ class DominoSwissEGate extends IPSModule {
 				return "";
 				
 			case 1: // eGate direct
-				$has_knx = file_exists("/mnt/system/.uart");
-				if ($has_knx) {
+				$isFusionONEMetal = file_exists("/mnt/system/.uart");
+				if ($isFusionONEMetal) {
 						return "{\"Port\":\"/dev/ttyAMA1\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
 				} else {
 						return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
