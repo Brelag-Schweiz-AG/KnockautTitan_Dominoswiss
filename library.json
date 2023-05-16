@@ -1,12 +1,12 @@
 {
-    "id": "{7E2FBCEA-D9A4-4710-B56D-860748B01B17}",
-    "author": "Brelag Schweiz AG",
-    "name": "Brelag DominoSwiss",
-    "url": "https://www.brelag.com",
-    "compatibility": {
-        "version": "5.0"
-    },
-    "version": "1.2",
-    "build": 4,
-    "date": 20220211
+  "id": "{7E2FBCEA-D9A4-4710-B56D-860748B01B17}",
+  "author": "Brelag Schweiz AG",
+  "name": "Brelag DominoSwiss",
+  "url": "https://www.brelag.com",
+  "compatibility": {
+    "version": "5.0"
+  },
+  "version": "1.3",
+  "build": 7,
+  "date": 20230503
 }
