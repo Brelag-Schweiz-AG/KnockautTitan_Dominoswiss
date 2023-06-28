@@ -411,6 +411,7 @@
 				
 				case "PIR DC":
 				case "MAG TFK":
+				case "MAG TFK INV":
 				case "UTC":
 					return true;
 			}
@@ -463,6 +464,7 @@
 					return "{CE892EF8-C01D-43D2-BBA7-D5B54484795E}";
 
 				case "MAG TFK":
+				case "MAG TFK INV":
 					return "{26AE9337-13A8-4BF8-99D0-EE11D91FDEE2}";
 					
 				case "UTC":
