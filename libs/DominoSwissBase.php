@@ -203,7 +203,7 @@ class DominoSwissBase extends IPSModule {
 		return $result;
 	}
 
-	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority, int $CheckNr = null) {
+	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority, int $CheckNr = -1) {
 		$id = $this->ReadPropertyInteger("ID");
 		return $this->SendDataToParent(
 			json_encode(
