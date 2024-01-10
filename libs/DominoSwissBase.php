@@ -219,6 +219,5 @@ class DominoSwissBase extends IPSModule {
 			)
 		);
 	}
-
 }
 ?>
