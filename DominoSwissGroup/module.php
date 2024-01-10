@@ -268,7 +268,7 @@ class DominoSwissGroup extends DominoSwissBase {
 	
 	
 	
-	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority, int $CheckNr = null) {
+	public function SendCommand(int $Instruction, int $Command, int $Value, int $Priority, int $CheckNr) {
 
 		$id = $this->ReadPropertyInteger("ID");
 		return $this->SendDataToParent(json_encode(Array("DataID" => "{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}", "Instruction" => $Instruction, "ID" => $id, "Command" => $Command, "Value" => $Value, "Priority" => $Priority, "CheckNr" => $CheckNr)));
