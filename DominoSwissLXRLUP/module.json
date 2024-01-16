@@ -12,5 +12,5 @@
 	"parentRequirements": ["{C24CDA30-82EE-46E2-BAA0-13A088ACB5DB}"],
 	"childRequirements": [],
 	"implemented": ["{BA70E3E8-68D2-4E3B-8C64-BBB86F188473}"],
-	"prefix": "BRELAGTEST"
+	"prefix": "BRELAG"
 }
