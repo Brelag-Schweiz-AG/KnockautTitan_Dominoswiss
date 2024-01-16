@@ -255,8 +255,7 @@ class DominoSwissEGate extends IPSModule {
 				$result = "Instruction=" . $Instruction . ";ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
 				if ($SendCheckNr) {
 					if ($CustomCheckNr == null || $CustomCheckNr == 0) {
-						$checkNr = $this->
-						($Command);
+						$checkNr = $this->GetCheckNRForCommand($Command);
 					} else {
 						$checkNr = $CustomCheckNr;
 					}
