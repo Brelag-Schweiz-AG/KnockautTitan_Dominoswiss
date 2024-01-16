@@ -126,43 +126,43 @@ class DominoSwissBase extends IPSModule {
 
 	public function PulseUp(int $Priority){
 
-		$this->SendCommand( 1, 1, 0  , $Priority);
+		$this->SendCommand( 1, 1, 0  , $Priority, null);
 
 	}
 
 	public function PulseDown(int $Priority){
 
-		$this->SendCommand( 1, 2, 0  , $Priority);
+		$this->SendCommand( 1, 2, 0  , $Priority, null);
 
 	}
 
 	public function ContinuousUp(int $Priority){
 
-		$this->SendCommand( 1, 3, 0  , $Priority);
+		$this->SendCommand( 1, 3, 0  , $Priority, null);
 
 	}
 
 	public function ContinuousDown(int $Priority){
 
-		$this->SendCommand( 1, 4, 0  , $Priority);
+		$this->SendCommand( 1, 4, 0  , $Priority, null);
 
 	}
 
 	public function Stop(int $Priority){
 
-		$this->SendCommand( 1, 5, 0  , $Priority);
+		$this->SendCommand( 1, 5, 0  , $Priority, null);
 
 	}
 
 	public function Toggle(int $Priority){
 
-		$this->SendCommand( 1, 6, 0  , $Priority);
+		$this->SendCommand( 1, 6, 0  , $Priority, null);
 
 	}
 
 	public function Save(int $Priority){
 
-		$this->SendCommand( 1, 15, 0  , $Priority);
+		$this->SendCommand( 1, 15, 0  , $Priority, null);
 
 	}
 
@@ -175,19 +175,19 @@ class DominoSwissBase extends IPSModule {
 
 	public function RestorePosition(int $Priority){
 
-		$this->SendCommand( 1, 23, -1  , $Priority);
+		$this->SendCommand( 1, 23, -1  , $Priority, null);
 
 	}
 
 	public function LockLevelSet(int $Value) {
 
-		$this->SendCommand( 1, 20, $Value , 3);
+		$this->SendCommand( 1, 20, $Value , 3, null);
 
 	}
 
 	public function LockLevelClear(int $Value) {
 
-		$this->SendCommand( 1, 21, $Value, 3);
+		$this->SendCommand( 1, 21, $Value, 3, null);
 
 	}
 

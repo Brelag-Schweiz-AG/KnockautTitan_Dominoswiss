@@ -188,7 +188,7 @@ class DominoSwissGroup extends DominoSwissBase {
 				break;
 
 			case "GroupOrder":
-				$this->SendCommand(1, $this->GetCommandNumberforValue($Value), 0, GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+				$this->SendCommand(1, $this->GetCommandNumberforValue($Value), 0, GetValue($this->GetIDForIdent("SendingOnLockLevel")), null);
 				break;
 
 			case "Intensity":
@@ -204,7 +204,7 @@ class DominoSwissGroup extends DominoSwissBase {
 	
 	public function RestorePosition(int $Priority){
 
-		$this->SendCommand( 1, 23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority);
+		$this->SendCommand( 1, 23, GetValue($this->GetIDForIdent("SavedValue"))  , $Priority, null);
 
 	}
 
@@ -220,7 +220,7 @@ class DominoSwissGroup extends DominoSwissBase {
 		}
 
 		$Value = round(($Value * 63) / 100, 0);
-		$this->SendCommand( 1, 17, $Value, $Priority);
+		$this->SendCommand( 1, 17, $Value, $Priority, null);
 
 	}
 
