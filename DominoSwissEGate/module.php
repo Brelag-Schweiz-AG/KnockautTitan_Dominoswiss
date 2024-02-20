@@ -2,11 +2,13 @@
 class DominoSwissEGate extends IPSModule {
 	
 	public function Create(){
+		$isFusionONE = file_exists("/mnt/system/.skin");
+
 		//Never delete this line!
 		parent::Create();
 
 		$this->RegisterPropertyInteger("MessageDelay", 250);
-		$this->RegisterPropertyInteger("Mode", 0);
+		$this->RegisterPropertyInteger("Mode", $isFusionONE ? 1 : 0);
 		
 		$this->RegisterVariableString("Name","Name");
 		$this->RegisterVariableString("ID",$this->Translate("DeviceID"));
@@ -16,8 +18,12 @@ class DominoSwissEGate extends IPSModule {
 		
 		$this->RegisterTimer("DeviceInfoGetTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
 		
-		$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
-		
+		if ($isFusionONE) {
+			$this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}"); //SerialPort
+		}
+		else {
+			$this->RequireParent("{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}"); //ClientSocket
+		}
 	}
 
 	
