@@ -55,9 +55,15 @@ class DominoSwissEGate extends IPSModule {
 			case 1: // eGate direct
 				$isFusionONEMetal = file_exists("/mnt/system/.uart");
 				if ($isFusionONEMetal) {
+					// Since Kernel 6.1+ Serial interfaces are named after the real number. Prefer ttyAMA3 and fall back to old behaviour using ttyAMA1 for older Kernels.
+					if (file_exists("/dev/ttyAMA3")) {
+						return "{\"Port\":\"/dev/ttyAMA3\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+					}
+					else {
 						return "{\"Port\":\"/dev/ttyAMA1\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+					}
 				} else {
-						return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
+					return "{\"Port\":\"/dev/ttyAMA0\", \"BaudRate\": \"115200\", \"StopBits\": \"1\", \"DataBits\": \"8\", \"Parity\": \"None\"}";
 				}
 
 			default:
