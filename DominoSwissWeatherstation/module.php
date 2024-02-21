@@ -46,6 +46,10 @@ class DominoSwissWeatherstation extends IPSModule {
 					$lightId = $this->GetIDForIdent("LightValue");
 					$oldValue = GetValue($lightId);
 					$oldStep = $this->GetStepFromLightValue($oldValue);
+					if ($oldStep == -1) {
+						IPS_LogMessage("Invalid light value", "Old: " . $oldValue);
+						break;
+					}
 					
 					$delta = $this->ReadPropertyInteger("MaxLightStepDelta");
 					// We check that not more than $delta steps are changed at once. This is a simple way to avoid wrong values.
