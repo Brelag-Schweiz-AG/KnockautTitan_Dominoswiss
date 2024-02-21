@@ -83,15 +83,33 @@ class DominoSwissEGate extends IPSModule {
 
 		$fssTransmitParameter = json_decode($JSONString);
 
+		$CheckNr = (isset($fssTransmitParameter->CheckNr) ? $fssTransmitParameter->CheckNr : null);
+
 		if (IPS_SemaphoreEnter($_IPS['SELF'], 20 * $this->ReadPropertyInteger("MessageDelay"))) {
-			$data = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, true);
+			$data = $this->GetDataString(
+				$fssTransmitParameter->Instruction,
+				$fssTransmitParameter->ID,
+				$fssTransmitParameter->Command,
+				$fssTransmitParameter->Value,
+				$fssTransmitParameter->Priority,
+				$CheckNr,
+				true
+			);
 			$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => $data)));
 			IPS_Sleep($this->ReadPropertyInteger("MessageDelay"));
 			IPS_SemaphoreLeave($_IPS['SELF']);
 		}
 		
 		if ($fssTransmitParameter->Instruction != 200) {
-			$emulateData = $this->GetDataString($fssTransmitParameter->Instruction, $fssTransmitParameter->ID, $fssTransmitParameter->Command, $fssTransmitParameter->Value, $fssTransmitParameter->Priority, false);
+			$emulateData = $this->GetDataString(
+				$fssTransmitParameter->Instruction,
+				$fssTransmitParameter->ID,
+				$fssTransmitParameter->Command,
+				$fssTransmitParameter->Value,
+				$fssTransmitParameter->Priority,
+				$CheckNr,
+				false
+			);
 			$this->ReceiveData(json_encode(Array("DataID" => "{018EF6B5-AB94-40C6-AA53-46943E824ACF}", "Buffer" => $emulateData)));
 		}
 	}
@@ -238,7 +256,7 @@ class DominoSwissEGate extends IPSModule {
 
 	
 
-	private function GetDataString($Instruction, $ID, $Command, $Value, $Priority, $Check){
+	private function GetDataString($Instruction, $ID, $Command, $Value, $Priority, $CustomCheckNr, $SendCheckNr){
 
 		switch ($Instruction) {
 			case 200:
@@ -247,8 +265,12 @@ class DominoSwissEGate extends IPSModule {
 				
 			default:
 				$result = "Instruction=" . $Instruction . ";ID=" . $ID . ";Command=" . $Command . ";Value=" . $Value . ";Priority=" . $Priority . ";";
-				if ($Check) {
-					$checkNr = $this->GetCheckNRForCommand($Command);
+				if ($SendCheckNr) {
+					if ($CustomCheckNr == null || $CustomCheckNr == 0) {
+						$checkNr = $this->GetCheckNRForCommand($Command);
+					} else {
+						$checkNr = $CustomCheckNr;
+					}
 					$result .= "CheckNr=" . $checkNr . ";";
 				}
 				break;
