@@ -1,7 +1,7 @@
 <?
 class DominoSwissWeatherstation extends IPSModule {
-	const $validWindValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
-	const $validLightValues = [0, 5, 8, 10, 30, 100, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 40000, 60000, 80000];
+	const VALID_WIND_VALUES = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
+	const VALID_LIGHT_VALUES = [0, 5, 8, 10, 30, 100, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 40000, 60000, 80000];
 	
 	public function Create(){
 		//Never delete this line!
@@ -89,7 +89,7 @@ class DominoSwissWeatherstation extends IPSModule {
 
 	function GetStepFromWindValue($value) {
 		$index = -1;
-		foreach ($this->validWindValues as $key => $val) {
+		foreach (self::VALID_WIND_VALUES as $key => $val) {
 			if ($val == $value) {
 				$index = $key;
 				break;
@@ -100,7 +100,7 @@ class DominoSwissWeatherstation extends IPSModule {
 
 	function GetStepFromLightValue($value) {
 		$index = -1;
-		foreach ($this->validLightValues as $key => $val) {
+		foreach (self::VALID_LIGHT_VALUES as $key => $val) {
 			if ($val == $value) {
 				$index = $key;
 				break;
