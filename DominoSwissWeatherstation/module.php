@@ -212,7 +212,6 @@ class DominoSwissWeatherstation extends IPSModule {
 	}
 	
 	private function GetWindValue($Category, $Modulo) {
-		$validValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
 		
 		$base = 0;
 		$step = 0;
