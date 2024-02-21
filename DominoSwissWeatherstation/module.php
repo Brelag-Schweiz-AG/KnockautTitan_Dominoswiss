@@ -41,7 +41,7 @@ class DominoSwissWeatherstation extends IPSModule {
 			switch ($data->Values->Command) {
 				case 32:
 					$newStep = intval($data->Values->Value / 8);
-					$newValue = $this->GetSimpleLightValue($newStep)
+					$newValue = $this->GetSimpleLightValue($newStep);
 
 					$lightId = $this->GetIDForIdent("LightValue");
 					$oldValue = GetValue($lightId);
@@ -57,7 +57,7 @@ class DominoSwissWeatherstation extends IPSModule {
 					break;
 					
 				case 33:
-					$newValue = $this->GetSimpleWindValue(intval($data->Values->Value / 8))
+					$newValue = $this->GetSimpleWindValue(intval($data->Values->Value / 8));
 					$windId = $this->GetIDForIdent("WindValue");
 					$oldValue = GetValue($windId);
 					$delta = $this->ReadPropertyInteger("MaxWindValueDelta");
