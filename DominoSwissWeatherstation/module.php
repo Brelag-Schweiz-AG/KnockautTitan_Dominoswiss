@@ -1,5 +1,7 @@
 <?
 class DominoSwissWeatherstation extends IPSModule {
+	$validWindValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
+	$validLightValues = [0, 5, 8, 10, 30, 100, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 40000, 60000, 80000];
 	
 	public function Create(){
 		//Never delete this line!
@@ -11,27 +13,24 @@ class DominoSwissWeatherstation extends IPSModule {
 		$this->RegisterVariableFloat("WindValue", "Wind", "~WindSpeed.kmh", 0);
 		$this->RegisterVariableBoolean("Raining", $this->Translate("Raining"), "~Raining", 0);
 		$this->RegisterVariableFloat("GoldCap", "GoldCap", "", 0);
-		
+
+		$this->RegisterPropertyInteger("MaxWindValueDelta", 40);
+		$this->RegisterPropertyInteger("MaxLightStepDelta", 2);
+
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
-
-	
 	
 	public function Destroy(){
 		//Never delete this line!
 		parent::Destroy();
 		
 	}
-
-	
 	
 	public function ApplyChanges(){
 		//Never delete this line!
 		parent::ApplyChanges();
 		
 	}
-
-	
 	
 	public function ReceiveData($JSONString) {
 		
@@ -41,11 +40,33 @@ class DominoSwissWeatherstation extends IPSModule {
 		if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
 			switch ($data->Values->Command) {
 				case 32:
-					SetValue($this->GetIDForIdent("LightValue"), $this->GetLightValue(intval($data->Values->Value / 8), ($data->Values->Value % 8)));
+					$newStep = intval($data->Values->Value / 8);
+					$newValue = $this->GetSimpleLightValue($newStep)
+
+					$lightId = $this->GetIDForIdent("LightValue");
+					$oldValue = GetValue($lightId);
+					$oldStep = $this->GetStepFromLightValue($oldValue);
+					
+					$delta = $this->ReadPropertyInteger("MaxLightStepDelta");
+					// We check that not more than $delta steps are changed at once. This is a simple way to avoid wrong values.
+					if (abs($newStep - $oldStep) > $delta) {
+						IPS_LogMessage("Unreasonable light step change", "Old: " . $oldValue . " New: " . $newValue . " Delta: " . $delta);
+					} else {
+						SetValue($lightId, $newValue);
+					}
 					break;
 					
 				case 33:
-					SetValue($this->GetIDForIdent("WindValue"), $this->GetWindValue(intval($data->Values->Value / 8), ($data->Values->Value % 8)));
+					$newValue = $this->GetSimpleWindValue(intval($data->Values->Value / 8))
+					$windId = $this->GetIDForIdent("WindValue");
+					$oldValue = GetValue($windId);
+					$delta = $this->ReadPropertyInteger("MaxWindValueDelta");
+					// We check that not more than $delta value is changed at once. This is a simple way to avoid wrong values.
+					if (abs($newValue - $oldValue) > $delta) {
+						IPS_LogMessage("Unreasonable wind value change", "Old: " . $oldValue . " New: " . $newValue . " Delta: " . $delta);
+					} else {
+						SetValue($windId, $newValue);
+					}
 					break;
 					
 				case 34:
@@ -66,8 +87,37 @@ class DominoSwissWeatherstation extends IPSModule {
 	
 	}
 
+	function GetStepFromWindValue($value) {
+		$index = -1;
+		foreach ($this->validWindValues as $key => $val) {
+			if ($val == $value) {
+				$index = $key;
+				break;
+			}
+		}
+		return $index;
+	}
+
+	function GetStepFromLightValue($value) {
+		$index = -1;
+		foreach ($this->validLightValues as $key => $val) {
+			if ($val == $value) {
+				$index = $key;
+				break;
+			}
+		}
+		return $index;
+	}
 	
+	function GetSimpleWindValue($step) {
+		return $this->validWindValues[$step];	
+	}
+
+	function GetSimpleLightValue($step) {
+		return $this->validLightValues[$step];
+	}
 	
+	// The following two function can calculate substeps for the light and wind values. But our weatherstation does not support this.
 	function GetLightValue($Category, $Modulo) {
 		
 		$base = 0;
@@ -156,10 +206,9 @@ class DominoSwissWeatherstation extends IPSModule {
 		
 		return $base + $Modulo * ($step / 8);
 	}
-
-	
 	
 	function GetWindValue($Category, $Modulo) {
+		$validValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
 		
 		$base = 0;
 		$step = 0;
@@ -247,6 +296,5 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $base + $Modulo * ($step / 8);
 		
 	}
-
 }
 ?>
