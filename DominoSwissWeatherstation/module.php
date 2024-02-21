@@ -1,7 +1,7 @@
 <?
 class DominoSwissWeatherstation extends IPSModule {
-	$validWindValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
-	$validLightValues = [0, 5, 8, 10, 30, 100, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 40000, 60000, 80000];
+	const $validWindValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
+	const $validLightValues = [0, 5, 8, 10, 30, 100, 5000, 10000, 12000, 15000, 20000, 25000, 30000, 40000, 60000, 80000];
 	
 	public function Create(){
 		//Never delete this line!
