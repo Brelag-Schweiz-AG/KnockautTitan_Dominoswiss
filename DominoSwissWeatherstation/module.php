@@ -87,7 +87,7 @@ class DominoSwissWeatherstation extends IPSModule {
 	
 	}
 
-	function GetStepFromWindValue($value) {
+	private function GetStepFromWindValue($value) {
 		$index = -1;
 		foreach (self::VALID_WIND_VALUES as $key => $val) {
 			if ($val == $value) {
@@ -98,7 +98,7 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $index;
 	}
 
-	function GetStepFromLightValue($value) {
+	private function GetStepFromLightValue($value) {
 		$index = -1;
 		foreach (self::VALID_LIGHT_VALUES as $key => $val) {
 			if ($val == $value) {
@@ -109,16 +109,16 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $index;
 	}
 	
-	function GetSimpleWindValue($step) {
-		return $this->validWindValues[$step];	
+	private function GetSimpleWindValue($step) {
+		return self::VALID_WIND_VALUES[$step];	
 	}
 
-	function GetSimpleLightValue($step) {
-		return $this->validLightValues[$step];
+	private function GetSimpleLightValue($step) {
+		return self::VALID_LIGHT_VALUES[$step];
 	}
 	
 	// The following two function can calculate substeps for the light and wind values. But our weatherstation does not support this.
-	function GetLightValue($Category, $Modulo) {
+	private function GetLightValue($Category, $Modulo) {
 		
 		$base = 0;
 		$step = 0;
@@ -207,7 +207,7 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $base + $Modulo * ($step / 8);
 	}
 	
-	function GetWindValue($Category, $Modulo) {
+	private function GetWindValue($Category, $Modulo) {
 		$validValues = [0, 10, 15, 20, 25, 30, 35, 40, 50, 60, 70, 80, 90, 100, 110, 120];
 		
 		$base = 0;
