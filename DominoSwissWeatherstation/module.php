@@ -41,14 +41,20 @@ class DominoSwissWeatherstation extends IPSModule {
 			switch ($data->Values->Command) {
 				case 32:
 					$newStep = intval($data->Values->Value / 8);
-					$newValue = $this->GetSimpleLightValue($newStep);
+					if ($newStep < 0 || $newStep > 15) {
+						IPS_LogMessage("Invalid new light step", "Step: " . $newStep);
+						return;
+					}
+					$newValue = $this->GetLightValue($newStep);
 
 					$lightId = $this->GetIDForIdent("LightValue");
 					$oldValue = GetValue($lightId);
 					$oldStep = $this->GetStepFromLightValue($oldValue);
 					if ($oldStep == -1) {
-						IPS_LogMessage("Invalid light value", "Old: " . $oldValue);
-						break;
+						// Old value is not valid for some reason (manually overwritten?). Just overwrite it and return
+						IPS_LogMessage("Invalid old light value", "Old: " . $oldValue);
+						SetValue($lightId, $newValue);
+						return;
 					}
 					
 					$delta = $this->ReadPropertyInteger("MaxLightStepDelta");
@@ -61,9 +67,19 @@ class DominoSwissWeatherstation extends IPSModule {
 					break;
 					
 				case 33:
-					$newValue = $this->GetSimpleWindValue(intval($data->Values->Value / 8));
+					$newStep = intval($data->Values->Value / 8);
+					if ($newStep < 0 || $newStep > 15) {
+						IPS_LogMessage("Invalid new wind step", "Step: " . $newStep);
+						return;
+					}
+					$newValue = $this->GetWindValue($newStep);
 					$windId = $this->GetIDForIdent("WindValue");
 					$oldValue = GetValue($windId);
+					if ($oldValue < 0) {
+						// Old value is not valid for some reason (manually overwritten?). Just overwrite it and return
+						SetValue($windId, $newValue);
+						return;
+					}
 					$delta = $this->ReadPropertyInteger("MaxWindValueDelta");
 					// We check that not more than $delta value is changed at once. This is a simple way to avoid wrong values.
 					if (abs($newValue - $oldValue) > $delta) {
@@ -91,17 +107,6 @@ class DominoSwissWeatherstation extends IPSModule {
 	
 	}
 
-	private function GetStepFromWindValue($value) {
-		$index = -1;
-		foreach (self::VALID_WIND_VALUES as $key => $val) {
-			if ($val == $value) {
-				$index = $key;
-				break;
-			}
-		}
-		return $index;
-	}
-
 	private function GetStepFromLightValue($value) {
 		$index = -1;
 		foreach (self::VALID_LIGHT_VALUES as $key => $val) {
@@ -113,191 +118,12 @@ class DominoSwissWeatherstation extends IPSModule {
 		return $index;
 	}
 	
-	private function GetSimpleWindValue($step) {
+	private function GetWindValue($step) {
 		return self::VALID_WIND_VALUES[$step];	
 	}
 
-	private function GetSimpleLightValue($step) {
+	private function GetLightValue($step) {
 		return self::VALID_LIGHT_VALUES[$step];
-	}
-	
-	// The following two function can calculate substeps for the light and wind values. But our weatherstation does not support this.
-	private function GetLightValue($Category, $Modulo) {
-		
-		$base = 0;
-		$step = 0;
-
-		switch ($Category) {
-			case 0:
-				$base = 0;
-				$step = 5;
-				break;
-				
-			case 1:
-				$base = 5;
-				$step = 3;
-				break;
-			
-			case 2:
-				$base = 8;
-				$step = 2;
-				break;
-			
-			case 3:
-				$base = 10;
-				$step = 20;
-				break;
-			
-			case 4:
-				$base = 30;
-				$step = 70;
-				break;
-			
-			case 5:
-				$base = 100;
-				$step = 4900;
-				break;
-			
-			case 6:
-				$base = 5000;
-				$step = 5000;
-				break;
-			
-			case 7:
-				$base = 10000;
-				$step = 2000;
-				break;
-			
-			case 8:
-				$base = 12000;
-				$step = 3000;
-				break;
-			
-			case 9:
-				$base = 15000;
-				$step = 5000;
-				break;
-			
-			case 10:
-				$base = 20000;
-				$step = 5000;
-				break;
-			
-			case 11:
-				$base = 25000;
-				$step = 5000;
-				break;
-			
-			case 12:
-				$base = 30000;
-				$step = 10000;
-				break;
-			
-			case 13:
-				$base = 40000;
-				$step = 20000;
-				break;
-			
-			case 14:
-				$base = 60000;
-				$step = 20000;
-				break;
-			
-			case 15:
-				$this->SendDebug("ValuesID", "häh", 0);
-				return 80000;
-		}
-		
-		return $base + $Modulo * ($step / 8);
-	}
-	
-	private function GetWindValue($Category, $Modulo) {
-		
-		$base = 0;
-		$step = 0;
-		
-		switch ($Category) {
-			case 0:
-				$base = 0;
-				$step = 10;
-				break;
-				
-			case 1:
-				$base = 10;
-				$step = 5;
-				break;
-			
-			case 2:
-				$base = 15;
-				$step = 5;
-				break;
-			
-			case 3:
-				$base = 20;
-				$step = 5;
-				break;
-			
-			case 4:
-				$base = 25;
-				$step = 5;
-				break;
-			
-			case 5:
-				$base = 30;
-				$step = 5;
-				break;
-			
-			case 6:
-				$base = 35;
-				$step = 5;
-				break;
-			
-			case 7:
-				$base = 40;
-				$step = 10;
-				break;
-			
-			case 8:
-				$base = 50;
-				$step = 10;
-				break;
-			
-			case 9:
-				$base = 60;
-				$step = 10;
-				break;
-			
-			case 10:
-				$base = 70;
-				$step = 10;
-				break;
-			
-			case 11:
-				$base = 80;
-				$step = 10;
-				break;
-			
-			case 12:
-				$base = 90;
-				$step = 10;
-				break;
-			
-			case 13:
-				$base = 100;
-				$step = 10;
-				break;
-			
-			case 14:
-				$base = 110;
-				$step = 10;
-				break;
-			
-			case 15:
-				return 120;
-		}
-		
-		return $base + $Modulo * ($step / 8);
-		
 	}
 }
 ?>
