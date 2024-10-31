@@ -7,7 +7,7 @@ class DominoSwissEGate extends IPSModule {
 		//Never delete this line!
 		parent::Create();
 
-		$this->RegisterPropertyInteger("MessageDelay", 250);
+		$this->RegisterPropertyInteger("MessageDelay", 1000);
 		$this->RegisterPropertyInteger("Mode", $isFusionONE ? 1 : 0);
 		
 		$this->RegisterVariableString("Name","Name");
