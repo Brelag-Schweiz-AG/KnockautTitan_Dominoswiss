@@ -349,6 +349,10 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 
 		SetValue($this->GetIDForIdent("RockerControl"), $Value);
 	}
-
+	
+	public function GetVisualizationTile(){
+		$htmlFile = file_get_contents(__DIR__.'/module.html');
+		return $htmlFile;
+	}
 }
 ?>
