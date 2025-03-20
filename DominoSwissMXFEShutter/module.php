@@ -8,7 +8,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		parent::Create();
 		
 		$this->SetVisualizationType(1);
-		$this->RegisterPropertyBoolean("Awning", false);
+		$this->RegisterPropertyBoolean("Awning", true);
 		$this->RegisterPropertyInteger("CountRockerSteps", 8);
 		$this->RegisterPropertyInteger("Runtime", 90);
 
