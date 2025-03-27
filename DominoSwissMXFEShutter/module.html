@@ -1,13 +1,13 @@
 <script> 
     function handleMessage(Data, Value) {
-        //requestAction(Data, Value);
+        requestAction(Data, Value);
         
     }  
 </script>
 
 <body>
     <div id="Movement"></div>
-        <button onclick ="requestAction('Movement', '0')">AUF</button>
+        <button onclick ="handleMessage('Movement', '0')">AUF</button>
         <button onclick ="handleMessage('Movement', '1')">Wippen AUF</button>
         <button onclick ="handleMessage('Movement', '2')">STOP</button>
         <button onclick ="handleMessage('Movement', '3')">Wippen AB</button>
