@@ -10,22 +10,22 @@ function handleMessage(Data, Value) {
 
  
     if (Data == 'ContinuousUp') {
-                element.innerHTML = 'Continuous Up, Value: ' + Value;
+                element.innerHTML = 'Continuous Up';
             } else if (Data == 'PulseUp') {
-                element.innerHTML = 'Pulse Up, Value: ' + Value;
+                element.innerHTML = 'Pulse Up';
             } else if (Data == 'Stop') {
-                element.innerHTML = 'Stop, Value: ' + Value;
+                element.innerHTML = 'Stop';
             } else if (Data == 'PulseDown') {
-                element.innerHTML = 'Pulse Down, Value: ' + Value;
+                element.innerHTML = 'Pulse Down';
             } else if (Data == 'ContinuousDown') {
-                element.innerHTML = 'Continuous Down, Value: ' + Value;
+                element.innerHTML = 'Continuous Down';
             }
 
 </script>
 
 <body>
     <div id="Movement"></div>
-        <button onclick ="handleMessage('ContinuousUp', '0')"></button>
+        <button onclick ="handleMessage('Movement', '0')"></button>
 
     
 </body>
