@@ -1,26 +1,22 @@
 <script> 
     function handleMessage(Data, Value) {
-        var element = document.getElementById('Movement');
-        var stopButton = document.getElementById('stopButton');  
+        var movement = document.getElementById('Movement'); 
+        var save = document.getElementById('Saving');
         requestAction(Data, Value);
         
-        if (Value === 0 || Value === 4) {
-            document.getElementById('stopButton').style.display = 'inline'; // Show Stop button
-        }else{
-            stopButton.style.display = 'none';
-        }
     }
 
-    window.onload = function() {
-            document.getElementById('stopButton').style.display = 'none';
-        };
+    
 </script>
 
 <body>
     <div id="Movement"></div>
         <button onclick ="handleMessage('Movement', '0')">AUF</button>
         <button onclick ="handleMessage('Movement', '1')">Wippen AUF</button>
-        <button id="stopButton" onclick ="handleMessage('Movement', '2')">STOP</button>
+        <button onclick ="handleMessage('Movement', '2')">STOP</button>
         <button onclick ="handleMessage('Movement', '3')">Wippen AB</button>
-        <button onclick ="handleMessage('Movement', '4')">AB</button>   
+        <button onclick ="handleMessage('Movement', '4')">AB</button> 
+        <button onclick ="handleMessage('Saving', '0')">Abrufen</button> 
+        <button onclick ="handleMessage('Saving', '1')">Speichern</button> 
+</body>
 </body>
