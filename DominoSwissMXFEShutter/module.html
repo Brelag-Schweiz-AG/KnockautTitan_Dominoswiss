@@ -1,6 +1,7 @@
 <script> 
     function handleMessage(Data, Value) {
-        document.getElementById('Movement');   
+        document.getElementById('Movement');
+        document.getElementById('stopButton');   
         requestAction(Data, Value);
         
         if (Value === 0 || Value === 4) {
