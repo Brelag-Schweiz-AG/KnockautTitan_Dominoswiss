@@ -1,31 +1,22 @@
 <script> 
 function handleMessage(Data, Value) {
-            var element = document.getElementById('Movement'); 
-            
-            requestAction(Data, Value);
-            
+            document.getElementById('Movement');   
+            requestAction(Data, Value);           
             // Update the UI based on the Data and Value
-            element.innerHTML = `${Data} Action, Value: ${Value}`;
+            element.innerHTML = `${Data} Action`;
         }
 
- 
-    if (Data == 'ContinuousUp') {
-                element.innerHTML = 'Continuous Up';
-            } else if (Data == 'PulseUp') {
-                element.innerHTML = 'Pulse Up';
-            } else if (Data == 'Stop') {
-                element.innerHTML = 'Stop';
-            } else if (Data == 'PulseDown') {
-                element.innerHTML = 'Pulse Down';
-            } else if (Data == 'ContinuousDown') {
-                element.innerHTML = 'Continuous Down';
-            }
 
 </script>
 
 <body>
     <div id="Movement"></div>
         <button onclick ="handleMessage('Movement', '0')"></button>
+        <button onclick ="handleMessage('Movement', '1')"></button>
+        <button onclick ="handleMessage('Movement', '2')"></button>
+        <button onclick ="handleMessage('Movement', '3')"></button>
+        <button onclick ="handleMessage('Movement', '4')"></button>
+        
 
     
 </body>
