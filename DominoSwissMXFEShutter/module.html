@@ -1,11 +1,11 @@
 <script> 
     function handleMessage(Data, Value) {
-        document.getElementById('Movement');
-        document.getElementById('stopButton');   
+        var element = document.getElementById('Movement');
+        var stopButton = document.getElementById('stopButton');  
         requestAction(Data, Value);
         
         if (Value === 0 || Value === 4) {
-            stopButton.style.display = 'inline'; // Show Stop button
+            document.getElementById('stopButton').style.display = 'inline'; // Show Stop button
         }else{
             stopButton.style.display = 'none';
         }
