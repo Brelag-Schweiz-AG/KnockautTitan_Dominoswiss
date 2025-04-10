@@ -292,6 +292,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 				switch ($Value) {
 					case 0:
 						$this->ContinuousUp(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
+						$this->handleMessage($Ident, $Value);
 						break;
 
 					case 1:
@@ -309,7 +310,6 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					case 4:
 						$this->ContinuousDown(GetValue($this->GetIDForIdent("SendingOnLockLevel")));
 						break;
-
 				}
 			break;
 

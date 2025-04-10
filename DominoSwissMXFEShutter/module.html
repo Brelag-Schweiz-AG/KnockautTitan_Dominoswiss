@@ -1,18 +1,73 @@
-<script> 
-    function handleMessage(Data, Value) {
-        requestAction(Data, Value);
-        
-    }  
-</script>
+<!DOCTYPE html>
 
-<body>
-    <div id="Movement"></div>
-        <button onclick ="handleMessage('Movement', '0')">TEST5</button>
-        <button onclick ="handleMessage('Movement', '1')">Wippen AUF</button>
-        <button onclick ="handleMessage('Movement', '2')">STOP</button>
-        <button onclick ="handleMessage('Movement', '3')">Wippen AB</button>
-        <button onclick ="handleMessage('Movement', '4')">AB</button> 
-        <button onclick ="handleMessage('Saving', '0')">Abrufen</button> 
-        <button onclick ="handleMessage('Saving', '1')">Speichern</button> 
-</body>
-</body>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
+
+        <style>
+            button {
+                padding: 15px;
+                font-size: 16px;
+                background-color: rgb(24, 24, 58);
+                color: white;
+                border: none;
+                border-radius: 1200px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                width: 100%;   /* Damit die Buttons die volle Breite ihrer Zelle einnehmen */
+                
+                box-sizing: border-box;
+            }
+            .positionButtons, #Stop {
+                display: none;
+            }
+            button:active {
+                background-color: blue;
+            }
+            .movementButtons {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));  /* Dynamische Spaltenanzahl */
+                gap: 10px;                            /* Abstand zwischen den Buttons */
+                margin: 0 auto;           /* Zentriert den Container */
+                height: 100%;
+                width: 100%;
+                max-width: 100%;
+            }
+          </style>
+    </head>
+
+
+
+
+
+
+
+
+
+
+    <body>
+        <div class = buttonGrid>
+            <div class="movementButtons">
+                <button id="Up" onclick ="requestAction('Movement', '0')">AUF</button>
+                <button id="StepUp" onclick="requestAction('Movement', '1')">Wippen AUF</button>
+                <button id="Down"onclick ="requestAction('Movement', '4')">AB</button> 
+                <button id="Stop"onclick ="requestAction('Movement', '2')">STOP</button>
+                <button id="StepDown"onclick ="requestAction('Movement', '3')">Wippen AB</button>
+                
+            </div>
+            <div class="positionButtons">
+                <button onclick ="requestAction('Saving', '0')">Abrufen</button> 
+                <button onclick ="requestAction('Saving', '1')">Speichern</button> 
+            </div>
+        </div>
+    </body>
+
+    <script> 
+        function handleMessage(Ident, Value) {
+            switch (Ident){
+            }      
+        }
+
+    </script>
+</html>
