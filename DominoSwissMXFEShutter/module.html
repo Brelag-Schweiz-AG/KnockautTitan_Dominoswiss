@@ -1,67 +1,78 @@
 <!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .movementButtons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Zwei gleichmäßige Spalten */
+            grid-template-rows: repeat(2, 1fr);    /* Zwei gleichmäßige Zeilen */
+            gap: 10px;
+            margin: 0 auto;
+            width: 400px; /* Breite des Containers anpassen */
+            height: 400px; /* Höhe des Containers anpassen, für einen quadratischen Bereich */
+            max-width: 100%;
+            position: relative; /* Für die absolute Positionierung des Stop-Buttons */
+        }
 
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="style.css">
+        .movementButtons button {
+            padding: 15px;
+            font-size: 16px;
+            background-color: rgb(59, 230, 96);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            height: 100%; /* Buttons füllen ihre Zelle aus */
+            box-sizing: border-box;
+            display: flex; /* Für die Zentrierung des Textes */
+            justify-content: center;
+            align-items: center;
+        }
 
-        <style>
-            button {
-                padding: 15px;
-                font-size: 16px;
-                background-color: rgb(107, 107, 190);
-                color: white;
-                border: none;
-                border-radius: 20px;
-                cursor: pointer;
-                transition: background-color 0.3s;
-                width: 100%;   /* Damit die Buttons die volle Breite ihrer Zelle einnehmen */
-                
-                box-sizing: border-box;
-            }
-            .positionButtons, #Stop {
-                display: none;
-            }
-            button:active {
-                background-color: blue;
-            }
-            .movementButtons {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));  /* Dynamische Spaltenanzahl */
-                gap: 10px;                            /* Abstand zwischen den Buttons */
-                margin: 0 auto;           /* Zentriert den Container */
-                height: 100%;
-                width: 100%;
-                max-width: 100%;
-            }
-          </style>
-    </head>
+        #Stop {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%); /* Zentriert den Button exakt */
+            width: 120px; /* Durchmesser des Kreises */
+            height: 120px; /* Durchmesser des Kreises */
+            border-radius: 50%; /* Macht den Button rund */
+            font-size: 20px;
+            background-color: rgb(255, 87, 34); /* Auffällige Farbe */
+            display: flex; /* Zentriert den Text im Kreis */
+            justify-content: center;
+            align-items: center;
+            z-index: 10; /* Stellt sicher, dass der Stop-Button über den anderen liegt */
+        }
 
+        .positionButtons, #Stop.hidden {
+            display: none;
+        }
 
-
-
-
-
-
-
-
-
-    <body>
-        <div class = buttonGrid>
-            <div class="movementButtons">
-                <button id="Up" onclick ="requestAction('Movement', '0')">AUF</button>
-                <button id="StepUp" onclick="requestAction('Movement', '1')">Wippen AUF</button>
-                <button id="Down"onclick ="requestAction('Movement', '4')">AB</button> 
-                <button id="Stop"onclick ="requestAction('Movement', '2')">STOP</button>
-                <button id="StepDown"onclick ="requestAction('Movement', '3')">Wippen AB</button>
-                
-            </div>
-            <div class="positionButtons">
-                <button onclick ="requestAction('Saving', '0')">Abrufen</button> 
-                <button onclick ="requestAction('Saving', '1')">Speichern</button> 
-            </div>
+        button:active {
+            background-color: blue;
+        }
+    </style>
+</head>
+<body>
+    <div class="buttonGrid">
+        <div class="movementButtons">
+            <button id="Up" onclick="requestAction('Movement', '0')">AUF</button>
+            <button id="StepUp" onclick="requestAction('Movement', '1')">Wippen AUF</button>
+            <button id="Down" onclick="requestAction('Movement', '4')">AB</button>
+            <button id="StepDown" onclick="requestAction('Movement', '3')">Wippen AB</button>
+            <button id="Stop" onclick="requestAction('Movement', '2')">STOP</button>
         </div>
-    </body>
+        <div class="positionButtons">
+            <button onclick="requestAction('Saving', '0')">Abrufen</button>
+            <button onclick="requestAction('Saving', '1')">Speichern</button>
+        </div>
+    </div>
+</body>
 
     <script> 
         function handleMessage(Data) {
