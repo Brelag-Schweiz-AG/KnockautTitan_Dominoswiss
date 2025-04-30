@@ -1,83 +1,96 @@
 <!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .movementButtons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* Zwei gleichmäßige Spalten */
-            grid-template-rows: repeat(2, 1fr);    /* Zwei gleichmäßige Zeilen */
-            gap: 10px;
-            margin: 0 auto;
-            width: 400px; /* Breite des Containers anpassen */
-            height: 400px; /* Höhe des Containers anpassen, für einen quadratischen Bereich */
-            max-width: 100%;
-            position: relative; /* Für die absolute Positionierung des Stop-Buttons */
-        }
 
-        .movementButtons button {
-            padding: 15px;
-            font-size: 16px;
-            background-color: rgb(59, 230, 96);
-            color: white;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            width: 100%;
-            height: 100%; /* Buttons füllen ihre Zelle aus */
-            box-sizing: border-box;
-            display: flex; /* Für die Zentrierung des Textes */
-            justify-content: center;
-            align-items: center;
-        }
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="style.css">
 
-        #Stop {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%); /* Zentriert den Button exakt */
-            width: 120px; /* Durchmesser des Kreises */
-            height: 120px; /* Durchmesser des Kreises */
-            border-radius: 50%; /* Macht den Button rund */
-            font-size: 20px;
-            background-color: rgb(255, 87, 34); /* Auffällige Farbe */
-            display: flex; /* Zentriert den Text im Kreis */
-            justify-content: center;
-            align-items: center;
-            z-index: 10; /* Stellt sicher, dass der Stop-Button über den anderen liegt */
-        }
+        <style>
+            button {
+                padding: 15px;
+                font-size: 20px;
+                background-color: rgb(0, 255, 0
+            );
+                color: rgb(255, 255, 255);
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                width: 100%;
+                height:100%;   /* Damit die Buttons die volle Breite ihrer Zelle einnehmen */
+                box-sizing: border-box;
+            }
 
-        .positionButtons, #Stop.hidden {
-            display: none;
-        }
+            .positionButtons {
+                visibility: hidden;
+            }
+            #Stop{
+                background-color: rgb(158, 196, 153);
+                height: 50px;
+            }
+            #Stop:active{
+                background-color: rgb(90, 14, 14);
+            }
 
-        button:active {
-            background-color: blue;
-        }
-    </style>
-</head>
-<body>
-    <div class="buttonGrid">
-        <div class="movementButtons">
-            <button id="Up" onclick="requestAction('Movement', '0')">AUF</button>
-            <button id="StepUp" onclick="requestAction('Movement', '1')">Wippen AUF</button>
-            <button id="Down" onclick="requestAction('Movement', '4')">AB</button>
-            <button id="StepDown" onclick="requestAction('Movement', '3')">Wippen AB</button>
-            <button id="Stop" onclick="requestAction('Movement', '2')">STOP</button>
+            
+            button:active {
+                background-color: rgb(29, 167, 82);
+            }
+            .movementButtons {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));  /* Dynamische Spaltenanzahl */
+                gap: 10px;                            /* Abstand zwischen den Buttons */
+                margin-bottom: 10px;           /* Zentriert den Container */
+            }
+            @media (min-width: 200px) {
+                .movementButtons {
+                grid-template-columns: repeat(2, 1fr); /* Erzwinge 2 Spalten bei breiteren Bildschirmen */
+                }
+            }
+            @media (min-width: 201px) and (max-width: 500px) {
+                .movementButtons {
+                grid-template-columns: repeat(2, 1fr); /* Erzwinge 2 Spalten bei breiteren Bildschirmen */
+                }
+            }
+            @media(min-width: 501px) {
+                .movementButtons {
+                grid-template-columns: repeat(4, 1fr); /* Erzwinge 2 Spalten bei breiteren Bildschirmen */
+                }
+                #Stop{
+
+                }
+            }
+
+        </style>
+    </head>
+
+    <body>
+        <div class = buttonGrid>
+            <div class="movementButtons">
+                <button id="Up" onclick ="requestAction('Movement', '0')">AUF &uarr;</button>
+                <button id="StepUp" onclick="requestAction('Movement', '1')">Wippen AUF </button>
+                <button id="Down"onclick ="requestAction('Movement', '4')">AB &darr;</button> 
+                <button id="StepDown"onclick ="requestAction('Movement', '3')">Wippen AB</button>
+            </div>
+            <div>
+                <button id="Stop"onclick ="requestAction('Movement', '2')">STOP</button>
+            </div>
+            <div class="positionButtons">
+                <button onclick ="requestAction('Saving', '0')">Abrufen</button> 
+                <button onclick ="requestAction('Saving', '1')">Speichern</button> 
+            </div>
         </div>
-        <div class="positionButtons">
-            <button onclick="requestAction('Saving', '0')">Abrufen</button>
-            <button onclick="requestAction('Saving', '1')">Speichern</button>
-        </div>
-    </div>
-</body>
+    </body>
 
     <script> 
-        function handleMessage(Data) {
-                 
-        }
+            function handleMessage(Ident, Value) {
+                switch (Ident){
+                }
+            }
 
+        const movementButtons = document.querySelector('.movementButtons');
+        const stopButton = document.getElementById('Stop');
+
+    
     </script>
 </html>
