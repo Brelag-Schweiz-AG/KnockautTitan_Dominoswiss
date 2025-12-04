@@ -331,7 +331,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 
 	
 	
-	public function SetRocker($Value) {
+	public function SetRocker(int $Value) {
 
 		$oldValue = GetValue($this->GetIDForIdent("RockerControl"));
 
