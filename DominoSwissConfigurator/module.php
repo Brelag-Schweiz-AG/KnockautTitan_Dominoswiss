@@ -88,6 +88,8 @@
 				if($channel["IsGroup"]) {
 					$typeName .= " " . $this->Translate("Group");
 				}
+
+				$displayName = !empty($channel["Name"]) ? $channel["Name"] : $typeName;
 				
 				$value = [
 					"ID" => $id,
@@ -97,7 +99,7 @@
 					"Group" => implode(", ", $channel["Group"]),
 					"Supplement" => implode(", ", $channel["Supplement"]),
 					"instanceID" => $findInstanceID($moduleID, $id),
-					"name" => sprintf("%s (ID: %d)", $typeName, $id),
+					"name" => sprintf("%s (ID: %d)", $displayName, $id),
 					"parent" => 1,
 					"create" => [
 						"moduleID" => $moduleID,
