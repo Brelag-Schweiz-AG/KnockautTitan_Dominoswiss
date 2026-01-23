@@ -417,6 +417,7 @@
 						$groupName = $receiverGroup["Name"];
 						break;
 					}
+				}
 					
 					//If no exact match, build name from receiver names
 					if($groupName == "") {
