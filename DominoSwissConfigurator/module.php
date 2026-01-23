@@ -376,6 +376,8 @@
 						if(!isset($transmitterData[$id])) {
 							$transmitterData[$id] = [
 								"receivers" => [],
+								"type" => $transmitter["Type"],
+								"channel" => $link["Channel"],
 								"transmitterIndex" => $link["TransmitterIndex"]
 							];
 						}
@@ -391,7 +393,7 @@
 			$transmitterChannels = [];
 			foreach($transmitterData as $id => $data) {
 				sort($data["receivers"]);
-				$signature = implode(",", $data["receivers"]);
+				$signature = $data["type"] . "|" . $data["channel"] . "|" . implode(",", $data["receivers"]);
 				if(!isset($seenSignatures[$signature])) {
 					//First occurrence with this signature - keep it
 					$seenSignatures[$signature] = $id;

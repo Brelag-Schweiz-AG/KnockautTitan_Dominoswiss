@@ -24,6 +24,9 @@ Programmer=
 3=G.EG.0003;MaxFlex M8W;;;Geb22\EG2;
 4=G.EG.0004;MaxFlex M8W;;;Geb22\EG2;
 5=G.EG.0005;MaxFlex M8W;;;Geb22\EG2;
+6=G.EG.0006;UTC;;;Geb22\EG2;
+7=G.EG.0007;SWRW;;;Geb22\EG2;
+8=G.EG.0008;MAG TFK;;;Geb22\EG2;
 [Receiver]
 //Index=Number;Type;Version;Name;Option1=,Option2=,...
 1=G.EG.0002;MX FE UP3;;G.EG.0002;keyRotationInversion=0,keyNoLuffing=0,keySwwReceiver=0,keyRepeaterOnly=1,keyNeverLock=0,
@@ -67,6 +70,19 @@ Programmer=
 6=2;8;2;Designator=2,ID=2,VirtualSender=1,
 7=3;1;23;RepeaterOnly=0,VirtualSender=0,
 8=3;1;24;RepeaterOnly=0,VirtualSender=0,
+9=3;1;2;Designator=3,ID=3,VirtualSender=0,
+10=6;1;2;Designator=4,ID=6,VirtualSender=0,
+11=7;1;2;Designator=5,ID=7,VirtualSender=0,
+12=8;1;2;Designator=6,ID=8,VirtualSender=0,
+13=5;1;10;RepeaterOnly=0,VirtualSender=0,
+14=5;1;2;Designator=7,ID=5,VirtualSender=0,
+15=5;2;2;Designator=8,ID=5,VirtualSender=0,
+16=5;2;7;RepeaterOnly=0,VirtualSender=0,
+17=5;2;8;RepeaterOnly=0,VirtualSender=0,
+18=5;2;10;RepeaterOnly=0,VirtualSender=0,
+19=4;3;23;RepeaterOnly=0,VirtualSender=0,
+20=4;3;24;RepeaterOnly=0,VirtualSender=0,
+21=4;3;2;Designator=9,ID=4,VirtualSender=0,
 [eGate1]
 SerialNr=
 DeviceNr=G.EG.0003
@@ -80,3 +96,10 @@ MAC-Address=??????
 //Index=ID;TransmitterIndex;Channel;ConfigData
 1=1;1;1;
 2=2;2;8;
+3=3;3;1;
+4=4;6;1;
+5=5;7;1;
+6=6;8;1;
+7=7;5;1;
+8=8;5;2;
+9=9;4;3;
