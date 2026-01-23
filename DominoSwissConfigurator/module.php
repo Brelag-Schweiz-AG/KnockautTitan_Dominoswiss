@@ -367,41 +367,16 @@
 
 		private function BuildTransmitterChannels(array $config) {
 			//Search a few special transmitter devices and also add them
-			//Collect transmitters with their controlled receivers for de-duplication
 			$transmitterData = [];
 			foreach($config["link"] as $link) {
 				$transmitter = $this->GetTransmitterByIndex($config, $link["TransmitterIndex"]);
 				if($transmitter && $this->IsSensorType($transmitter["Type"], $link["Channel"])) {
 					$id = $this->GetEGate1ID($config, $link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
-						if(!isset($transmitterData[$id])) {
-							$transmitterData[$id] = [
-								"receivers" => [],
-								"type" => $transmitter["Type"],
-								"channel" => $link["Channel"],
-								"transmitterIndex" => $link["TransmitterIndex"]
-							];
-						}
-						if(!in_array($link["ReceiverIndex"], $transmitterData[$id]["receivers"])) {
-							$transmitterData[$id]["receivers"][] = $link["ReceiverIndex"];
-						}
+						$transmitterChannels[$id]["Group"][] = $link["TransmitterIndex"];
+						$transmitterChannels[$id]["Supplement"] = [];
 					}
 				}
-			}
-
-			//De-duplicate transmitters based on controlled receivers
-			$seenSignatures = [];
-			$transmitterChannels = [];
-			foreach($transmitterData as $id => $data) {
-				sort($data["receivers"]);
-				$signature = $data["type"] . "|" . $data["channel"] . "|" . implode(",", $data["receivers"]);
-				if(!isset($seenSignatures[$signature])) {
-					//First occurrence with this signature - keep it
-					$seenSignatures[$signature] = $id;
-					$transmitterChannels[$id]["Group"][] = $data["transmitterIndex"];
-					$transmitterChannels[$id]["Supplement"] = [];
-				}
-				//Otherwise skip this transmitter (it's a duplicate)
 			}
 			return $transmitterChannels;
 		}
