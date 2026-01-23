@@ -232,15 +232,7 @@
 					$row = explode("~", $row);
 					if(count($row) >= 3) {
 						$receiverIndices = explode(",", $row[2]);
-						$receiverIndices = array_map('intval', $receiverIndices);
-						$config["ReceiverGroup"][] = [
-							"Index" => $index++,
-							"GroupID" => $row[0],
-							"Name" => $row[1],
-							"ReceiverIndices" => $receiverIndices
-						];
-					}
-				}
+					$receiverIndices = array_map('trim', $receiverIndices);
 			}
 			
 			//parse link
@@ -404,16 +396,16 @@
 					//Build group name based on naming rules
 					$groupName = "";
 					$groupIndices = $channel["Group"];
-					sort($groupIndices);
-					
-					//Check if exact match with ReceiverGroup exists
-					foreach($config["ReceiverGroup"] as $receiverGroup) {
-						$rgIndices = $receiverGroup["ReceiverIndices"];
-						sort($rgIndices);
-						if($groupIndices === $rgIndices) {
-							$groupName = $receiverGroup["Name"];
-							break;
-						}
+				
+				//Create a sorted copy for comparison
+				$sortedGroupIndices = $groupIndices;
+				sort($sortedGroupIndices, SORT_NUMERIC);
+				
+				//Check if exact match with ReceiverGroup exists
+				foreach($config["ReceiverGroup"] as $receiverGroup) {
+					$rgIndices = $receiverGroup["ReceiverIndices"];
+					sort($rgIndices, SORT_NUMERIC);
+					if($sortedGroupIndices === $rgIndices) {
 					}
 					
 					//If no exact match, build name from receiver names
