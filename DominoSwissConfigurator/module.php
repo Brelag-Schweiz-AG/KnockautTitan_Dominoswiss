@@ -232,7 +232,15 @@
 					$row = explode("~", $row);
 					if(count($row) >= 3) {
 						$receiverIndices = explode(",", $row[2]);
-					$receiverIndices = array_map('trim', $receiverIndices);
+						$receiverIndices = array_map('trim', $receiverIndices);
+						$config["ReceiverGroup"][] = [
+							"Index" => $index++,
+							"GroupID" => $row[0],
+							"Name" => $row[1],
+							"ReceiverIndices" => $receiverIndices
+						];
+					}
+				}
 			}
 			
 			//parse link
@@ -406,6 +414,8 @@
 					$rgIndices = $receiverGroup["ReceiverIndices"];
 					sort($rgIndices, SORT_NUMERIC);
 					if($sortedGroupIndices === $rgIndices) {
+						$groupName = $receiverGroup["Name"];
+						break;
 					}
 					
 					//If no exact match, build name from receiver names
