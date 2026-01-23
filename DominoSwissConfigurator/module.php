@@ -134,7 +134,7 @@
 					"Group" => "",
 					"Supplement" => "",
 					"instanceID" => $findInstanceID($moduleID, $id),
-					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
+					"name" => sprintf("%s (%s) (ID: %d)", $channel["Type"], $channel["Name"], $id),
 					"parent" => 2,
 					"create" => [
 						"moduleID" => $moduleID,
