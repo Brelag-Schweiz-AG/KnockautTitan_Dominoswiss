@@ -382,9 +382,10 @@
 				$transmitterChannels[$id]["Supplement"] = [];
 			}
 			//Otherwise skip this transmitter (it's a duplicate)
-			
-			//Go through all receiver channels and mark as Group or obtain the device type, name and awning
-			foreach($receiverChannels as $id => $channel) {
+		}
+		
+		//Go through all receiver channels and mark as Group or obtain the device type, name and awning
+		foreach($receiverChannels as $id => $channel) {
 				if(sizeof($channel["Group"]) > 1) {
 					//Check if we have a homogeneous group of the same device
 					$types = [];
