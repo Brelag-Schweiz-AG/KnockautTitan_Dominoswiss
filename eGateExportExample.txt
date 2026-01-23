@@ -27,6 +27,8 @@ Programmer=
 6=G.EG.0006;UTC;;;Geb22\EG2;
 7=G.EG.0007;SWRW;;;Geb22\EG2;
 8=G.EG.0008;MAG TFK;;;Geb22\EG2;
+9=G.EG.0009;MX FS4W;;;Geb22\EG2;
+10=G.EG.0010;MX FS4B;;;Geb22\EG2;
 [Receiver]
 //Index=Number;Type;Version;Name;Option1=,Option2=,...
 1=G.EG.0002;MX FE UP3;;G.EG.0002;keyRotationInversion=0,keyNoLuffing=0,keySwwReceiver=0,keyRepeaterOnly=1,keyNeverLock=0,
@@ -81,8 +83,14 @@ Programmer=
 17=4;3;23;RepeaterOnly=0,VirtualSender=0,
 18=4;3;24;RepeaterOnly=0,VirtualSender=0,
 19=4;3;2;Designator=9,ID=4,VirtualSender=0,
-20=5;1;26;keyRepeaterOnly=0,VirtualSender=0,
-21=5;1;2;Designator=7,ID=5,VirtualSender=0,
+20=5;1;2;Designator=7,ID=5,VirtualSender=0,
+21=5;1;18;RepeaterOnly=0,VirtualSender=0,
+22=3;2;2;Designator=10,ID=3,VirtualSender=0,
+23=3;2;26;RepeaterOnly=0,VirtualSender=0,
+24=9;1;2;Designator=11,ID=9,VirtualSender=0,
+25=9;1;3;RepeaterOnly=0,VirtualSender=0,
+26=10;1;2;Designator=12,ID=10,VirtualSender=0,
+27=10;1;3;RepeaterOnly=0,VirtualSender=0,
 [eGate1]
 SerialNr=
 DeviceNr=G.EG.0003
@@ -103,3 +111,6 @@ MAC-Address=??????
 7=8;5;2;
 8=9;4;3;
 9=7;5;1;
+10=10;3;2;
+11=11;9;1;
+12=12;10;1;

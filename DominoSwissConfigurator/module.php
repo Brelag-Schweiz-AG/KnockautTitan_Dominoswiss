@@ -310,6 +310,7 @@
 			$transmitterChannels = $this->BuildTransmitterChannels($config);
 			
 			$this->ResolveReceiverChannelDetails($receiverChannels, $config);
+			$this->DeduplicateReceiverChannels($receiverChannels);
 			$this->BuildReceiverSupplements($receiverChannels);
 			$this->ResolveTransmitterChannelDetails($transmitterChannels, $config);
 			
@@ -505,6 +506,24 @@
 					}
 				}
 				sort($receiverChannels[$id]["Supplement"]);
+			}
+		}
+
+		private function DeduplicateReceiverChannels(array &$receiverChannels) {
+			$seen = [];
+			$duplicates = [];
+			foreach($receiverChannels as $id => $channel) {
+				$group = $channel["Group"];
+				sort($group, SORT_NUMERIC);
+				$signature = implode(",", $group);
+				if(isset($seen[$signature])) {
+					$duplicates[] = $id;
+				} else {
+					$seen[$signature] = $id;
+				}
+			}
+			foreach($duplicates as $dupId) {
+				unset($receiverChannels[$dupId]);
 			}
 		}
 
