@@ -367,7 +367,7 @@
 
 		private function BuildTransmitterChannels(array $config) {
 			//Search a few special transmitter devices and also add them
-			$transmitterData = [];
+			$transmitterChannels = [];
 			foreach($config["link"] as $link) {
 				$transmitter = $this->GetTransmitterByIndex($config, $link["TransmitterIndex"]);
 				if($transmitter && $this->IsSensorType($transmitter["Type"], $link["Channel"])) {
@@ -407,7 +407,27 @@
 			unset($channel);
 		}
 
+		/**
+		 * Compute a human-readable group name for a set of receiver indices.
+		 *
+		 * Rules:
+		 * 1) Exact group match: If an entry in ReceiverGroup matches the exact set of
+		 *    receiver indices (ignoring order), use that group's Name.
+		 * 2) Consecutive numeric range: If all receiver names have numeric suffixes
+		 *    (e.g., "G.EG.0003") and the numbers form a consecutive sequence, use
+		 *    "firstName - lastName" (based on min/max numeric suffix).
+		 * 3) Two receivers: If there are exactly two receivers, order them by numeric
+		 *    suffix when available and use "name1 + name2".
+		 * 4) Otherwise return an empty string to use a generic name elsewhere.
+		 *
+		 * Examples:
+		 * - groupIndices [23, 24] with ReceiverGroup "Hello23" -> "Hello23".
+		 * - groupIndices [3, 1, 2] -> "G.EG.0001 - G.EG.0003" (consecutive).
+		 * - groupIndices [24, 23] -> "G.EG.0023 + G.EG.0024" (two items, ordered).
+		 * - groupIndices [7, 10, 12] (not consecutive) -> "".
+		 */
 		private function FindGroupName(array $groupIndices, array $config) {
+			// 1) Try exact match with ReceiverGroup definitions (order-insensitive)
 			$groupName = "";
 			$sortedGroupIndices = $groupIndices;
 			sort($sortedGroupIndices, SORT_NUMERIC);
@@ -422,6 +442,7 @@
 			if($groupName != "") {
 				return $groupName;
 			}
+			// 2) Extract numeric suffixes from receiver names (e.g., "G.EG.0003" -> 3)
 			$receiverNumbersByIndex = [];
 			foreach($groupIndices as $idx) {
 				$receiver = $this->GetReceiverByIndex($config, $idx);
@@ -431,6 +452,7 @@
 					$receiverNumbersByIndex[$idx] = null;
 				}
 			}
+			// 2a) Check if numeric suffixes are present and form a consecutive range
 			$isConsecutive = true;
 			$sortedNumbers = array_values($receiverNumbersByIndex);
 			sort($sortedNumbers);
@@ -448,6 +470,7 @@
 					}
 				}
 			}
+			// 2b) Consecutive: use min/max endpoints for range naming
 			if($isConsecutive && count($groupIndices) > 1) {
 				$minNum = PHP_INT_MAX; $maxNum = PHP_INT_MIN; $minIdx = null; $maxIdx = null;
 				foreach($receiverNumbersByIndex as $idx => $num) {
@@ -458,6 +481,7 @@
 				$lastReceiver = $this->GetReceiverByIndex($config, $maxIdx);
 				return $firstReceiver["Name"] . " - " . $lastReceiver["Name"];
 			}
+			// 3) Two receivers: order by numeric suffix (if present) and join with '+'
 			if(count($groupIndices) == 2) {
 				$idxA = $groupIndices[0];
 				$idxB = $groupIndices[1];
@@ -468,11 +492,13 @@
 				$secondReceiver = $this->GetReceiverByIndex($config, $idxB);
 				return $firstReceiver["Name"] . " + " . $secondReceiver["Name"];
 			}
+			// 4) No specific naming rule applies
 			return "";
 		}
 
 		private function BuildReceiverSupplements(array &$receiverChannels) {
 			foreach($receiverChannels as $id => $channel) {
+				//Go through each "group" channel und if and check if we are inside
 				foreach($receiverChannels as $idx => $channelx) {
 					if ($id != $idx) {
 						if (array_intersect($channel["Group"], $channelx["Group"]) == $channel["Group"]) {
