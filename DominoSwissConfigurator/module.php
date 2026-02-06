@@ -273,6 +273,11 @@
 				}
 			}
 			
+			//Extract eGate DeviceNr for consecutive group name logic
+			if(isset($ini['eGate1']['DeviceNr'])) {
+				$config["eGateDeviceNr"] = $ini['eGate1']['DeviceNr'];
+			}
+			
 			//remove all egate1 options which we do not need
 			foreach ($ini['eGate1'] as $key => $value) {
 				if ($key == "//Index") {
@@ -286,11 +291,6 @@
 			$egate1Fields = explode("~", $egate1['//Index']);
 			$egate1Fields[4] = "Location"; //Rename this field
 
-			//Extract eGate DeviceNr for consecutive group name logic
-			if(isset($egate1['DeviceNr'])) {
-				$config["eGateDeviceNr"] = $egate1['DeviceNr'];
-			}
-			
 			unset($egate1['//Index']);
 			$index = 1;
 			foreach($egate1 as $row) {
