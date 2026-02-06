@@ -1,0 +1,116 @@
+[Info]
+Version=1.00
+Date=23.01.2026
+[Project]
+Name=Severin Test Projekt
+Address=
+Town=
+[Customer]
+Company=Test
+Contact=
+Address=bb
+Town=
+Phone_Company=
+Phone_Contact=
+Phone_Mobile=
+Mail=sdfsf
+[Creator]
+Planner=
+Programmer=
+[Transmitter]
+//Index=Number;Type;Version;Name;Location\Sublocation;
+1=G.EG.0001;MX FS1W;;;Geb22\EG2;
+2=G.EG.0002;Virtual Sender;;;Geb22\EG2;
+3=G.EG.0003;MaxFlex M8W;;;Geb22\EG2;
+4=G.EG.0004;MaxFlex M8W;;;Geb22\EG2;
+5=G.EG.0005;MaxFlex M8W;;;Geb22\EG2;
+6=G.EG.0006;UTC;;;Geb22\EG2;
+7=G.EG.0007;SWRW;;;Geb22\EG2;
+8=G.EG.0008;MAG TFK;;;Geb22\EG2;
+9=G.EG.0009;MX FS4W;;;Geb22\EG2;
+10=G.EG.0010;MX FS4B;;;Geb22\EG2;
+[Receiver]
+//Index=Number;Type;Version;Name;Option1=,Option2=,...
+1=G.EG.0002;MX FE UP3;;G.EG.0002;keyRotationInversion=0,keyNoLuffing=0,keySwwReceiver=0,keyRepeaterOnly=1,keyNeverLock=0,
+2=G.EG.0003;FusionOne;;G.EG.0003;dhcp=0,ip=3232235520,gateway=3232235520,dns=3232235520,port=1318,
+3=G.EG.0004;MX FE PRO;;G.EG.0004;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=1,SwwValueCheck=0,Unlockable=0,
+4=G.EG.0005;MX FE PRO;;G.EG.0005;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=1,SwwValueCheck=0,Unlockable=0,
+5=G.EG.0006;MX FE PRO;;G.EG.0006;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=1,SwwValueCheck=0,Unlockable=0,
+6=G.EG.0008;MX FE PRO;;G.EG.0008;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+7=G.EG.0009;MX FE PRO;;G.EG.0009;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+8=G.EG.0010;MX FE PRO;;G.EG.0010;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+9=G.EG.0011;MX FE PRO;;G.EG.0011;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+10=G.EG.0012;MX FE PRO;;G.EG.0012;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+11=G.EG.0013;MX FE PRO;;G.EG.0013;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+12=G.EG.0014;MX FE PRO;;G.EG.0014;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+13=G.EG.0015;MX FE PRO;;G.EG.0015;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+14=G.EG.0016;MX FE PRO;;G.EG.0016;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+15=G.EG.0017;MX FE PRO;;G.EG.0017;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+16=G.EG.0018;MX FE PRO;;G.EG.0018;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+17=G.EG.0019;MX FE PRO;;G.EG.0019;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+18=G.EG.0020;MX FE PRO;;G.EG.0020;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+19=G.EG.0021;MX FE PRO;;G.EG.0021;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+20=G.EG.0022;MX FE PRO;;G.EG.0022;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+21=G.EG.0023;MX FE PRO;;G.EG.0023;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+22=G.EG.0024;MX FE PRO;;G.EG.0024;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+23=G.EG.0025;MX FE PRO;;G.EG.0025;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+24=G.EG.0026;MX FE PRO;;G.EG.0026;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+25=G.EG.0027;MX FE PRO;;G.EG.0027;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+26=G.EG.0028;MX FE SLIM;;G.EG.0028;keyRotationInversion=0,keyNoLuffing=0,keySwwReceiver=0,keyNeverLock=0,
+27=T.2.0001;MX FE PRO;;T.2.0001;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+28=T.2.0002;MX FE PRO;;T.2.0002;DirectionChange=0,NoSlatAdjustment=0,SWWReceiver=0,SwwValueCheck=0,Unlockable=0,
+[ReceiverGroup]
+//Index=GroupID;Name;ReceiverIndices(separated by ,)
+1=d135a4d3-13ba-437e-9ec7-41682fed8211;Hello23;23,24
+[Link]
+//Index=TransmitterIndex;Channel;ReceiverIndex;Option1=,Option2=,...
+1=2;8;6;RepeaterOnly=0,VirtualSender=1,
+2=1;1;3;RepeaterOnly=0,VirtualSender=0,
+3=1;1;4;RepeaterOnly=0,VirtualSender=0,
+4=1;1;2;Designator=1,ID=1,VirtualSender=0,
+5=2;8;2;Designator=2,ID=2,VirtualSender=1,
+6=3;1;23;RepeaterOnly=0,VirtualSender=0,
+7=3;1;24;RepeaterOnly=0,VirtualSender=0,
+8=3;1;2;Designator=3,ID=3,VirtualSender=0,
+9=6;1;2;Designator=4,ID=6,VirtualSender=0,
+10=7;1;2;Designator=5,ID=7,VirtualSender=0,
+11=8;1;2;Designator=6,ID=8,VirtualSender=0,
+12=5;1;10;RepeaterOnly=0,VirtualSender=0,
+13=5;2;2;Designator=8,ID=5,VirtualSender=0,
+14=5;2;7;RepeaterOnly=0,VirtualSender=0,
+15=5;2;8;RepeaterOnly=0,VirtualSender=0,
+16=5;2;10;RepeaterOnly=0,VirtualSender=0,
+17=4;3;23;RepeaterOnly=0,VirtualSender=0,
+18=4;3;24;RepeaterOnly=0,VirtualSender=0,
+19=4;3;2;Designator=9,ID=4,VirtualSender=0,
+20=5;1;2;Designator=7,ID=5,VirtualSender=0,
+21=5;1;18;RepeaterOnly=0,VirtualSender=0,
+22=3;2;2;Designator=10,ID=3,VirtualSender=0,
+23=3;2;26;RepeaterOnly=0,VirtualSender=0,
+24=9;1;2;Designator=11,ID=9,VirtualSender=0,
+25=9;1;3;RepeaterOnly=0,VirtualSender=0,
+26=10;1;2;Designator=12,ID=10,VirtualSender=0,
+27=10;1;3;RepeaterOnly=0,VirtualSender=0,
+[eGate1]
+SerialNr=
+DeviceNr=G.EG.0003
+DHCP=0
+IP-Address=192.168.0.0
+Gateway=192.168.0.0
+DNS=192.168.0.0
+Port=1318
+Netmask=
+MAC-Address=??????
+//Index=ID;TransmitterIndex;Channel;ConfigData
+1=1;1;1;
+2=2;2;8;
+3=3;3;1;
+4=4;6;1;
+5=5;7;1;
+6=6;8;1;
+7=8;5;2;
+8=9;4;3;
+9=7;5;1;
+10=10;3;2;
+11=11;9;1;
+12=12;10;1;

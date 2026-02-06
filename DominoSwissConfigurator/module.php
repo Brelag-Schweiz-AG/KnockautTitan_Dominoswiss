@@ -88,6 +88,8 @@
 				if($channel["IsGroup"]) {
 					$typeName .= " " . $this->Translate("Group");
 				}
+
+				$displayName = !empty($channel["Name"]) ? $channel["Name"] : $typeName;
 				
 				$value = [
 					"ID" => $id,
@@ -97,7 +99,7 @@
 					"Group" => implode(", ", $channel["Group"]),
 					"Supplement" => implode(", ", $channel["Supplement"]),
 					"instanceID" => $findInstanceID($moduleID, $id),
-					"name" => sprintf("%s (ID: %d)", $typeName, $id),
+					"name" => sprintf("%s (ID: %d)", $displayName, $id),
 					"parent" => 1,
 					"create" => [
 						"moduleID" => $moduleID,
@@ -132,7 +134,7 @@
 					"Group" => "",
 					"Supplement" => "",
 					"instanceID" => $findInstanceID($moduleID, $id),
-					"name" => sprintf("%s (ID: %d)", $channel["Type"], $id),
+					"name" => sprintf("%s (%s) (ID: %d)", $channel["Type"], $channel["Name"], $id),
 					"parent" => 2,
 					"create" => [
 						"moduleID" => $moduleID,
@@ -158,8 +160,10 @@
 			$config = [
 				"Transmitter" => [],
 				"Receiver" => [],
+				"ReceiverGroup" => [],
 				"link" => [],
-				"eGate1" => []
+				"eGate1" => [],
+				"eGateDeviceNr" => null
 			];
 
 			$data = base64_decode($this->ReadPropertyString("FileData"));
@@ -220,6 +224,26 @@
 				}
 			}
 			
+			//parse ReceiverGroup if available
+			if(isset($ini['ReceiverGroup'])) {
+				$receiverGroup = $ini['ReceiverGroup'];
+				unset($receiverGroup['//Index']);
+				$index = 1;
+				foreach($receiverGroup as $row) {
+					$row = explode("~", $row);
+					if(count($row) >= 3) {
+						$receiverIndices = explode(",", $row[2]);
+						$receiverIndices = array_map('trim', $receiverIndices);
+						$config["ReceiverGroup"][] = [
+							"Index" => $index++,
+							"GroupID" => $row[0],
+							"Name" => $row[1],
+							"ReceiverIndices" => $receiverIndices
+						];
+					}
+				}
+			}
+			
 			//parse link
 			$link = $ini['Link'];
 			$linkFields = explode("~", $link['//Index']);
@@ -249,6 +273,11 @@
 				}
 			}
 			
+			//Extract eGate DeviceNr for consecutive group name logic
+			if(isset($ini['eGate1']['DeviceNr'])) {
+				$config["eGateDeviceNr"] = $ini['eGate1']['DeviceNr'];
+			}
+			
 			//remove all egate1 options which we do not need
 			foreach ($ini['eGate1'] as $key => $value) {
 				if ($key == "//Index") {
@@ -261,6 +290,7 @@
 			$egate1 = $ini['eGate1'];
 			$egate1Fields = explode("~", $egate1['//Index']);
 			$egate1Fields[4] = "Location"; //Rename this field
+
 			unset($egate1['//Index']);
 			$index = 1;
 			foreach($egate1 as $row) {
@@ -281,93 +311,216 @@
 		
 		
 		public function BuildChannels() {
-			
 			$config = $this->ParseFileData();
 			
-			$getReceiverByIndex = function($index) use($config) {
-				foreach($config["Receiver"] as $receiver) {
-					if($receiver["Index"] == $index) {
-						return $receiver;
-					}
+			$receiverChannels = $this->BuildReceiverChannels($config);
+			$transmitterChannels = $this->BuildTransmitterChannels($config);
+			
+			$this->ResolveReceiverChannelDetails($receiverChannels, $config);
+			$this->DeduplicateReceiverChannels($receiverChannels);
+			$this->BuildReceiverSupplements($receiverChannels);
+			$this->ResolveTransmitterChannelDetails($transmitterChannels, $config);
+			
+			return [
+				"receivers" => $receiverChannels,
+				"transmitters" => $transmitterChannels
+			];
+			
+		}
+
+		private function GetReceiverByIndex(array $config, $index) {
+			foreach($config["Receiver"] as $receiver) {
+				if($receiver["Index"] == $index) {
+					return $receiver;
 				}
-				return null;
-			};
-			
-			$getTransmitterByIndex = function($index) use($config) {
-				foreach($config["Transmitter"] as $transmitter) {
-					if($transmitter["Index"] == $index) {
-						return $transmitter;
-					}
+			}
+			return null;
+		}
+
+		private function GetTransmitterByIndex(array $config, $index) {
+			foreach($config["Transmitter"] as $transmitter) {
+				if($transmitter["Index"] == $index) {
+					return $transmitter;
 				}
-				return null;
-			};
-			
-			$geteGate1ID = function($transmitterIndex, $channel) use($config) {
-				foreach($config["eGate1"] as $eGate1) {
-					if($eGate1["TransmitterIndex"] == $transmitterIndex && $eGate1["Channel"] == $channel) {
-						return $eGate1["ID"];
-					}
+			}
+			return null;
+		}
+
+		private function GetEGate1ID(array $config, $transmitterIndex, $channel) {
+			foreach($config["eGate1"] as $eGate1) {
+				if($eGate1["TransmitterIndex"] == $transmitterIndex && $eGate1["Channel"] == $channel) {
+					return $eGate1["ID"];
 				}
-				return null;
-			};			
-			
-			$receiverChannels = [];
-			$transmitterChannels = [];
-			
+			}
+			return null;
+		}
+
+		private function BuildReceiverChannels(array $config) {
 			//Go through all (non repeater) link channels for building the grouping (and associate with eGate IDs)
+			$receiverChannels = [];
 			foreach($config["link"] as $link) {
 				if(isset($link["Options"]["RepeaterOnly"]) && ($link["Options"]["RepeaterOnly"] == 0)) {
-					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
+					$id = $this->GetEGate1ID($config, $link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
 						$receiverChannels[$id]["Group"][] = $link["ReceiverIndex"];
-						$receiverChannels[$id]["Supplement"] = [];
+						if(!isset($receiverChannels[$id]["Supplement"])) {
+							$receiverChannels[$id]["Supplement"] = [];
+						}
 					}
 				}
 			}
+			return $receiverChannels;
+		}
 
+		private function BuildTransmitterChannels(array $config) {
 			//Search a few special transmitter devices and also add them
+			$transmitterChannels = [];
 			foreach($config["link"] as $link) {
-				$transmitter = $getTransmitterByIndex($link["TransmitterIndex"]);
-				if($this->IsSensorType($transmitter["Type"], $link["Channel"])) {
-					$id = $geteGate1ID($link["TransmitterIndex"], $link["Channel"]);
+				$transmitter = $this->GetTransmitterByIndex($config, $link["TransmitterIndex"]);
+				if($transmitter && $this->IsSensorType($transmitter["Type"], $link["Channel"])) {
+					$id = $this->GetEGate1ID($config, $link["TransmitterIndex"], $link["Channel"]);
 					if($id != null) {
 						$transmitterChannels[$id]["Group"][] = $link["TransmitterIndex"];
 						$transmitterChannels[$id]["Supplement"] = [];
 					}
 				}
 			}
-			
+			return $transmitterChannels;
+		}
+
+		private function ResolveReceiverChannelDetails(array &$receiverChannels, array $config) {
 			//Go through all receiver channels and mark as Group or obtain the device type, name and awning
-			foreach($receiverChannels as $id => $channel) {
+			foreach($receiverChannels as $id => &$channel) {
 				if(sizeof($channel["Group"]) > 1) {
-					//Check if we have a homogeneous group of the same device
 					$types = [];
-					foreach($channel["Group"] as $group) {
-						$receiver = $getReceiverByIndex($group);
+					foreach($channel["Group"] as $groupIndex) {
+						$receiver = $this->GetReceiverByIndex($config, $groupIndex);
 						$types[] = $receiver["Type"];
 					}
 					$types = array_unique($types);
-					
-					if(sizeof($types) == 1) {
-						$receiverChannels[$id]["Type"] = $types[0];
-					} else {
-						$receiverChannels[$id]["Type"] = "";
-					}
-					
-					$receiverChannels[$id]["Name"] = "";
-					$receiverChannels[$id]["IsGroup"] = true;
+					$channel["Type"] = (sizeof($types) == 1) ? $types[0] : "";
+					$channel["Name"] = $this->FindGroupName($channel["Group"], $config);
+					$channel["IsGroup"] = true;
 				} else {
-					$device = $getReceiverByIndex($channel["Group"][0]);
-					$receiverChannels[$id]["Type"] = $device["Type"];
-					$receiverChannels[$id]["Name"] = $device["Name"];
+					$device = $this->GetReceiverByIndex($config, $channel["Group"][0]);
+					$channel["Type"] = $device["Type"];
+					$channel["Name"] = $device["Name"];
 					if(isset($device["Options"]["NoSlatAdjustment"])) {
-						$receiverChannels[$id]["Awning"] = ($device["Options"]["NoSlatAdjustment"] == 1);
+						$channel["Awning"] = ($device["Options"]["NoSlatAdjustment"] == 1);
 					}
-					$receiverChannels[$id]["IsGroup"] = false;
+					$channel["IsGroup"] = false;
+				}
+			}
+			unset($channel);
+		}
+
+		/**
+		 * Compute a human-readable group name for a set of receiver indices.
+		 *
+		 * Rules:
+		 * 1) Exact group match: If an entry in ReceiverGroup matches the exact set of
+		 *    receiver indices (ignoring order), use that group's Name.
+		 * 2) Consecutive numeric range: If all receiver names have numeric suffixes
+		 *    (e.g., "G.EG.0003") and the numbers form a consecutive sequence, use
+		 *    "firstName - lastName" (based on min/max numeric suffix).
+		 * 3) Two receivers: If there are exactly two receivers, order them by numeric
+		 *    suffix when available and use "name1 + name2".
+		 * 4) Otherwise return an empty string to use a generic name elsewhere.
+		 *
+		 * Examples:
+		 * - groupIndices [23, 24] with ReceiverGroup "Hello23" -> "Hello23".
+		 * - groupIndices [3, 1, 2] -> "G.EG.0001 - G.EG.0003" (consecutive).
+		 * - groupIndices [24, 23] -> "G.EG.0023 + G.EG.0024" (two items, ordered).
+		 * - groupIndices [7, 10, 12] (not consecutive) -> "".
+		 */
+		private function FindGroupName(array $groupIndices, array $config) {
+			// 1) Try exact match with ReceiverGroup definitions (order-insensitive)
+			$groupName = "";
+			$sortedGroupIndices = $groupIndices;
+			sort($sortedGroupIndices, SORT_NUMERIC);
+			foreach($config["ReceiverGroup"] as $receiverGroup) {
+				$rgIndices = $receiverGroup["ReceiverIndices"];
+				sort($rgIndices, SORT_NUMERIC);
+				if($sortedGroupIndices === $rgIndices) {
+					$groupName = $receiverGroup["Name"];
+					break;
+				}
+			}
+			if($groupName != "") {
+				return $groupName;
+			}
+			// 2) Extract numeric suffixes from receiver names (e.g., "G.EG.0003" -> 3)
+			$receiverNumbersByIndex = [];
+			foreach($groupIndices as $idx) {
+				$receiver = $this->GetReceiverByIndex($config, $idx);
+				if(preg_match('/\.(\d+)$/', $receiver["Name"], $matches)) {
+					$receiverNumbersByIndex[$idx] = intval($matches[1]);
+				} else {
+					$receiverNumbersByIndex[$idx] = null;
 				}
 			}
 			
-			//Go through all receiver channels and build supplement for group channels
+			// 2a) Include eGate DeviceNr for consecutive check (Titan Controller address)
+			$eGateNumber = null;
+			if(isset($config["eGateDeviceNr"]) && $config["eGateDeviceNr"]) {
+				if(preg_match('/\.(\d+)$/', $config["eGateDeviceNr"], $matches)) {
+					$eGateNumber = intval($matches[1]);
+				}
+			}
+			
+			// 2b) Check if numeric suffixes are present and form a consecutive range
+			$isConsecutive = true;
+			$sortedNumbers = array_values($receiverNumbersByIndex);
+			// Add eGate number to the list for consecutive check
+			if($eGateNumber !== null) {
+				$sortedNumbers[] = $eGateNumber;
+			}
+			sort($sortedNumbers);
+			foreach($sortedNumbers as $num) {
+				if($num === null) {
+					$isConsecutive = false;
+					break;
+				}
+			}
+			if($isConsecutive) {
+				for($i = 1; $i < count($sortedNumbers); $i++) {
+					if($sortedNumbers[$i] != $sortedNumbers[$i-1] + 1) {
+						$isConsecutive = false;
+						break;
+					}
+				}
+			}
+			// 2c) Consecutive: use min/max endpoints for range naming (only actual receivers, not eGate)
+			if($isConsecutive && count($groupIndices) > 1) {
+				// Find min/max from actual receivers only (not eGate)
+				$minNum = PHP_INT_MAX; $maxNum = PHP_INT_MIN; $minIdx = null; $maxIdx = null;
+				foreach($receiverNumbersByIndex as $idx => $num) {
+					if($num !== null) {
+						if($num < $minNum) { $minNum = $num; $minIdx = $idx; }
+						if($num > $maxNum) { $maxNum = $num; $maxIdx = $idx; }
+					}
+				}
+				
+				$firstReceiver = $this->GetReceiverByIndex($config, $minIdx);
+				$lastReceiver = $this->GetReceiverByIndex($config, $maxIdx);
+				return $firstReceiver["Name"] . " - " . $lastReceiver["Name"];
+			}
+			// 3) Two receivers: order by numeric suffix (if present) and join with '+'
+			if(count($groupIndices) == 2) {
+				$idxA = $groupIndices[0];
+				$idxB = $groupIndices[1];
+				$numA = $receiverNumbersByIndex[$idxA];
+				$numB = $receiverNumbersByIndex[$idxB];
+				if($numA !== null && $numB !== null && $numA > $numB) { $tmp = $idxA; $idxA = $idxB; $idxB = $tmp; }
+				$firstReceiver = $this->GetReceiverByIndex($config, $idxA);
+				$secondReceiver = $this->GetReceiverByIndex($config, $idxB);
+				return $firstReceiver["Name"] . " + " . $secondReceiver["Name"];
+			}
+			// 4) No specific naming rule applies
+			return "";
+		}
+
+		private function BuildReceiverSupplements(array &$receiverChannels) {
 			foreach($receiverChannels as $id => $channel) {
 				//Go through each "group" channel und if and check if we are inside
 				foreach($receiverChannels as $idx => $channelx) {
@@ -379,19 +532,33 @@
 				}
 				sort($receiverChannels[$id]["Supplement"]);
 			}
-			
-			//Go through all transmitter channels and obtain the device type, name and awning
-			foreach($transmitterChannels as $id => $channel) {
-				$device = $getTransmitterByIndex($channel["Group"][0]);
-				$transmitterChannels[$id]["Type"] = $device["Type"];
-				$transmitterChannels[$id]["Name"] = $device["Name"];
+		}
+
+		private function DeduplicateReceiverChannels(array &$receiverChannels) {
+			$seen = [];
+			$duplicates = [];
+			foreach($receiverChannels as $id => $channel) {
+				$group = $channel["Group"];
+				sort($group, SORT_NUMERIC);
+				$signature = implode(",", $group);
+				if(isset($seen[$signature])) {
+					$duplicates[] = $id;
+				} else {
+					$seen[$signature] = $id;
+				}
 			}
-			
-			return [
-				"receivers" => $receiverChannels,
-				"transmitters" => $transmitterChannels
-			];
-			
+			foreach($duplicates as $dupId) {
+				unset($receiverChannels[$dupId]);
+			}
+		}
+
+		private function ResolveTransmitterChannelDetails(array &$transmitterChannels, array $config) {
+			foreach($transmitterChannels as $id => &$channel) {
+				$device = $this->GetTransmitterByIndex($config, $channel["Group"][0]);
+				$channel["Type"] = $device["Type"];
+				$channel["Name"] = $device["Name"];
+			}
+			unset($channel);
 		}
 
 		
