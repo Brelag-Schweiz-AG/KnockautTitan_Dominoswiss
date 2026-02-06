@@ -162,7 +162,8 @@
 				"Receiver" => [],
 				"ReceiverGroup" => [],
 				"link" => [],
-				"eGate1" => []
+				"eGate1" => [],
+				"eGateDeviceNr" => null
 			];
 
 			$data = base64_decode($this->ReadPropertyString("FileData"));
@@ -284,6 +285,12 @@
 			$egate1 = $ini['eGate1'];
 			$egate1Fields = explode("~", $egate1['//Index']);
 			$egate1Fields[4] = "Location"; //Rename this field
+
+			//Extract eGate DeviceNr for consecutive group name logic
+			if(isset($egate1['DeviceNr'])) {
+				$config["eGateDeviceNr"] = $egate1['DeviceNr'];
+			}
+			
 			unset($egate1['//Index']);
 			$index = 1;
 			foreach($egate1 as $row) {
@@ -452,9 +459,22 @@
 					$receiverNumbersByIndex[$idx] = null;
 				}
 			}
-			// 2a) Check if numeric suffixes are present and form a consecutive range
+			
+			// 2a) Include eGate DeviceNr for consecutive check (Titan Controller address)
+			$eGateNumber = null;
+			if(isset($config["eGateDeviceNr"]) && $config["eGateDeviceNr"]) {
+				if(preg_match('/\.(\d+)$/', $config["eGateDeviceNr"], $matches)) {
+					$eGateNumber = intval($matches[1]);
+				}
+			}
+			
+			// 2b) Check if numeric suffixes are present and form a consecutive range
 			$isConsecutive = true;
 			$sortedNumbers = array_values($receiverNumbersByIndex);
+			// Add eGate number to the list for consecutive check
+			if($eGateNumber !== null) {
+				$sortedNumbers[] = $eGateNumber;
+			}
 			sort($sortedNumbers);
 			foreach($sortedNumbers as $num) {
 				if($num === null) {
@@ -470,13 +490,17 @@
 					}
 				}
 			}
-			// 2b) Consecutive: use min/max endpoints for range naming
+			// 2c) Consecutive: use min/max endpoints for range naming (only actual receivers, not eGate)
 			if($isConsecutive && count($groupIndices) > 1) {
+				// Find min/max from actual receivers only (not eGate)
 				$minNum = PHP_INT_MAX; $maxNum = PHP_INT_MIN; $minIdx = null; $maxIdx = null;
 				foreach($receiverNumbersByIndex as $idx => $num) {
-					if($num < $minNum) { $minNum = $num; $minIdx = $idx; }
-					if($num > $maxNum) { $maxNum = $num; $maxIdx = $idx; }
+					if($num !== null) {
+						if($num < $minNum) { $minNum = $num; $minIdx = $idx; }
+						if($num > $maxNum) { $maxNum = $num; $maxIdx = $idx; }
+					}
 				}
+				
 				$firstReceiver = $this->GetReceiverByIndex($config, $minIdx);
 				$lastReceiver = $this->GetReceiverByIndex($config, $maxIdx);
 				return $firstReceiver["Name"] . " - " . $lastReceiver["Name"];
