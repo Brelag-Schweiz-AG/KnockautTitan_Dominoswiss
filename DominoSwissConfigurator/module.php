@@ -542,14 +542,9 @@
 				sort($group, SORT_NUMERIC);
 				$signature = implode(",", $group);
 				if(isset($seen[$signature])) {
-					$duplicates[] = $id;
-				} else {
-					$seen[$signature] = $id;
-				}
-			}
-			foreach($duplicates as $dupId) {
-				unset($receiverChannels[$dupId]);
-			}
+				// Add the duplicate ID to the supplement of the original channel
+				$originalId = $seen[$signature];
+				$receiverChannels[$originalId]["Supplement"][] = $id;
 		}
 
 		private function ResolveTransmitterChannelDetails(array &$transmitterChannels, array $config) {
