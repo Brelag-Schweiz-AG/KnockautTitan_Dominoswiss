@@ -542,6 +542,9 @@
 				sort($group, SORT_NUMERIC);
 				$signature = implode(",", $group);
 				if(isset($seen[$signature])) {
+					// Add the duplicate ID to the supplement of the original channel
+					$originalId = $seen[$signature];
+					$receiverChannels[$originalId]["Supplement"][] = $id;
 					$duplicates[] = $id;
 				} else {
 					$seen[$signature] = $id;
