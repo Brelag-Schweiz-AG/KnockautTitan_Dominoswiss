@@ -135,7 +135,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		$this->MaintainVariable("SavedRocker", $this->Translate("SavedRocker"), 1, "", 10, true);
 		IPS_SetHidden($this->GetIDForIdent("SavedRocker"), true);
 
-		$this->RegisterTimer("SetMovementStopTimer", 0, 'BRELAG_SetMovementStop($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("SetMovementStopTimer", 0, 'BRELAG_SetMovementStop(' . $this->InstanceID . ');');
 
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}

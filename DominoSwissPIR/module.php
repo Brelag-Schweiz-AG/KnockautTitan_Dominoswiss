@@ -8,7 +8,7 @@ class DominoSwissPIR extends IPSModule {
 		$this->RegisterPropertyInteger("ID", 1);
 		$this->RegisterPropertyInteger("MotionTimer", 300);
 
-		$this->RegisterTimer("PIRTimer", 0, "BRELAG_StopPIRTimer(\$_IPS['TARGET']);");
+		$this->RegisterTimer("PIRTimer", 0, 'BRELAG_StopPIRTimer(' . $this->InstanceID . ');');
 		
 		$this->RegisterVariableBoolean("MotionValue", $this->Translate("Motion"), "~Motion", 0);
 		
