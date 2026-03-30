@@ -4,9 +4,9 @@
   "name": "Brelag DominoSwiss",
   "url": "https://www.brelag.com",
   "compatibility": {
-    "version": "5.0"
+    "version": "9.0"
   },
-  "version": "1.13",
-  "build": 48,
+  "version": "1.14",
+  "build": 50,
   "date": 1764849042
 }
