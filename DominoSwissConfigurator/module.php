@@ -102,15 +102,16 @@
 					"name" => sprintf("%s (ID: %d)", $displayName, $id),
 					"parent" => 1,
 					"create" => [
-					[
-						"moduleID" => $moduleID,
-						"configuration" => [
-							"ID" => $id
+						[
+							"moduleID" => $moduleID,
+							"configuration" => [
+								"ID" => $id
+							],
+							"position" => $id
 						],
-						"position" => $id
-					],
-					[
-						"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						]
 					]
 				];
 
@@ -141,18 +142,19 @@
 					"name" => sprintf("%s (%s) (ID: %d)", $channel["Type"], $channel["Name"], $id),
 					"parent" => 2,
 					"create" => [
-					[
-						"moduleID" => $moduleID,
-						"configuration" => [
-							"ID" => $id
+						[
+							"moduleID" => $moduleID,
+							"configuration" => [
+								"ID" => $id
+							],
+							"position" => $id
 						],
-						"position" => $id
-					],
-					[
-						"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						]
 					]
 				];
-				
+
 				$data->actions[0]->values[] = $value;
 			}
 			
