@@ -112,6 +112,9 @@
 					[
 						"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
 					]
+				];
+
+				//Some properties are only available for receivers
 				$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
 			
 				//Awning property is only available for non groups and only some devices
@@ -148,6 +151,9 @@
 					[
 						"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
 					]
+				];
+				
+				$data->actions[0]->values[] = $value;
 			}
 			
 			return json_encode($data);
