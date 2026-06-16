@@ -103,24 +103,24 @@
 					"parent" => 1,
 					"create" => [
 						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						],
+						[
 							"moduleID" => $moduleID,
 							"configuration" => [
 								"ID" => $id
 							],
 							"position" => $id
-						],
-						[
-							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
 						]
 					]
 				];
 
 				//Some properties are only available for receivers
-				$value["create"][0]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+				$value["create"][1]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
 			
 				//Awning property is only available for non groups and only some devices
 				if(isset($channel["Awning"])) {
-					$value["create"][0]["configuration"]["Awning"] = $channel["Awning"];
+					$value["create"][1]["configuration"]["Awning"] = $channel["Awning"];
 				}
 				
 				$data->actions[0]->values[] = $value;
