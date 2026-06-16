@@ -178,6 +178,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 		//No ID check necessary, check is done by receiveFilter "DominoSwissBase.php->ApplyChanges()"
 		if ($data->Values->Priority >= $this->GetHighestLockLevel()) {
 			$command = $data->Values->Command;
+			$isAwning = $this->ReadPropertyBoolean("Awning");
 			switch ($command) {
 				case 1:
 				case 2:
@@ -187,7 +188,7 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					}
 					else {
 						
-						if ($this->ReadPropertyBoolean("Awning")) {
+						if ($isAwning) {
 							SetValue($this->GetIDForIdent("Status"), true);
 							if ($command == 1) {
 								SetValue($this->GetIDForIdent("Movement"), 0);
@@ -226,11 +227,17 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					SetValue($this->GetIDForIdent("Status"), true);
 					$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
 					if ($command == 3) {
-						SetValue($this->GetIDForIdent("RockerControl"), $this->ReadPropertyInteger("CountRockerSteps"));
+						// RockerControl only exists for Jalousie, not Awning
+						if (!$isAwning) {
+							SetValue($this->GetIDForIdent("RockerControl"), $this->ReadPropertyInteger("CountRockerSteps"));
+						}
 						SetValue($this->GetIDForIdent("Movement"), 0);
 					}
 					else {
-						SetValue($this->GetIDForIdent("RockerControl"), 0);
+						// RockerControl only exists for Jalousie, not Awning
+						if (!$isAwning) {
+							SetValue($this->GetIDForIdent("RockerControl"), 0);
+						}
 						SetValue($this->GetIDForIdent("Movement"), 4);
 					}
 					break;
@@ -243,7 +250,10 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 				case 15:
 					//only save if its our ID
 					if ($data->Values->ID == $this->ReadPropertyInteger("ID")) {
-						SetValue($this->GetIDForIdent("SavedRocker"), GetValue($this->GetIDForIdent("RockerControl")));
+						// RockerControl only exists for Jalousie, not Awning
+						if (!$isAwning) {
+							SetValue($this->GetIDForIdent("SavedRocker"), GetValue($this->GetIDForIdent("RockerControl")));
+						}
 						SetValue($this->GetIDForIdent("Saving"), 1);
 					}
 					break;
@@ -258,8 +268,11 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 						SetValue($this->GetIDForIdent("Movement"), 2);
 						$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
 					}
-					$savedRocker = ($this->GetIDForIdent("SavedRocker"));
-					SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
+					// RockerControl only exists for Jalousie, not Awning
+					if (!$isAwning) {
+						$savedRocker = GetValue($this->GetIDForIdent("SavedRocker"));
+						SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
+					}
 					break;
 
 				case 20:
@@ -275,8 +288,11 @@ class DominoSwissMXFEShutter extends DominoSwissBase {
 					SetValue($this->GetIDForIdent("Movement"), 2);
 					SetValue($this->GetIDForIdent("Saving"), 0);
 					$this->SetTimerInterval("SetMovementStopTimer", $this->ReadPropertyInteger("Runtime") * 1000);
-					$savedRocker = GetValue($this->GetIDForIdent("SavedRocker"));
-					SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
+					// RockerControl only exists for Jalousie, not Awning
+					if (!$isAwning) {
+						$savedRocker = GetValue($this->GetIDForIdent("SavedRocker"));
+						SetValue($this->GetIDForIdent("RockerControl"), $savedRocker);
+					}
 					break;
 			}
 		}
