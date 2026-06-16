@@ -90,16 +90,6 @@
 
 				$displayName = !empty($channel["Name"]) ? $channel["Name"] : $typeName;
 				
-				$deviceConfiguration = [
-					"ID" => $id,
-					"Supplement" => json_encode($buildSupplementList($channel["Supplement"]))
-				];
-
-				//Awning property is only available for non groups and only some devices
-				if(isset($channel["Awning"])) {
-					$deviceConfiguration["Awning"] = $channel["Awning"];
-				}
-
 				$value = [
 					"ID" => $id,
 					"Name" => $channel["Name"],
@@ -113,11 +103,14 @@
 					"create" => [
 						[
 							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
-							"configuration" => json_encode(["MessageDelay" => 1000, "Mode" => 1])
+							"configuration" => ["MessageDelay" => 1000, "Mode" => 1]
 						],
 						[
 							"moduleID" => $moduleID,
-							"configuration" => json_encode($deviceConfiguration),
+							"configuration" => [
+								"ID" => $id,
+								"Supplement" => json_encode($buildSupplementList($channel["Supplement"]))
+							],
 							"position" => $id
 						]
 					]
@@ -125,14 +118,19 @@
 				
 				$data->actions[0]->values[] = $value;
 			}
+
+			//Some properties are only available for receivers
+			$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+
+			//Awning property is only available for non groups and only some devices
+			if(isset($channel["Awning"])) {
+				$value["create"]["configuration"]["Awning"] = $channel["Awning"];
+			}
 			
 			//Add all Actuators
 			foreach($channels["transmitters"] as $id => $channel) {
 				
 				$moduleID = $this->GetModuleIDForType($channel["Type"]);
-				$deviceConfiguration = [
-					"ID" => $id
-				];
 				
 				$value = [
 					"ID" => $id,
@@ -147,11 +145,13 @@
 					"create" => [
 						[
 							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
-							"configuration" => json_encode(["MessageDelay" => 1000, "Mode" => 1])
+							"configuration" => ["MessageDelay" => 1000, "Mode" => 1]
 						],
 						[
 							"moduleID" => $moduleID,
-							"configuration" => json_encode($deviceConfiguration),
+							"configuration" => [
+								"ID" => $id
+							],
 							"position" => $id
 						],
 					]

@@ -41,7 +41,7 @@ class DominoSwissMAG extends IPSModule {
 		$this->RegisterVariableInteger("Event", $this->Translate("Event"), "BRELAG.MAGEvent", 2);
 		$this->RegisterVariableBoolean("Lifesign", $this->Translate("Lifesign"), "BRELAG.MAGLifesign", 4);
 
-		$this->RegisterTimer("CheckLifesignTimer", 60 * 60 * 1000, 'BRELAG_CheckLifesign(' . $this->InstanceID . ');');
+		$this->RegisterTimer("CheckLifesignTimer", 60 * 60 * 1000, 'BRELAG_CheckLifesign($_IPS[\'TARGET\']);');
 		
 		$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
 	}
