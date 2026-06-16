@@ -16,7 +16,7 @@ class DominoSwissEGate extends IPSModule {
 		$this->RegisterVariableString("Firmware","Firmware");
 		$this->RegisterVariableInteger("Serial",$this->Translate("Serialnumber"));
 		
-		$this->RegisterTimer("DeviceInfoGetTimer", 60 * 1000, 'BRELAG_SendDeviceInfoGet($_IPS[\'TARGET\']);');
+		$this->RegisterTimer("DeviceInfoGetTimer", 60 * 1000, 'BRELAG_CheckLifesign($_IPS[\'TARGET\']);');
 		
 		if ($isFusionONE) {
 			$this->RequireParent("{6DC3D946-0D31-450F-A8C6-C42DB8D7D4F1}"); //SerialPort

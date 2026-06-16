@@ -9,7 +9,6 @@
 			$this->RegisterPropertyString("FileData", "");
 
 			$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
-
 		}	
 
 		
@@ -102,23 +101,30 @@
 					"name" => sprintf("%s (ID: %d)", $displayName, $id),
 					"parent" => 1,
 					"create" => [
-						"moduleID" => $moduleID,
-						"configuration" => [
-							"ID" => $id
+						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
+							"configuration" => ["MessageDelay" => 1000, "Mode" => 1]
 						],
-						"position" => $id
+						[
+							"moduleID" => $moduleID,
+							"configuration" => [
+								"ID" => $id,
+								"Supplement" => json_encode($buildSupplementList($channel["Supplement"]))
+							],
+							"position" => $id
+						]
 					]
 				];
 				
-				//Some properties are only available for receivers
-				$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
-			
-				//Awning property is only available for non groups and only some devices
-				if(isset($channel["Awning"])) {
-					$value["create"]["configuration"]["Awning"] = $channel["Awning"];
-				}
-				
 				$data->actions[0]->values[] = $value;
+			}
+
+			//Some properties are only available for receivers
+			$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+
+			//Awning property is only available for non groups and only some devices
+			if(isset($channel["Awning"])) {
+				$value["create"]["configuration"]["Awning"] = $channel["Awning"];
 			}
 			
 			//Add all Actuators
@@ -137,14 +143,20 @@
 					"name" => sprintf("%s (%s) (ID: %d)", $channel["Type"], $channel["Name"], $id),
 					"parent" => 2,
 					"create" => [
-						"moduleID" => $moduleID,
-						"configuration" => [
-							"ID" => $id
+						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
+							"configuration" => ["MessageDelay" => 1000, "Mode" => 1]
 						],
-						"position" => $id
+						[
+							"moduleID" => $moduleID,
+							"configuration" => [
+								"ID" => $id
+							],
+							"position" => $id
+						],
 					]
 				];
-				
+
 				$data->actions[0]->values[] = $value;
 			}
 			
