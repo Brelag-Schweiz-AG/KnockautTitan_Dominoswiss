@@ -91,6 +91,16 @@
 
 				$displayName = !empty($channel["Name"]) ? $channel["Name"] : $typeName;
 				
+				$deviceConfiguration = [
+					"ID" => $id,
+					"Supplement" => json_encode($buildSupplementList($channel["Supplement"]))
+				];
+
+				//Awning property is only available for non groups and only some devices
+				if(isset($channel["Awning"])) {
+					$deviceConfiguration["Awning"] = $channel["Awning"];
+				}
+
 				$value = [
 					"ID" => $id,
 					"Name" => $channel["Name"],
@@ -107,21 +117,11 @@
 						],
 						[
 							"moduleID" => $moduleID,
-							"configuration" => [
-								"ID" => $id
-							],
+							"configuration" => json_encode($deviceConfiguration),
 							"position" => $id
 						]
 					]
 				];
-
-				//Some properties are only available for receivers
-				$value["create"][1]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
-			
-				//Awning property is only available for non groups and only some devices
-				if(isset($channel["Awning"])) {
-					$value["create"][1]["configuration"]["Awning"] = $channel["Awning"];
-				}
 				
 				$data->actions[0]->values[] = $value;
 			}
@@ -130,6 +130,9 @@
 			foreach($channels["transmitters"] as $id => $channel) {
 				
 				$moduleID = $this->GetModuleIDForType($channel["Type"]);
+				$deviceConfiguration = [
+					"ID" => $id
+				];
 				
 				$value = [
 					"ID" => $id,
@@ -147,9 +150,7 @@
 						],
 						[
 							"moduleID" => $moduleID,
-							"configuration" => [
-								"ID" => $id
-							],
+							"configuration" => json_encode($deviceConfiguration),
 							"position" => $id
 						],
 					]
