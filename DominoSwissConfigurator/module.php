@@ -143,15 +143,15 @@
 					"parent" => 2,
 					"create" => [
 						[
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+						],
+						[
 							"moduleID" => $moduleID,
 							"configuration" => [
 								"ID" => $id
 							],
 							"position" => $id
 						],
-						[
-							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
-						]
 					]
 				];
 
