@@ -9,7 +9,6 @@
 			$this->RegisterPropertyString("FileData", "");
 
 			$this->ConnectParent("{1252F612-CF3F-4995-A152-DA7BE31D4154}"); //DominoSwiss eGate
-
 		}	
 
 		
@@ -113,7 +112,8 @@
 					"parent" => 1,
 					"create" => [
 						[
-							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
+							"configuration" => json_encode(["MessageDelay" => 1000, "Mode" => 1])
 						],
 						[
 							"moduleID" => $moduleID,
@@ -146,7 +146,8 @@
 					"parent" => 2,
 					"create" => [
 						[
-							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}"
+							"moduleID" => "{1252F612-CF3F-4995-A152-DA7BE31D4154}",
+							"configuration" => json_encode(["MessageDelay" => 1000, "Mode" => 1])
 						],
 						[
 							"moduleID" => $moduleID,
