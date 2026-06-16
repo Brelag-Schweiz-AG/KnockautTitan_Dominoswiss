@@ -116,11 +116,11 @@
 				];
 
 				//Some properties are only available for receivers
-				$value["create"]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
+				$value["create"][0]["configuration"]["Supplement"] = json_encode($buildSupplementList($channel["Supplement"]));
 			
 				//Awning property is only available for non groups and only some devices
 				if(isset($channel["Awning"])) {
-					$value["create"]["configuration"]["Awning"] = $channel["Awning"];
+					$value["create"][0]["configuration"]["Awning"] = $channel["Awning"];
 				}
 				
 				$data->actions[0]->values[] = $value;
